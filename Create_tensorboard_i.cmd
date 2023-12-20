@@ -1,0 +1,1 @@
+tensorboard --logdir logs\fit --reload_interval 30 --reload_multifile True

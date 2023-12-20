@@ -1,0 +1,16 @@
+/.vscode
+/Database
+/download
+/models
+/Samples
+__pycache__/
+/PAI_model_weights.h5
+/PAI_model_weights_BL.h5
+/PAI_model_T.h5
+/PAI_model_T_BL.h5
+/cache
+/Build
+/validation
+/backup
+/Pneumonia AI.pyproj
+/Interface/CLI/Data/PAI_model.h5

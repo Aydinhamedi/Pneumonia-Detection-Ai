@@ -1,0 +1,1 @@
+You can use this code to merging two datasets with different image formats.

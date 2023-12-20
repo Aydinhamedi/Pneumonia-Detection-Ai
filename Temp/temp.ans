@@ -1,0 +1,62 @@
+Training the model...
+[0;33m
+Setup Verbose:[0m
+[0m[0m[0;36mSetting TensorBoard Log dir to [0m[0;32m[logs/fit/y2023_m12_d17-h13_m34_s30][0m[0;36m...[0m
+[0m[0m[0;36mDebug_OUTPUT_DPS [0m[0;32m[False][0m[0;36m.[0m
+[0m[0m[0;36mOneCycleLr_UFTS [0m[0;32m[False][0m[0;36m.[0m
+[0;33mSetup Verbose END.[0m
+[0m
+[0m[0mEpoch: [0m[0;36m1[0m[0m/[0m[0;32m384 (TSEC: 0)[0m[0;34m | [0m[0;32m[Learning the patterns][0m
+[0m[0m[0;33mTaking a subset of [0m[0;32m[|2048|AdvSubset:True][0m[0;33m...[0m
+[0;33mPreparing train data...[0m
+[0;33m- Loading fitted ImageDataGenerator...[0m
+[0;33m- ImageDataGenerator fit done.[0m
+[0;33m- Augmenting Image Data...[0m
+[0;33m- Normalizing Image Data...[0m
+[0m[0m[0;33mSetting training OneCycleLr::maxlr to [0m[0;32m[0.01[0m[0;31m[0m[0;32m][0m[0;33m...[0m
+[0m[0m[0;33mSetting training subset epoch.c to [0m[0;32m[6][0m[0;33m...[0m
+[0;32mTraining on subset...[0m
+Epoch 1/6
+256/256 [==============================] - 292s 563ms/step - loss: 0.5469 - accuracy: 0.7583 - val_loss: 0.9052 - val_accuracy: 0.6330
+Epoch 2/6
+256/256 [==============================] - 130s 505ms/step - loss: 0.6177 - accuracy: 0.6953 - val_loss: 0.5541 - val_accuracy: 0.6827
+Epoch 3/6
+256/256 [==============================] - 119s 466ms/step - loss: 0.6180 - accuracy: 0.6611 - val_loss: 0.5461 - val_accuracy: 0.7772
+Epoch 4/6
+256/256 [==============================] - 117s 457ms/step - loss: 0.5305 - accuracy: 0.7192 - val_loss: 0.5137 - val_accuracy: 0.7580
+Epoch 5/6
+256/256 [==============================] - 116s 452ms/step - loss: 0.3770 - accuracy: 0.8364 - val_loss: 0.5753 - val_accuracy: 0.7067
+Epoch 6/6
+256/256 [==============================] - 118s 458ms/step - loss: 0.2332 - accuracy: 0.9092 - val_loss: 0.2681 - val_accuracy: 0.8846
+[0;32mSubset training done.[0m
+[0;33mLoading the best weights...[0m
+[0;33mLoading weights from file cache\model_SUB_checkpoint-006-0.8846.h5...[0m
+[0m[0m[0;33mModel Test acc: [0m[0;32m0.8830[0m
+[0m[0m[0;33mModel Test loss: [0m[0;32m0.2681[0m
+[0m[0m[0;33mImproved model loss from [0m[0;32m80.3234 [0m[0;33mto [0m[0;32m1.12[0m[0;33m. [0m[0;36mSaving model.[0m
+[0m[0m[0;36mSaving full model H5 format...[0m
+[0m[0m[0;33mImproved model loss from [0m[0;32m80.3234 [0m[0;33mto [0m[0;32m1.12[0m[0;33m. [0m[0;36mSaving model.[0m
+[0m[0m[0;36mSaving full model H5 format...[0m
+[0m[0m[0;33mTime taken for epoch(FULL): [0m[0;32m940.46 [0m[0;36msec[0m
+[0m[0m[0;33mTime taken for epoch(SUBo): [0m[0;32m892.92 [0m[0;36msec[0m
+[0m[0m[0;33mTime taken for epoch(OTHERo): [0m[0;32m47.54 [0m[0;36msec[0m
+[0;36m<---------------------------------------|Epoch [1] END|--------------------------------------->[0m
+[0m
+[0m[0mEpoch: [0m[0;36m2[0m[0m/[0m[0;32m384 (TSEC: 6)[0m[0;34m | [0m[0;32m[Learning the patterns][0m
+[0m[0m[0;33mTaking a subset of [0m[0;32m[|2048|AdvSubset:True][0m[0;33m...[0m
+[0;33mPreparing train data...[0m
+[0;33m- Augmenting Image Data...[0m
+[0;33m- Normalizing Image Data...[0m
+[0m[0m[0;33mSetting training OneCycleLr::maxlr to [0m[0;32m[0.01[0m[0;31m[0m[0;32m][0m[0;33m...[0m
+[0m[0m[0;33mSetting training subset epoch.c to [0m[0;32m[6][0m[0;33m...[0m
+[0;32mTraining on subset...[0m
+Epoch 7/12
+256/256 [==============================] - 168s 477ms/step - loss: 0.3547 - accuracy: 0.8472 - val_loss: 0.4639 - val_accuracy: 0.7388
+Epoch 8/12
+256/256 [==============================] - 121s 471ms/step - loss: 0.4729 - accuracy: 0.7808 - val_loss: 0.4375 - val_accuracy: 0.7901
+Epoch 9/12
+256/256 [==============================] - 121s 472ms/step - loss: 0.7884 - accuracy: 0.6240 - val_loss: 0.6539 - val_accuracy: 0.6042
+Epoch 10/12
+256/256 [==============================] - 119s 464ms/step - loss: 0.6239 - accuracy: 0.6475 - val_loss: 0.5616 - val_accuracy: 0.7372
+Epoch 11/12
+186/256 [====================>.........] - ETA: 27s - loss: 0.5564 - accuracy: 0.7077
