@@ -1,62 +1,33 @@
-# Pneumonia AI Dev
+# Pneumonia Detection AI
 
-Welcome to the Pneumonia AI Dev project! This project aims to develop an artificial intelligence system capable of detecting pneumonia from medical images with high accuracy. Our goal is to assist healthcare professionals in diagnosing pneumonia more efficiently and effectively, ultimately improving patient outcomes.
+This project uses a deep learning model built with the TensorFlow framework to detect pneumonia in X-ray images. The model architecture is based on the EfficientNetB7 model, which has achieved an accuracy of approximately 97% (96.96%) on our test data. This high accuracy rate is one of the strengths of our AI model.
 
-## Project Overview
+## Model
 
-Pneumonia is a significant health problem worldwide and can be challenging to diagnose, especially in areas with limited medical resources. Our AI system uses advanced machine learning algorithms to analyze chest X-ray images for signs of pneumonia, providing a valuable tool for radiologists and other healthcare providers.
-
-## Getting Started
-
-To get started with the Pneumonia AI Dev project, please follow the instructions below:
-
-### Prerequisites
-
-- Python 3.8 or higher
-- Pip package manager
-- Virtual environment (recommended)
-
-### Installation
-
-1. Clone the repository:
-2. Navigate to the project directory:
-3. Create a virtual environment:
-4. Activate the virtual environment:
-- On Windows:
-  ```
-  .\venv\Scripts\activate
-  ```
-- On Unix or MacOS:
-  ```
-  source venv/bin/activate
-  ```
-5. Install the required dependencies:
+The model is a Convolutional Neural Network (CNN) trained on a dataset of 8888 X-ray images. The dataset is a combination of the [chest-xray-pneumonia](https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia) dataset from Kaggle and the [Covid19-Pneumonia-Normal Chest X-Ray Images](https://data.mendeley.com/datasets/dvntn9yhd2/1) from Mendeley.
 
 ## Usage
 
-To use the AI system, follow these steps:
+The project includes a Command Line Interface (CLI) for easy use of the model. The CLI, which is based on the [Python CLI template](https://github.com/Aydinhamedi/Python-CLI-template) from the same author, provides a user-friendly, colorful interface that allows you to interact with the model. You can run the CLI with the following command:
 
-1. Place your chest X-ray images in the `input_images` directory.
-2. Run the detection script:
-3. The results will be output in the `results` directory.
+```
+Interface\CLI\CLI.cmd
+```
 
-## Contributing
+## Repository Structure
 
-We welcome contributions from the community. If you'd like to contribute, please fork the repository and use a feature branch. Pull requests are warmly welcome.
+Please note that due to the large size of some files and folders, they are not available directly in the repository. However, they can be found in the [Releases](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/releases) page of the repository. This includes the model weights and the database, which are crucial for the functioning of the AI model.
 
-## License
+## Contribution
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
-
-## Acknowledgments
-
-- Thanks to all the contributors who have helped to build this project.
-- Special thanks to healthcare professionals who provided valuable insights.
-
-## Contact
-
-For any questions or suggestions, please contact us at [contact@pneumonia-ai-dev.com](mailto:contact@pneumonia-ai-dev.com).
+Any contributions to improve the project are welcome. You can submit a pull request or open an issue on GitHub. Please make sure to test your changes thoroughly before submitting. We appreciate your help in making this project better.
 
 ## Disclaimer
 
-This AI system is a development project and should not be used as a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition.
+The model provided in this project should not be used for medical diagnosis without further validation. While the model has shown high accuracy in detecting pneumonia from X-ray images, it is not a substitute for professional medical advice. Please consult with a healthcare professional for medical advice.
+
+## License
+
+This project is open-source and is licensed under the MIT License. See the `LICENSE` file for details.
+
+[GitHub Repository](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai)
