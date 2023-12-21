@@ -20,6 +20,8 @@ The project includes a Command Line Interface (CLI) for easy use of the model. T
 ```
 Interface\CLI
 ```
+### Example Image of the CLI:
+![Example](doc/Screenshot.png)  
 ## Release
 > ### Newest release 📃
 > #### [Go to newest release](https://github.com/Aydinhamedi/Ai-MNIST-Advanced-model/releases/tag/V0.3.6)
