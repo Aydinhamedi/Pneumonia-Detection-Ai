@@ -63,11 +63,6 @@ Any contributions to improve the project are welcome. You can submit a pull requ
 > [!CAUTION]
 The model provided in this project should not be used for medical diagnosis without further validation. While the model has shown high accuracy in detecting pneumonia from X-ray images, it is not a substitute for professional medical advice. Please consult with a healthcare professional for medical advice.
 
-## License
-
-This project is open-source and is licensed under the MIT License. See the `LICENSE` file for details.
-
-[GitHub Repository](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai)
 
 ## Other
 > [!NOTE]
@@ -94,3 +89,10 @@ This project is open-source and is licensed under the MIT License. See the `LICE
 
 ![img3](doc/Screenshot.png)  
 -->
+
+
+## License
+
+This project is open-source and is licensed under the MIT License. See the `LICENSE` file for details.
+
+[GitHub Repository](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai)
