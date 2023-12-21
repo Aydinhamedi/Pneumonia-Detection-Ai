@@ -77,3 +77,16 @@ The model provided in this project should not be used for medical diagnosis with
 This project is open-source and is licensed under the MIT License. See the `LICENSE` file for details.
 
 [GitHub Repository](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai)
+
+## Results
+
+> [!WARNING]
+> Results were achived using Rev2 training method and Rev1.2 model.
+#### N/A 
+<!--
+![img1](doc/Screenshot.png)  
+
+![img2](doc/Screenshot.png)  
+
+![img3](doc/Screenshot.png)  
+-->
