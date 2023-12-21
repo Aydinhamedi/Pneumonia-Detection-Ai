@@ -18,7 +18,6 @@ logs/fit/*
 /cache
 /Build
 /validation
-/backup
 /Pneumonia AI.pyproj
 /Interface/CLI/Data/PAI_model.h5
 /TEMP.txt
