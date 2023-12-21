@@ -24,7 +24,7 @@ Interface\CLI
 ![Example](doc/Screenshot.png)  
 ## Release
 > ### Newest release 📃
-> #### [Go to newest release](https://github.com/Aydinhamedi/Ai-MNIST-Advanced-model/releases/tag/V0.3.6)
+> #### [Go to newest release](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/releases)
 
 ## Model
 
