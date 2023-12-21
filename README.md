@@ -2,17 +2,8 @@
 <img src="https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue"/> <img src="https://img.shields.io/badge/TensorFlow-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white"/> <img src="https://img.shields.io/badge/Keras-FF0000?style=for-the-badge&logo=keras&logoColor=white"/>
 
 ### This project uses a deep learning model built with the TensorFlow framework to detect pneumonia in X-ray images. The model architecture is based on the EfficientNetB7 model, which has achieved an accuracy of approximately 97% (96.96%) on our test data. This high accuracy rate is one of the strengths of our AI model.
-> [!NOTE]
->  Please note that this code uses my Python-CLI-template\
->  for more info go to https://github.com/Aydinhamedi/Python-CLI-template.
-
-> [!NOTE]
->  Please note that this code uses my Python-color-print-V2\
->  for more info go to https://github.com/Aydinhamedi/Python-color-print-V2.
-
-> [!NOTE]
->  Please note that this code uses my Python-color-print\
->  for more info go to https://github.com/Aydinhamedi/Python-color-print.
+> [!IMPORTANT]
+> The code that have achived the highest acc is `backup/V4/Model_T&T.ipynb`.
 ## Usage
 
 The project includes a Command Line Interface (CLI) for easy use of the model. The CLI, which is based on the [Python CLI template](https://github.com/Aydinhamedi/Python-CLI-template) from the same author, provides a user-friendly, colorful interface that allows you to interact with the model. you can fined the cli in 
@@ -77,6 +68,19 @@ The model provided in this project should not be used for medical diagnosis with
 This project is open-source and is licensed under the MIT License. See the `LICENSE` file for details.
 
 [GitHub Repository](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai)
+
+## Other
+> [!NOTE]
+>  Please note that this code uses my Python-CLI-template\
+>  for more info go to https://github.com/Aydinhamedi/Python-CLI-template.
+
+> [!NOTE]
+>  Please note that this code uses my Python-color-print-V2\
+>  for more info go to https://github.com/Aydinhamedi/Python-color-print-V2.
+
+> [!NOTE]
+>  Please note that this code uses my Python-color-print\
+>  for more info go to https://github.com/Aydinhamedi/Python-color-print.
 
 ## Results
 
