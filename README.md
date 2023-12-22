@@ -67,7 +67,8 @@ The model provided in this project should not be used for medical diagnosis with
 ## Results
 
 > [!WARNING]
-> Results were achived using Rev2 training method and Rev1.2 model.
+> Results were achived using Rev2 training method and Rev1.2 model and
+> with `backup/V4/Model_T&T.ipynb` code.
 <!-- #### N/A --> 
 ![img1](doc/ACC_P.png)
 ![img2](doc/LOSS__P.png)  
