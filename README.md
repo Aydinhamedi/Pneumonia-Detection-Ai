@@ -56,16 +56,13 @@ The model provided in this project should not be used for medical diagnosis with
 
 ## Other
 > [!NOTE]
->  Please note that this code uses my Python-CLI-template\
->  for more info go to https://github.com/Aydinhamedi/Python-CLI-template.
-
-> [!NOTE]
->  Please note that this code uses my Python-color-print-V2\
->  for more info go to https://github.com/Aydinhamedi/Python-color-print-V2.
-
-> [!NOTE]
->  Please note that this code uses my Python-color-print\
->  for more info go to https://github.com/Aydinhamedi/Python-color-print.
+> Please note that this code uses my:
+> - Python-CLI-template
+>   - for more info go to https://github.com/Aydinhamedi/Python-CLI-template.
+> - Python-color-print-V2
+>   - for more info go to https://github.com/Aydinhamedi/Python-color-print-V2.
+> - Python-color-print
+>   - for more info go to https://github.com/Aydinhamedi/Python-color-print.
 
 ## Results
 
