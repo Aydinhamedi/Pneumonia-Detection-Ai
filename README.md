@@ -19,7 +19,7 @@ Interface\CLI
 > ### Newest release 📃
 > #### [Go to newest release](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/releases)
 
-# Training System Specifications
+## Training System Specifications
 
 - **Graphics Card (GPU)**: RTX 3090
 - **Memory (RAM)**: 64GB
