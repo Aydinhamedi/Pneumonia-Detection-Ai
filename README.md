@@ -5,7 +5,8 @@
 > [!IMPORTANT]
 > The code that have achived the highest acc is `backup/V4/Model_T&T.ipynb`.
 ## Usage
-
+> [!TIP]
+> If you just want the model go to the Github Releases.
 The project includes a Command Line Interface (CLI) for easy use of the model. The CLI, which is based on the [Python CLI template](https://github.com/Aydinhamedi/Python-CLI-template) from the same author, provides a user-friendly, colorful interface that allows you to interact with the model. you can fined the cli in 
 
 ```
