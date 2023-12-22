@@ -17,7 +17,7 @@ Interface\CLI
 ![Example](doc/Screenshot.png)  
 ## Release
 > ### Newest release 📃
-> #### [Go to newest release](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/releases)
+> #### [Go to newest release](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/releases/latest)
 
 ## Training System Specifications
 
