@@ -28,7 +28,7 @@ Model_dir = 'Data/PAI_model' # without file extention
 Database_dir = 'Data/dataset.npy'
 IMG_AF = ('JPEG', 'PNG', 'BMP', 'TIFF', 'JPG')
 Model_FORMAT = 'H5_SF' # TF_dir/H5_SF
-IMG_RES = (300, 280, 3)
+IMG_RES = (224, 224, 3)
 train_epochs_def = 4
 SHOW_CSAA_OS = False
 #normal global
