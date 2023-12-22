@@ -19,6 +19,14 @@ Interface\CLI
 > ### Newest release 📃
 > #### [Go to newest release](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/releases)
 
+# Training System Specifications
+
+- **Graphics Card (GPU)**: RTX 3090
+- **Memory (RAM)**: 64GB
+- **Operating System (OS)**: Windows 11 Pro
+- **Processor (CPU)**: Intel Core i7-12700KF
+
+
 ## Model
 
 The model is a Convolutional Neural Network (CNN) trained on a dataset of 8888 X-ray images. The dataset is a combination of the [chest-xray-pneumonia](https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia) dataset from Kaggle and the [Covid19-Pneumonia-Normal Chest X-Ray Images](https://data.mendeley.com/datasets/dvntn9yhd2/1) from Mendeley.
