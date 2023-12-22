@@ -68,12 +68,10 @@ The model provided in this project should not be used for medical diagnosis with
 
 > [!WARNING]
 > Results were achived using Rev2 training method and Rev1.2 model.
-#### N/A 
+<!-- #### N/A --> 
+![img1](doc\ACC_P.png)
+![img2](doc\LOSS__P.png)  
 <!--
-![img1](doc/Screenshot.png)  
-
-![img2](doc/Screenshot.png)  
-
 ![img3](doc/Screenshot.png)  
 -->
 
