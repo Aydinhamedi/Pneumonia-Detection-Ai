@@ -11,7 +11,7 @@ Samples/*
 # Except for directories ending with _STR
 !logs/fit/*_STR/
 !Samples/*_STR/
-!Samples/*_STR.gz/
+!Samples/*_STR.gz
 
 /PAI_model_weights.h5
 /PAI_model_weights_BL.h5
