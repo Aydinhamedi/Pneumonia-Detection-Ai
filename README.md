@@ -1,7 +1,7 @@
 # Pneumonia Detection AI
 <img src="https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue"/> <img src="https://img.shields.io/badge/TensorFlow-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white"/> <img src="https://img.shields.io/badge/Keras-FF0000?style=for-the-badge&logo=keras&logoColor=white"/>
 
-### This project uses a deep learning model built with the TensorFlow framework to detect pneumonia in X-ray images. The model architecture is based on the EfficientNetB7 model, which has achieved an accuracy of approximately 97% (96.96%) on our test data. This high accuracy rate is one of the strengths of our AI model.
+### This project uses a deep learning model built with the TensorFlow framework to detect pneumonia in X-ray images. The model architecture is based on the EfficientNetB7 model, which has achieved an accuracy of approximately **97% (96.96%)** on our test data. This high accuracy rate is one of the strengths of our AI model.
 > [!NOTE]
 >  Please note that this code uses my Python-CLI-template\
 >  for more info go to https://github.com/Aydinhamedi/Python-CLI-template.
