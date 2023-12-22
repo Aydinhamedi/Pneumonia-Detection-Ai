@@ -105,9 +105,19 @@ check_arg_ERROR_LIST_USAGE = ['![IER:02]']
 check_arg_ERROR_LIST_RT = ['![IER:04]', '![IER:03]']
 #open_file_GUI
 def open_file_GUI():
+    """Opens a file selection dialog GUI to allow the user to select an image file.
+
+    Builds a filetypes filter from the IMG_AF global variable, joins the extensions 
+    together into a filter string, converts to lowercase. Opens the file dialog, 
+    and returns the selected file path if one was chosen.
+
+    Returns:
+        str: The path to the selected image file, or None if no file was chosen.
+    """
     formats = ";*.".join(IMG_AF)
     formats = "*." + formats.lower()
-    file_path = filedialog.askopenfilename(filetypes=[("Image Files", formats)])
+    file_path = filedialog.askopenfilename(
+        filetypes=[("Image Files", formats)])
     if file_path:
         return file_path
 #Debug
@@ -155,35 +165,59 @@ def Debug(ID, DEBUG_IF, SFL: bool = True, Force: bool = False, SFCS: bool = True
 #CF>>>
 #CI_help
 def CI_help(SSUH: bool = True, show_lines: bool = True): #change show_lines and SSUH to change the style
-    #main
+    """Prints a help message listing available commands.
+
+    This function prints a formatted help message showing the available 
+    commands and their descriptions. It takes two boolean arguments:
+
+    SSUH: Whether to print section headers and formatting. 
+    show_lines: Whether to show line graphics.
+
+    It first prints a header and list of main commands if SSUH is True.
+    Then it prints a header and list of other commands.
+
+    The commands are printed from the cmd_descriptions and 
+    cmd_descriptions_other dictionaries, with some simple formatting.
+    """
+    # main
     if SSUH:
-        print_Color(f'{("┌─ " if show_lines else "")}~*Main (you can run them in order for simple usage):', ['cyan'], advanced_mode=True)
+        print_Color(f'{("┌─ " if show_lines else "")}~*Main (you can run them in order for simple usage):',
+                    ['cyan'], advanced_mode=True)
         for i, (cmd, desc) in enumerate(cmd_descriptions.items(), start=1):
             if i == len(cmd_descriptions):
-                print_Color(f'{("│  └─ " if show_lines else "")}~*{i}. {cmd}: ~*{desc}', ['yellow', 'normal'], advanced_mode=True)
+                print_Color(f'{("│  └─ " if show_lines else "")}~*{i}. {cmd}: ~*{desc}',
+                            ['yellow', 'normal'], advanced_mode=True)
             else:
-                print_Color(f'{("│  ├─ " if show_lines else "")}~*{i}. {cmd}: ~*{desc}', ['yellow', 'normal'], advanced_mode=True)
-        #other
-        print_Color(f'{("└─ " if show_lines else "")}~*Other:', ['cyan'], advanced_mode=True)
+                print_Color(f'{("│  ├─ " if show_lines else "")}~*{i}. {cmd}: ~*{desc}',
+                            ['yellow', 'normal'], advanced_mode=True)
+        # other
+        print_Color(f'{("└─ " if show_lines else "")}~*Other:',
+                    ['cyan'], advanced_mode=True)
         for i, (cmd_other, desc_other) in enumerate(cmd_descriptions_other.items(), start=1):
             if i == len(cmd_descriptions_other):
-                print_Color(f'{("   └─ " if show_lines else "")}~*{cmd_other}: ~*{desc_other}', ['yellow', 'normal'], advanced_mode=True)
+                print_Color(f'{("   └─ " if show_lines else "")}~*{cmd_other}: ~*{desc_other}', [
+                            'yellow', 'normal'], advanced_mode=True)
             else:
-                print_Color(f'{("   ├─ " if show_lines else "")}~*{cmd_other}: ~*{desc_other}', ['yellow', 'normal'], advanced_mode=True)
+                print_Color(f'{("   ├─ " if show_lines else "")}~*{cmd_other}: ~*{desc_other}', [
+                            'yellow', 'normal'], advanced_mode=True)
     else:
         print_Color(f'~*commands:', ['cyan'], advanced_mode=True)
-        #main
+        # main
         for i, (cmd, desc) in enumerate(cmd_descriptions.items(), start=1):
             if i == len(cmd_descriptions):
-                print_Color(f'{("└─ " if show_lines else "")}~*{cmd}: ~*{desc}', ['yellow', 'normal'], advanced_mode=True)
+                print_Color(f'{("└─ " if show_lines else "")}~*{cmd}: ~*{desc}',
+                            ['yellow', 'normal'], advanced_mode=True)
             else:
-                print_Color(f'{("├─ " if show_lines else "")}~*{cmd}: ~*{desc}', ['yellow', 'normal'], advanced_mode=True)
-        #others
+                print_Color(f'{("├─ " if show_lines else "")}~*{cmd}: ~*{desc}',
+                            ['yellow', 'normal'], advanced_mode=True)
+        # others
         for i, (cmd_other, desc_other) in enumerate(cmd_descriptions_other.items(), start=1):
             if i == len(cmd_descriptions_other):
-                print_Color(f'{("└─ " if show_lines else "")}~*{cmd_other}: ~*{desc_other}', ['yellow', 'normal'], advanced_mode=True)
+                print_Color(f'{("└─ " if show_lines else "")}~*{cmd_other}: ~*{desc_other}', [
+                            'yellow', 'normal'], advanced_mode=True)
             else:
-                print_Color(f'{("├─ " if show_lines else "")}~*{cmd_other}: ~*{desc_other}', ['yellow', 'normal'], advanced_mode=True)
+                print_Color(f'{("├─ " if show_lines else "")}~*{cmd_other}: ~*{desc_other}', [
+                            'yellow', 'normal'], advanced_mode=True)
 #CI_atmd
 def CI_atmd():
     #global var import
