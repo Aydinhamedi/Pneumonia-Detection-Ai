@@ -443,7 +443,7 @@ cmd_descriptions_other = {
 #funcs(INTERNAL)>>>
 #CLI_IM
 def CLI_IM(CLII: bool = True):
-    if CLII: print_Color('>>> ', ['green'], print_END='')  
+    if CLII: print_Color('>>> ' if Debug_m else '>>> ', ['red' if Debug_m else 'green'], print_END='', advanced_mode=False)  
     U_input = input('').lower()
     try:
         str_array = U_input.split()
@@ -460,8 +460,9 @@ def CLI_IM(CLII: bool = True):
         return ['IIE']
 #IEH
 def IEH(id: str = 'Unknown', stop: bool = True, DEV: bool = True):
+    Debug('IEH INPUT: ', f'id:{id}|stop:{stop}|DEV:{DEV}')
     print_Color(f'~*ERROR: ~*Internal error info/id:\n~*{id}~*.', ['red', 'yellow', 'bg_red', 'yellow'], advanced_mode=True)   
-    logger.exception(f'Internal Error Handler [stop:{stop}|id:{id}]')
+    logger.exception(f'Internal Error Handler [stop:{stop}|DEV:{DEV}|id:{id}]')
     if DEV: 
         print_Color('~*Do you want to see the detailed error message? ~*[~*Y~*/~*n~*]: ',
                     ['yellow', 'normal', 'green', 'normal', 'red', 'normal'],
@@ -471,7 +472,9 @@ def IEH(id: str = 'Unknown', stop: bool = True, DEV: bool = True):
         if show_detailed_error.lower() == 'y':
             print_Color('detailed error message:', ['yellow'])
             traceback.print_exc()
-    if stop: sys.exit('SYS EXIT|ERROR: Internal|by Internal Error Handler')
+    if stop: 
+        logger.warning('SYS EXIT|ERROR: Internal|by Internal Error Handler')
+        sys.exit('SYS EXIT|ERROR: Internal|by Internal Error Handler')
 #main
 def main():
     #global
@@ -482,8 +485,7 @@ def main():
         input_array = CLI_IM()
         Debug('input_array', input_array)
         logger.debug(f'input_array {input_array}')
-        Debug('Model_dir', Model_dir)
-        match input_array[0]: #MI
+        match input_array[10]: #MI
             case 'help':
                 CI_help() 
             case 'atmd':
