@@ -3,9 +3,9 @@
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-#start L1
+# start L1
 print('Loading the CLI...', end='\r')
-#pylib
+# pylib
 import re
 import sys
 import difflib
@@ -26,26 +26,27 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.utils import to_categorical
 import numpy as np
 from PrintColor.Print_color import print_Color
-#global vars>>>
-#CONST SYS
+
+# global vars>>>
+# CONST SYS
 CLI_Ver = '0.98'
-Model_dir = 'Data/PAI_model' # without file extention
+Model_dir = 'Data/PAI_model'  # without file extention
 Database_dir = 'Data/dataset.npy'
 IMG_AF = ('JPEG', 'PNG', 'BMP', 'TIFF', 'JPG')
-Model_FORMAT = 'H5_SF' # TF_dir/H5_SF
+Model_FORMAT = 'H5_SF'  # TF_dir/H5_SF
 IMG_RES = (224, 224, 3)
 train_epochs_def = 4
 SHOW_CSAA_OS = False
-#normal global
+# normal global
 img_array = None
 Debug_m = False
 label = None
 model = None
-#other
+# other
 logger.remove()
 logger.add('Data\\logs\\SYS_LOG_{time}.log', backtrace=True, diagnose=True, compression='zip')
 logger.info('CLI Start...\n')
-#crator
+# crator
 CSAA = '''
 ~*
   ___                              _        ___      _          _   _              _   _   ___      _ 
@@ -58,8 +59,10 @@ CSAA = '''
   / _ \  / /|__ \\
  /_/ \_\/_/ |___/                                                                                                                                               
 '''
-#HF>>>
-#check_args
+
+
+# HF>>>
+# check_args
 def check_arg(arg_list: list, arg_str: str, return_arg: bool = False, bool_OUTPUT_ONLY: bool = False):
     """
     This function checks if a specific argument exists in a list of arguments.
@@ -97,18 +100,22 @@ def check_arg(arg_list: list, arg_str: str, return_arg: bool = False, bool_OUTPU
         return False if bool_OUTPUT_ONLY else '![IER:01]'
     if arg_str == '':
         return False if bool_OUTPUT_ONLY else '![IER:02]'
-    
+
     for item in arg_list:
         if item.startswith('-'):
             if item[1] == arg_str:
                 if len(item) == 2 and return_arg:
                     return False if bool_OUTPUT_ONLY else '![IER:03]'
                 return True if not return_arg else item[2:]
-    
+
     return False if bool_OUTPUT_ONLY else '![IER:04]'
+
+
 check_arg_ERROR_LIST_USAGE = ['![IER:02]']
 check_arg_ERROR_LIST_RT = ['![IER:04]', '![IER:03]']
-#open_file_GUI
+
+
+# open_file_GUI
 def open_file_GUI():
     """Opens a file selection dialog GUI to allow the user to select an image file.
 
@@ -125,7 +132,9 @@ def open_file_GUI():
         filetypes=[("Image Files", formats)])
     if file_path:
         return file_path
-#Debug
+
+
+# Debug
 def Debug(ID, DEBUG_IF, SFL: bool = True, Force: bool = False, SFCS: bool = True):
     """
     This function is used for debugging purposes. It prints out various information about the data passed to it.
@@ -146,30 +155,35 @@ def Debug(ID, DEBUG_IF, SFL: bool = True, Force: bool = False, SFCS: bool = True
             stack_trace = traceback.format_stack()
             stack_trace_formated = ''
             for line in stack_trace[:-1]:
-                stack_trace_formated += '--> [!>>>' + line 
+                stack_trace_formated += '--> [!>>>' + line
             location = f'{inspect.stack()[1].filename}:{frame_info.f_back.f_lineno}' if SFL else f'L:{frame_info.f_back.f_lineno}'
             Debug_data = \
-            f'\n~*--> ~*DEBUG INFO id: ~*[{str(ID)}]~*, ' \
-            f'Location: ~*[{location}]~*, ' \
-            f'time: ~*[{datetime.now().strftime("%Y/%m/%d | %H:%M:%S")}]\n~*--> ~*' \
-            f'Data: ~*{str(DEBUG_IF)}\n~*--> ~*' \
-            f'Data Type: ~*{type(DEBUG_IF)}\n~*--> ~*' \
-            f'Memory Address: ~*DEC>>>~*{id(DEBUG_IF)}~* | HEX>>>~*{hex(id(DEBUG_IF))}~* | BIN>>>~*{bin(id(DEBUG_IF))}\n' 
+                f'\n~*--> ~*DEBUG INFO id: ~*[{str(ID)}]~*, ' \
+                f'Location: ~*[{location}]~*, ' \
+                f'time: ~*[{datetime.now().strftime("%Y/%m/%d | %H:%M:%S")}]\n~*--> ~*' \
+                f'Data: ~*{str(DEBUG_IF)}\n~*--> ~*' \
+                f'Data Type: ~*{type(DEBUG_IF)}\n~*--> ~*' \
+                f'Memory Address: ~*DEC>>>~*{id(DEBUG_IF)}~* | HEX>>>~*{hex(id(DEBUG_IF))}~* | BIN>>>~*{bin(id(DEBUG_IF))}\n'
             if SFCS:
                 Debug_data += f'~*--> ~*Function Call Stack: ~*↓\n~*{stack_trace_formated}\n'
             print_Color(Debug_data,
-            ['red', 'magenta', 'green', 'magenta', 'yellow', 'magenta', 'yellow',
-            'red', 'magenta', 'yellow', 'red', 'magenta', 'yellow', 'red', 'magenta',
-            'cyan', 'yellow', 'cyan', 'yellow', 'cyan', 'yellow', 'red', 'magenta', 'green', 'yellow'] if SFCS else \
-            ['red', 'magenta', 'green', 'magenta', 'yellow', 'magenta', 'yellow',
-            'red', 'magenta', 'yellow', 'red', 'magenta', 'yellow', 'red', 'magenta',
-            'cyan', 'yellow', 'cyan', 'yellow', 'cyan', 'yellow'], 
-            advanced_mode=True)
+                        ['red', 'magenta', 'green', 'magenta', 'yellow', 'magenta', 'yellow',
+                         'red', 'magenta', 'yellow', 'red', 'magenta', 'yellow', 'red', 'magenta',
+                         'cyan', 'yellow', 'cyan', 'yellow', 'cyan', 'yellow', 'red', 'magenta', 'green',
+                         'yellow'] if SFCS else \
+                            ['red', 'magenta', 'green', 'magenta', 'yellow', 'magenta', 'yellow',
+                             'red', 'magenta', 'yellow', 'red', 'magenta', 'yellow', 'red', 'magenta',
+                             'cyan', 'yellow', 'cyan', 'yellow', 'cyan', 'yellow'],
+                        advanced_mode=True)
     except NameError:
-        print_Color('~*[`Debug` func] --> ERROR: ~*carate a global var named `Debug_m` for turning on and off the Debug func.', ['red', 'yellow'], advanced_mode=True)
-#CF>>>
-#CI_help
-def CI_help(SSUH: bool = True, show_lines: bool = True): #change show_lines and SSUH to change the style
+        print_Color(
+            '~*[`Debug` func] --> ERROR: ~*carate a global var named `Debug_m` for turning on and off the Debug func.',
+            ['red', 'yellow'], advanced_mode=True)
+
+
+# CF>>>
+# CI_help
+def CI_help(SSUH: bool = True, show_lines: bool = True):  # change show_lines and SSUH to change the style
     """Prints a help message listing available commands.
 
     This function prints a formatted help message showing the available 
@@ -201,10 +215,10 @@ def CI_help(SSUH: bool = True, show_lines: bool = True): #change show_lines and 
         for i, (cmd_other, desc_other) in enumerate(cmd_descriptions_other.items(), start=1):
             if i == len(cmd_descriptions_other):
                 print_Color(f'{("   └─ " if show_lines else "")}~*{cmd_other}: ~*{desc_other}', [
-                            'yellow', 'normal'], advanced_mode=True)
+                    'yellow', 'normal'], advanced_mode=True)
             else:
                 print_Color(f'{("   ├─ " if show_lines else "")}~*{cmd_other}: ~*{desc_other}', [
-                            'yellow', 'normal'], advanced_mode=True)
+                    'yellow', 'normal'], advanced_mode=True)
     else:
         print_Color(f'~*commands:', ['cyan'], advanced_mode=True)
         # main
@@ -219,16 +233,18 @@ def CI_help(SSUH: bool = True, show_lines: bool = True): #change show_lines and 
         for i, (cmd_other, desc_other) in enumerate(cmd_descriptions_other.items(), start=1):
             if i == len(cmd_descriptions_other):
                 print_Color(f'{("└─ " if show_lines else "")}~*{cmd_other}: ~*{desc_other}', [
-                            'yellow', 'normal'], advanced_mode=True)
+                    'yellow', 'normal'], advanced_mode=True)
             else:
                 print_Color(f'{("├─ " if show_lines else "")}~*{cmd_other}: ~*{desc_other}', [
-                            'yellow', 'normal'], advanced_mode=True)
-#CI_atmd
+                    'yellow', 'normal'], advanced_mode=True)
+
+
+# CI_atmd
 def CI_atmd():
-    #global var import
+    # global var import
     global img_array
     global label
-    #check for a image with a label
+    # check for a image with a label
     if label is not None:
         # Check if the dataset file exists
         if os.path.exists(Database_dir):
@@ -254,18 +270,22 @@ def CI_atmd():
         label = None
     else:
         print_Color('~*ERROR: ~*a image with a label doesnt exist.', ['red', 'yellow'], advanced_mode=True)
-#CI_tmwd
+
+
+# CI_tmwd
 def CI_tmwd(argv_Split: list = ['none']):
     Debug('FUNC[CI_tmwd] ARGV INPUT', argv_Split)
-    #global var import
+    # global var import
     global model
-    #argv
+    # argv
     train_epochs = check_arg(argv_Split, 'e', return_arg=True)
     Debug('FUNC[CI_tmwd] check_arg `-e`', train_epochs)
     if train_epochs in check_arg_ERROR_LIST_USAGE:
-        IEH('Func[main>>CI_tmwd],P:[check_arg]>>[get `-e`],Error[check_arg.error in check_arg_ERROR_LIST_USAGE]', DEV=False)
+        IEH('Func[main>>CI_tmwd],P:[check_arg]>>[get `-e`],Error[check_arg.error in check_arg_ERROR_LIST_USAGE]',
+            DEV=False)
     if train_epochs in check_arg_ERROR_LIST_RT or train_epochs.isalpha():
-        print_Color(f'~*WARNING: ~*Invalid arg for -e. Using default value {train_epochs_def}.', ['red', 'yellow'], advanced_mode=True)
+        print_Color(f'~*WARNING: ~*Invalid arg for -e. Using default value {train_epochs_def}.', ['red', 'yellow'],
+                    advanced_mode=True)
         train_epochs = train_epochs_def
     elif train_epochs == '![IER:01]':
         train_epochs = train_epochs_def
@@ -274,7 +294,7 @@ def CI_tmwd(argv_Split: list = ['none']):
     if os.path.exists(Database_dir):
         # Load the dataset file
         dataset = np.load(Database_dir, allow_pickle=True).item()
-        if len(dataset['images']) > 15 or check_arg(argv_Split, 'i', bool_OUTPUT_ONLY=True): #ARG IL (ignore limits)
+        if len(dataset['images']) > 15 or check_arg(argv_Split, 'i', bool_OUTPUT_ONLY=True):  # ARG IL (ignore limits)
             # Convert 'dataset['images']' and 'dataset['labels']' to NumPy arrays
             images = np.array(dataset['images'])
             labels = np.array(dataset['labels'])
@@ -287,21 +307,27 @@ def CI_tmwd(argv_Split: list = ['none']):
                 print_Color('~*ERROR: ~*Failed to load the model.', ['red', 'yellow'], advanced_mode=True)
             else:
                 print('Training the model...\n')
-                #training
-                history = model.fit(images, labels, epochs = train_epochs, batch_size = 1, verbose = 'auto')  # history not used
+                # training
+                history = model.fit(images, labels, epochs=train_epochs, batch_size=1,
+                                    verbose='auto')  # history not used
                 print('Training done.\n')
         else:
-            print_Color('~*ERROR: ~*Data/dataset.npy Len is <= 15 add more data.', ['red', 'yellow'], advanced_mode=True)
+            print_Color('~*ERROR: ~*Data/dataset.npy Len is <= 15 add more data.', ['red', 'yellow'],
+                        advanced_mode=True)
     else:
         print_Color('~*ERROR: ~*Data/dataset.npy doesnt exist.', ['red', 'yellow'], advanced_mode=True)
-#CI_ulmd      
+
+
+# CI_ulmd
 def CI_ulmd():
     print_Color('Warning: upload model data set (currently not available!!!)', ['yellow'])
-#CI_pwai
+
+
+# CI_pwai
 def CI_pwai():
-    #global var import
+    # global var import
     global model
-    #check for input img
+    # check for input img
     if img_array is not None:
         try:
             if model is None:
@@ -316,16 +342,19 @@ def CI_pwai():
             pred_class = 'PNEUMONIA' if model_prediction == 1 else 'NORMAL'
             class_color = 'red' if model_prediction == 1 else 'green'
             confidence = np.max(model_prediction_ORG)
-            print_Color(f'~*the Ai model prediction: ~*{pred_class}~* with confidence ~*{confidence:.2f}~*.', ['normal', class_color, 'normal', 'green', 'normal'], advanced_mode=True)
+            print_Color(f'~*the Ai model prediction: ~*{pred_class}~* with confidence ~*{confidence:.2f}~*.',
+                        ['normal', class_color, 'normal', 'green', 'normal'], advanced_mode=True)
             if confidence < 0.82:
                 print_Color('~*WARNING: ~*the confidence is low.', ['red', 'yellow'], advanced_mode=True)
     else:
         print_Color('~*ERROR: ~*image data doesnt exist.', ['red', 'yellow'], advanced_mode=True)
-#CI_rlmw
+
+
+# CI_rlmw
 def CI_rlmw():
-    #global var import
+    # global var import
     global model
-    #main proc
+    # main proc
     model = None
     print_Color('loading the Ai model...', ['normal'])
     try:
@@ -333,39 +362,43 @@ def CI_rlmw():
     except (ImportError, IOError):
         print_Color('~*ERROR: ~*Failed to load the model.', ['red', 'yellow'], advanced_mode=True)
     print_Color('loading the Ai model done.', ['normal'])
-#CI_liid
+
+
+# CI_liid
 def CI_liid():
-    #global var import
+    # global var import
     global img_array
     global label
     replace_img = 'y'
-    #check for img
+    # check for img
     if img_array is not None:
         # Ask the user if they want to replace the image
         print_Color('~*Warning: An image is already loaded. Do you want to replace it? ~*[~*Y~*/~*n~*]: ',
                     ['yellow', 'normal', 'green', 'normal', 'red', 'normal'],
-                    advanced_mode = True,
+                    advanced_mode=True,
                     print_END='')
         replace_img = input('')
         # If the user answers 'n' or 'N', return the existing img_array
-    if replace_img.lower() == 'y':   
+    if replace_img.lower() == 'y':
         print_Color('img dir. Enter \'G\' for using GUI: ', ['yellow'], print_END='')
         img_dir = input().strip('"')
         if img_dir.lower() == 'g':
             img_dir = open_file_GUI()
-        
+
         logger.debug(f'liid:img_dir {img_dir}')
         # Extract file extension from img_dir
         _, file_extension = os.path.splitext(img_dir)
         # Check if file is an image of acceptable format
         if file_extension.upper()[1:] not in IMG_AF:
-            print_Color('~*ERROR: ~*Invalid file format. Please provide an image file.', ['red', 'yellow'], advanced_mode=True)
+            print_Color('~*ERROR: ~*Invalid file format. Please provide an image file.', ['red', 'yellow'],
+                        advanced_mode=True)
         else:
             try:
                 # Load and resize the image
                 img = Image.open(img_dir).resize((IMG_RES[1], IMG_RES[0]))
             except Exception:
-                print_Color('~*ERROR: ~*Invalid file dir. Please provide an image file.', ['red', 'yellow'], advanced_mode=True)
+                print_Color('~*ERROR: ~*Invalid file dir. Please provide an image file.', ['red', 'yellow'],
+                            advanced_mode=True)
             else:
                 # Check for RGB mode
                 if img.mode != 'RGB':
@@ -378,7 +411,7 @@ def CI_liid():
 
                 # Add a dimension to transform from (height, width, channels) to (batch_size, height, width, channels)
                 img_array = np.expand_dims(img_array, axis=0)
-                
+
                 # Assign labels to the image
                 print_Color('Enter label (0 for Normal, 1 for Pneumonia, 2 Unknown): ', ['yellow'], print_END='')
                 try:
@@ -393,24 +426,28 @@ def CI_liid():
                     else:
                         label = None
                     print_Color('The image is loaded.', ['green'])
-#CI_csaa
+
+
+# CI_csaa
 def CI_csaa():
     print_Color(CSAA, ['yellow', 'green'], advanced_mode=True)
-#CMT>>>
+
+
+# CMT>>>
 command_tuple = (
-    'help', # help
-    'atmd', # add to model dataset
-    'tmwd', # train model with dataset
-    'ulmd', # upload model data set (not available!!!) 
-    'pwai', # predict with Ai 
-    'rlmw', # reload model
-    'liid', # load img input data
-    'csaa', # Creator Signature ASCII ART
-    'debug', # Debug
-    'exit', # Quit the CLI
-    'clear' # Clear the CLI
+    'help',  # help
+    'atmd',  # add to model dataset
+    'tmwd',  # train model with dataset
+    'ulmd',  # upload model data set (not available!!!)
+    'pwai',  # predict with Ai
+    'rlmw',  # reload model
+    'liid',  # load img input data
+    'csaa',  # Creator Signature ASCII ART
+    'debug',  # Debug
+    'exit',  # Quit the CLI
+    'clear'  # Clear the CLI
 )
-#SCH table:
+# SCH table:
 # '│' (U+2502): Box Drawings Light Vertical
 # '┌' (U+250C): Box Drawings Light Down and Right
 # '┐' (U+2510): Box Drawings Light Down and Left
@@ -440,10 +477,13 @@ cmd_descriptions_other = {
     'exit': 'Quit the CLI',
     'clear': 'Clear the CLI'
 }
-#funcs(INTERNAL)>>>
-#CLI_IM
+
+
+# funcs(INTERNAL)>>>
+# CLI_IM
 def CLI_IM(CLII: bool = True):
-    if CLII: print_Color('>>> ' if Debug_m else '>>> ', ['red' if Debug_m else 'green'], print_END='', advanced_mode=False)  
+    if CLII: print_Color('>>> ' if Debug_m else '>>> ', ['red' if Debug_m else 'green'], print_END='',
+                         advanced_mode=False)
     U_input = input('').lower()
     try:
         str_array = U_input.split()
@@ -452,54 +492,62 @@ def CLI_IM(CLII: bool = True):
         else:
             closest_match = difflib.get_close_matches(str_array[0], command_tuple, n=1)
             if closest_match:
-                print_Color(f'~*ERROR: ~*Invalid input. you can use \'~*help~*\', did you mean \'~*{closest_match[0]}~*\'.', ['red', 'yellow', 'green', 'yellow', 'green', 'yellow'], advanced_mode=True)
+                print_Color(
+                    f'~*ERROR: ~*Invalid input. you can use \'~*help~*\', did you mean \'~*{closest_match[0]}~*\'.',
+                    ['red', 'yellow', 'green', 'yellow', 'green', 'yellow'], advanced_mode=True)
             else:
-                print_Color(f'~*ERROR: ~*Invalid input. you can use \'~*help~*\'.', ['red', 'yellow', 'green', 'yellow'], advanced_mode=True)
+                print_Color(f'~*ERROR: ~*Invalid input. you can use \'~*help~*\'.',
+                            ['red', 'yellow', 'green', 'yellow'], advanced_mode=True)
             return ['IIE']
     except IndexError:
         return ['IIE']
-#IEH
+
+
+# IEH
 def IEH(id: str = 'Unknown', stop: bool = True, DEV: bool = True):
     Debug('IEH INPUT: ', f'id:{id}|stop:{stop}|DEV:{DEV}')
-    print_Color(f'~*ERROR: ~*Internal error info/id:\n~*{id}~*.', ['red', 'yellow', 'bg_red', 'yellow'], advanced_mode=True)   
+    print_Color(f'~*ERROR: ~*Internal error info/id:\n~*{id}~*.', ['red', 'yellow', 'bg_red', 'yellow'],
+                advanced_mode=True)
     logger.exception(f'Internal Error Handler [stop:{stop}|DEV:{DEV}|id:{id}]')
-    if DEV: 
+    if DEV:
         print_Color('~*Do you want to see the detailed error message? ~*[~*Y~*/~*n~*]: ',
                     ['yellow', 'normal', 'green', 'normal', 'red', 'normal'],
-                    advanced_mode = True,
+                    advanced_mode=True,
                     print_END='')
         show_detailed_error = input('')
         if show_detailed_error.lower() == 'y':
             print_Color('detailed error message:', ['yellow'])
             traceback.print_exc()
-    if stop: 
+    if stop:
         logger.warning('SYS EXIT|ERROR: Internal|by Internal Error Handler')
         sys.exit('SYS EXIT|ERROR: Internal|by Internal Error Handler')
-#main
+
+
+# main
 def main():
-    #global
+    # global
     global Debug_m
-    #CLI loop
-    while True: #WT
-        #input manager
+    # CLI loop
+    while True:  # WT
+        # input manager
         input_array = CLI_IM()
         Debug('input_array', input_array)
         logger.debug(f'input_array {input_array}')
-        match input_array[10]: #MI
+        match input_array[10]:  # MI
             case 'help':
-                CI_help() 
+                CI_help()
             case 'atmd':
-                CI_atmd()  
+                CI_atmd()
             case 'tmwd':
                 if len(input_array) > 1:
-                    CI_tmwd(argv_Split = input_array[1:])  
+                    CI_tmwd(argv_Split=input_array[1:])
                 else:
-                    CI_tmwd()    
+                    CI_tmwd()
             case 'ulmd':
-                CI_ulmd()  
-            case 'pwai': 
+                CI_ulmd()
+            case 'pwai':
                 CI_pwai()
-            case 'rlmw': 
+            case 'rlmw':
                 CI_rlmw()
             case 'liid':
                 CI_liid()
@@ -517,23 +565,25 @@ def main():
                 logger.info('Exit by prompt.')
                 raise KeyboardInterrupt
             case _:
-                IEH(id = 'Func[main],P:[CLI loop]>>[match input],Error[nothing matched]', stop = False, DEV = False)
-#start>>>
-#clear the 'start L1' prompt
+                IEH(id='Func[main],P:[CLI loop]>>[match input],Error[nothing matched]', stop=False, DEV=False)
+
+
+# start>>>
+# clear the 'start L1' prompt
 print('                  ', end='\r')
-#Print CSAA
+# Print CSAA
 if SHOW_CSAA_OS: print_Color(CSAA, ['yellow', 'green'], advanced_mode=True)
-#Start INFO
+# Start INFO
 VER = f'V{CLI_Ver}' + datetime.now().strftime(" CDT(%Y/%m/%d | %H:%M:%S)")
 gpus = tf.config.list_physical_devices('GPU')
 if gpus:
     TF_MODE = 'GPU'
     TF_sys_details = tf.sysconfig.get_build_info()
     TF_CUDA_VER = TF_sys_details['cuda_version']
-    TF_CUDNN_VER = TF_sys_details['cudnn_version'] #NOT USED
+    TF_CUDNN_VER = TF_sys_details['cudnn_version']  # NOT USED
     try:
         gpu_name = subprocess.check_output(["nvidia-smi", "-L"]).decode("utf-8").split(":")[1].split("(")[0].strip()
-        #GPU 0: NVIDIA `THE GPU NAME` (UUID: GPU-'xxxxxxxxxxxxxxxxxxxx')
+        # GPU 0: NVIDIA `THE GPU NAME` (UUID: GPU-'xxxxxxxxxxxxxxxxxxxx')
         #     │                       │
         # ┌---┴----------┐        ┌---┴----------┐
         # │.split(":")[1]│        │.split("(")[0]│
@@ -545,20 +595,20 @@ else:
     TF_MODE = 'CPU'
     info = cpuinfo.get_cpu_info()['brand_raw']
     TF_INFO = f'{info}'
-#CLI_Info
+# CLI_Info
 CLI_Info = f'PDAI Ver: {VER} \nPython Ver: {sys.version} \nTensorflow Ver: {tf.version.VERSION}, Mode: {TF_MODE}, {TF_INFO} \nType \'help\' for more information.'
 logger.info(f'PDAI Ver: {VER}')
 logger.info(f'Python Ver: {sys.version}')
 logger.info(f'Tensorflow Ver: {tf.version.VERSION}')
 logger.info(f'Mode: {TF_MODE}, {TF_INFO}')
 print(CLI_Info)
-#FP
+# FP
 if Model_FORMAT not in ['TF_dir', 'H5_SF']:
     logger.info(f'Model file format [{Model_FORMAT}]')
     IEH(id=f'F[SYS],P[FP],Error[Invalid Model_FORMAT]', DEV=False)
 elif Model_FORMAT == 'H5_SF':
     Model_dir += '.h5'
-#start main
+# start main
 if __name__ == '__main__':
     try:
         try:
@@ -573,4 +623,4 @@ if __name__ == '__main__':
         print_Color('\n~*[PDAI CLI] ~*closed.', ['yellow', 'red'], advanced_mode=True)
 else:
     logger.info('CLI Imported.')
-#end(EOF) 
+# end(EOF)
