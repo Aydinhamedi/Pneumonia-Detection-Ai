@@ -3,7 +3,7 @@
 
 ### This project uses a deep learning model built with the TensorFlow framework to detect pneumonia in X-ray images. The model architecture is based on the EfficientNetB7 model, which has achieved an accuracy of approximately 97% (96.96%) on our test data. This high accuracy rate is one of the strengths of our AI model.
 > [!IMPORTANT]
-> The code that have achived the highest acc is `backup/V4/Model_T&T.ipynb`.
+> The code that have achived the highest acc is `backup/V5/Model_T&T.ipynb`.
 ## Usage
 > [!TIP]
 > If you just want the model go to the Github Releases.
@@ -76,10 +76,17 @@ The model provided in this project should not be used for medical diagnosis with
 
 > [!WARNING]
 > Results were achived using Rev2 training method and Rev1.2 model and
-> with `backup/V4/Model_T&T.ipynb` code.
+> with `backup/V5/Model_T&T.ipynb` code.
 <!-- #### N/A --> 
-![img1](doc/ACC_P.png)
-![img2](doc/LOSS__P.png)  
+![img1](doc/V5/D7.png)
+![img1](doc/V5/D8.png)
+![img1](doc/V5/D9.png)
+![img1](doc/V5/D1.png)
+![img1](doc/V5/D2.png)
+![img1](doc/V5/D3.png)
+![img1](doc/V5/D4.png)
+![img1](doc/V5/D5.png)
+![img1](doc/V5/D6.png)
 <!--
 ![img3](doc/Screenshot.png)  
 -->
