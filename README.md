@@ -74,6 +74,9 @@ The model provided in this project should not be used for medical diagnosis with
 
 ## Results
 
+> [!IMPORTANT]
+> The code that have achived accuracy of approximately 97% (96.96%).
+
 > [!WARNING]
 > Results were achived using Rev2 training method and Rev1.2 model and
 > with `backup/V5/Model_T&T.ipynb` code.
