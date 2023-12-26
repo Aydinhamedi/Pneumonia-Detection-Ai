@@ -26,3 +26,5 @@ Samples/*
 /freearc1.tmp
 /.idea
 /venv
+/.ipynb_checkpoints
+/Utils/behavioral_overfitting_detection
