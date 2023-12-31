@@ -4,27 +4,27 @@
 # https://opensource.org/licenses/MIT
 
 # start L1
-from PrintColor.Print_color import print_Color
-import numpy as np
-from keras.utils import to_categorical
-from keras.preprocessing.image import ImageDataGenerator
-from keras.models import load_model
-import tensorflow as tf
-from PIL import Image
 import os
-from datetime import datetime
-from tkinter import filedialog
-import efficientnet.tfkeras
-from loguru import logger
-import cpuinfo
-from tqdm import tqdm
-import requests
-import subprocess
-import traceback
-import inspect
-import difflib
-import sys
 import re
+import sys
+import difflib
+import inspect
+import traceback
+import subprocess
+import requests
+from tqdm import tqdm
+import cpuinfo
+from loguru import logger
+import efficientnet.tfkeras
+from tkinter import filedialog
+from datetime import datetime
+from PIL import Image
+import tensorflow as tf
+from keras.models import load_model
+from keras.preprocessing.image import ImageDataGenerator
+from keras.utils import to_categorical
+import numpy as np
+from PrintColor.Print_color import print_Color
 print('Loading the CLI...', end='\r')
 # pylib
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
