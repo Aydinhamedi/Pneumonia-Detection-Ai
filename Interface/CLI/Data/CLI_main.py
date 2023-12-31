@@ -1,38 +1,41 @@
 # Copyright (c) 2023 Aydin Hamedi
-# 
+#
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
 # start L1
+from PrintColor.Print_color import print_Color
+import numpy as np
+from keras.utils import to_categorical
+from keras.preprocessing.image import ImageDataGenerator
+from keras.models import load_model
+import tensorflow as tf
+from PIL import Image
+import os
+from datetime import datetime
+from tkinter import filedialog
+import efficientnet.tfkeras
+from loguru import logger
+import cpuinfo
+from tqdm import tqdm
+import requests
+import subprocess
+import traceback
+import inspect
+import difflib
+import sys
+import re
 print('Loading the CLI...', end='\r')
 # pylib
-import re
-import sys
-import difflib
-import inspect
-import traceback
-import subprocess
-import cpuinfo
-from loguru import logger
-import efficientnet.tfkeras
-from tkinter import filedialog
-from datetime import datetime
-import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-from PIL import Image
-import tensorflow as tf
-from keras.models import load_model
-from keras.preprocessing.image import ImageDataGenerator
-from keras.utils import to_categorical
-import numpy as np
-from PrintColor.Print_color import print_Color
-
 # global vars>>>
 # CONST SYS
 CLI_Ver = '0.98'
 Model_dir = 'Data/PAI_model'  # without file extention
 Database_dir = 'Data/dataset.npy'
 IMG_AF = ('JPEG', 'PNG', 'BMP', 'TIFF', 'JPG')
+Github_repo_Releases_Model_name = 'PAI_model_T.h5'
+Github_repo_Releases_URL = 'https://api.github.com/repos/Aydinhamedi/Pneumonia-Detection-Ai/releases/latest'
 Model_FORMAT = 'H5_SF'  # TF_dir/H5_SF
 IMG_RES = (224, 224, 3)
 train_epochs_def = 4
@@ -44,7 +47,8 @@ label = None
 model = None
 # other
 logger.remove()
-logger.add('Data\\logs\\SYS_LOG_{time}.log', backtrace=True, diagnose=True, compression='zip')
+logger.add('Data\\logs\\SYS_LOG_{time}.log',
+           backtrace=True, diagnose=True, compression='zip')
 logger.info('CLI Start...\n')
 # crator
 CSAA = '''
@@ -59,8 +63,6 @@ CSAA = '''
   / _ \  / /|__ \\
  /_/ \_\/_/ |___/                                                                                                                                               
 '''
-
-
 # HF>>>
 # check_args
 def check_arg(arg_list: list, arg_str: str, return_arg: bool = False, bool_OUTPUT_ONLY: bool = False):
@@ -76,7 +78,7 @@ def check_arg(arg_list: list, arg_str: str, return_arg: bool = False, bool_OUTPU
     bool/str: Returns True if the argument exists and return_arg is False. 
               Returns the string after the argument if return_arg is True and the argument exists.
               Returns specific error codes in case of errors.
-              
+
     Error Codes:
 
         '![IER:01]': This error is returned when the provided argument list (arg_list) is empty or contains only 'none' or ''.
@@ -114,7 +116,6 @@ def check_arg(arg_list: list, arg_str: str, return_arg: bool = False, bool_OUTPU
 check_arg_ERROR_LIST_USAGE = ['![IER:02]']
 check_arg_ERROR_LIST_RT = ['![IER:04]', '![IER:03]']
 
-
 # open_file_GUI
 def open_file_GUI():
     """Opens a file selection dialog GUI to allow the user to select an image file.
@@ -132,7 +133,6 @@ def open_file_GUI():
         filetypes=[("Image Files", formats)])
     if file_path:
         return file_path
-
 
 # Debug
 def Debug(ID, DEBUG_IF, SFL: bool = True, Force: bool = False, SFCS: bool = True):
@@ -170,20 +170,62 @@ def Debug(ID, DEBUG_IF, SFL: bool = True, Force: bool = False, SFCS: bool = True
                         ['red', 'magenta', 'green', 'magenta', 'yellow', 'magenta', 'yellow',
                          'red', 'magenta', 'yellow', 'red', 'magenta', 'yellow', 'red', 'magenta',
                          'cyan', 'yellow', 'cyan', 'yellow', 'cyan', 'yellow', 'red', 'magenta', 'green',
-                         'yellow'] if SFCS else \
-                            ['red', 'magenta', 'green', 'magenta', 'yellow', 'magenta', 'yellow',
-                             'red', 'magenta', 'yellow', 'red', 'magenta', 'yellow', 'red', 'magenta',
-                             'cyan', 'yellow', 'cyan', 'yellow', 'cyan', 'yellow'],
+                         'yellow'] if SFCS else
+                        ['red', 'magenta', 'green', 'magenta', 'yellow', 'magenta', 'yellow',
+                         'red', 'magenta', 'yellow', 'red', 'magenta', 'yellow', 'red', 'magenta',
+                         'cyan', 'yellow', 'cyan', 'yellow', 'cyan', 'yellow'],
                         advanced_mode=True)
     except NameError:
         print_Color(
             '~*[`Debug` func] --> ERROR: ~*carate a global var named `Debug_m` for turning on and off the Debug func.',
             ['red', 'yellow'], advanced_mode=True)
 
+# download_file_from_github
+
+def download_file_from_github(url, file_name, save_as, chunk_size):
+    # Get the JSON data of the latest release
+    # Downloads a file from a GitHub release API URL to a local path.
+    # url: The GitHub API URL for the release to download from.
+    # file_name: The name of the file to download from the release.
+    # save_as: The local path to save the downloaded file to.
+    # chunk_size: The chunk size to use when streaming the download.
+    response = requests.get(url)
+    data = response.json()
+
+    # Get the name of the latest release
+    release_name = data['name']
+    print(f"Latest release: {release_name}")
+
+    # Get the assets of the latest release
+    assets = data['assets']
+
+    # Find the required asset in the assets
+    for asset in assets:
+        if asset['name'] == file_name:
+            download_url = asset['browser_download_url']
+            break
+
+    # Download the file with a progress bar
+    response = requests.get(download_url, stream=True)
+    file_size = int(response.headers['Content-Length'])
+    progress_bar = tqdm(total=file_size, unit='b', unit_scale=True)
+
+    with open(save_as, 'wb') as f:
+        for chunk in response.iter_content(chunk_size=chunk_size):
+            progress_bar.update(len(chunk))
+            f.write(chunk)
+
+    progress_bar.close()
+
+    if file_size != 0 and progress_bar.n != file_size:
+        print("ERROR: Something went wrong while downloading the file.")
+    else:
+        print(f"File '{save_as}' downloaded successfully.")
 
 # CF>>>
 # CI_help
-def CI_help(SSUH: bool = True, show_lines: bool = True):  # change show_lines and SSUH to change the style
+# change show_lines and SSUH to change the style
+def CI_help(SSUH: bool = True, show_lines: bool = True):
     """Prints a help message listing available commands.
 
     This function prints a formatted help message showing the available 
@@ -238,7 +280,6 @@ def CI_help(SSUH: bool = True, show_lines: bool = True):  # change show_lines an
                 print_Color(f'{("├─ " if show_lines else "")}~*{cmd_other}: ~*{desc_other}', [
                     'yellow', 'normal'], advanced_mode=True)
 
-
 # CI_atmd
 def CI_atmd():
     # global var import
@@ -265,12 +306,13 @@ def CI_atmd():
         np.save(Database_dir, dataset)
         # Display the length of the dataset
         print(f"Dataset length: {len(dataset['images'])}")
-        print_Color(f"Saved label: ~*{label_class}", [label_class_color], advanced_mode=True)
+        print_Color(f"Saved label: ~*{label_class}",
+                    [label_class_color], advanced_mode=True)
         print_Color('The image and its label are saved.', ['green'])
         label = None
     else:
-        print_Color('~*ERROR: ~*a image with a label doesnt exist.', ['red', 'yellow'], advanced_mode=True)
-
+        print_Color('~*ERROR: ~*a image with a label doesnt exist.',
+                    ['red', 'yellow'], advanced_mode=True)
 
 # CI_tmwd
 def CI_tmwd(argv_Split: list = ['none']):
@@ -294,17 +336,20 @@ def CI_tmwd(argv_Split: list = ['none']):
     if os.path.exists(Database_dir):
         # Load the dataset file
         dataset = np.load(Database_dir, allow_pickle=True).item()
-        if len(dataset['images']) > 15 or check_arg(argv_Split, 'i', bool_OUTPUT_ONLY=True):  # ARG IL (ignore limits)
+        # ARG IL (ignore limits)
+        if len(dataset['images']) > 15 or check_arg(argv_Split, 'i', bool_OUTPUT_ONLY=True):
             # Convert 'dataset['images']' and 'dataset['labels']' to NumPy arrays
             images = np.array(dataset['images'])
             labels = np.array(dataset['labels'])
-            images = np.reshape(images, (-1, IMG_RES[0], IMG_RES[1], IMG_RES[2]))
+            images = np.reshape(
+                images, (-1, IMG_RES[0], IMG_RES[1], IMG_RES[2]))
             try:
                 if model is None:
                     print_Color('loading the Ai model...', ['normal'])
                     model = load_model(Model_dir)
             except (ImportError, IOError):
-                print_Color('~*ERROR: ~*Failed to load the model.', ['red', 'yellow'], advanced_mode=True)
+                print_Color('~*ERROR: ~*Failed to load the model.',
+                            ['red', 'yellow'], advanced_mode=True)
             else:
                 print('Training the model...\n')
                 # training
@@ -315,13 +360,14 @@ def CI_tmwd(argv_Split: list = ['none']):
             print_Color('~*ERROR: ~*Data/dataset.npy Len is <= 15 add more data.', ['red', 'yellow'],
                         advanced_mode=True)
     else:
-        print_Color('~*ERROR: ~*Data/dataset.npy doesnt exist.', ['red', 'yellow'], advanced_mode=True)
-
+        print_Color('~*ERROR: ~*Data/dataset.npy doesnt exist.',
+                    ['red', 'yellow'], advanced_mode=True)
 
 # CI_ulmd
 def CI_ulmd():
-    print_Color('Warning: upload model data set (currently not available!!!)', ['yellow'])
-
+    print_Color(
+        'Warning: upload model data set (currently not available!!!)',
+        ['yellow'])
 
 # CI_pwai
 def CI_pwai():
@@ -334,7 +380,8 @@ def CI_pwai():
                 print_Color('loading the Ai model...', ['normal'])
                 model = load_model(Model_dir)
         except (ImportError, IOError):
-            print_Color('~*ERROR: ~*Failed to load the model.', ['red', 'yellow'], advanced_mode=True)
+            print_Color('~*ERROR: ~*Failed to load the model.',
+                        ['red', 'yellow'], advanced_mode=True)
         else:
             print_Color('predicting with the Ai model...', ['normal'])
             model_prediction_ORG = model.predict(img_array)
@@ -345,10 +392,11 @@ def CI_pwai():
             print_Color(f'~*the Ai model prediction: ~*{pred_class}~* with confidence ~*{confidence:.2f}~*.',
                         ['normal', class_color, 'normal', 'green', 'normal'], advanced_mode=True)
             if confidence < 0.82:
-                print_Color('~*WARNING: ~*the confidence is low.', ['red', 'yellow'], advanced_mode=True)
+                print_Color('~*WARNING: ~*the confidence is low.',
+                            ['red', 'yellow'], advanced_mode=True)
     else:
-        print_Color('~*ERROR: ~*image data doesnt exist.', ['red', 'yellow'], advanced_mode=True)
-
+        print_Color('~*ERROR: ~*image data doesnt exist.',
+                    ['red', 'yellow'], advanced_mode=True)
 
 # CI_rlmw
 def CI_rlmw():
@@ -360,9 +408,9 @@ def CI_rlmw():
     try:
         model = load_model(Model_dir)
     except (ImportError, IOError):
-        print_Color('~*ERROR: ~*Failed to load the model.', ['red', 'yellow'], advanced_mode=True)
+        print_Color('~*ERROR: ~*Failed to load the model.',
+                    ['red', 'yellow'], advanced_mode=True)
     print_Color('loading the Ai model done.', ['normal'])
-
 
 # CI_liid
 def CI_liid():
@@ -380,7 +428,8 @@ def CI_liid():
         replace_img = input('')
         # If the user answers 'n' or 'N', return the existing img_array
     if replace_img.lower() == 'y':
-        print_Color('img dir. Enter \'G\' for using GUI: ', ['yellow'], print_END='')
+        print_Color('img dir. Enter \'G\' for using GUI: ',
+                    ['yellow'], print_END='')
         img_dir = input().strip('"')
         if img_dir.lower() == 'g':
             img_dir = open_file_GUI()
@@ -413,11 +462,13 @@ def CI_liid():
                 img_array = np.expand_dims(img_array, axis=0)
 
                 # Assign labels to the image
-                print_Color('Enter label (0 for Normal, 1 for Pneumonia, 2 Unknown): ', ['yellow'], print_END='')
+                print_Color('Enter label (0 for Normal, 1 for Pneumonia, 2 Unknown): ', [
+                            'yellow'], print_END='')
                 try:
                     label = int(input(''))
                 except ValueError:
-                    print_Color('~*ERROR: ~*Invalid input.', ['red', 'yellow'], advanced_mode=True)
+                    print_Color('~*ERROR: ~*Invalid input.',
+                                ['red', 'yellow'], advanced_mode=True)
                 else:
                     if label in [0, 1]:
                         # Convert label to categorical format
@@ -427,11 +478,16 @@ def CI_liid():
                         label = None
                     print_Color('The image is loaded.', ['green'])
 
-
 # CI_csaa
 def CI_csaa():
     print_Color(CSAA, ['yellow', 'green'], advanced_mode=True)
-
+    
+# CI_uaim
+def CI_uaim():
+    download_file_from_github(Github_repo_Releases_URL,
+                              Github_repo_Releases_Model_name,
+                              Model_dir,
+                              2048)
 
 # CMT>>>
 command_tuple = (
@@ -444,6 +500,7 @@ command_tuple = (
     'liid',  # load img input data
     'csaa',  # Creator Signature ASCII ART
     'debug',  # Debug
+    'uaim',  # Update AI model
     'exit',  # Quit the CLI
     'clear'  # Clear the CLI
 )
@@ -473,24 +530,25 @@ cmd_descriptions_other = {
    │            └────Example: \'-e10\'',
     'ulmd': 'Upload model data set (currently not available)',
     'csaa': 'Creator Signature ASCII ART',
+    'uaim': 'Update the AI model',
     'rlmw': 'Reload/Load Ai model',
     'exit': 'Quit the CLI',
     'clear': 'Clear the CLI'
 }
-
-
 # funcs(INTERNAL)>>>
 # CLI_IM
 def CLI_IM(CLII: bool = True):
-    if CLII: print_Color('>>> ' if Debug_m else '>>> ', ['red' if Debug_m else 'green'], print_END='',
-                         advanced_mode=False)
+    if CLII:
+        print_Color('>>> ' if Debug_m else '>>> ', ['red' if Debug_m else 'green'], print_END='',
+                    advanced_mode=False)
     U_input = input('').lower()
     try:
         str_array = U_input.split()
         if str_array[0] in command_tuple:
             return str_array
         else:
-            closest_match = difflib.get_close_matches(str_array[0], command_tuple, n=1)
+            closest_match = difflib.get_close_matches(
+                str_array[0], command_tuple, n=1)
             if closest_match:
                 print_Color(
                     f'~*ERROR: ~*Invalid input. you can use \'~*help~*\', did you mean \'~*{closest_match[0]}~*\'.',
@@ -501,7 +559,6 @@ def CLI_IM(CLII: bool = True):
             return ['IIE']
     except IndexError:
         return ['IIE']
-
 
 # IEH
 def IEH(id: str = 'Unknown', stop: bool = True, DEV: bool = True):
@@ -522,7 +579,6 @@ def IEH(id: str = 'Unknown', stop: bool = True, DEV: bool = True):
         logger.warning('SYS EXIT|ERROR: Internal|by Internal Error Handler')
         sys.exit('SYS EXIT|ERROR: Internal|by Internal Error Handler')
 
-
 # main
 def main():
     # global
@@ -533,7 +589,7 @@ def main():
         input_array = CLI_IM()
         Debug('input_array', input_array)
         logger.debug(f'input_array {input_array}')
-        match input_array[10]:  # MI
+        match input_array[0]:  # MI
             case 'help':
                 CI_help()
             case 'atmd':
@@ -553,6 +609,8 @@ def main():
                 CI_liid()
             case 'csaa':
                 CI_csaa()
+            case 'uaim':
+                CI_uaim()
             case 'IIE':
                 pass
             case 'debug':
@@ -565,14 +623,15 @@ def main():
                 logger.info('Exit by prompt.')
                 raise KeyboardInterrupt
             case _:
-                IEH(id='Func[main],P:[CLI loop]>>[match input],Error[nothing matched]', stop=False, DEV=False)
-
+                IEH(id='Func[main],P:[CLI loop]>>[match input],Error[nothing matched]',
+                    stop=False, DEV=False)
 
 # start>>>
 # clear the 'start L1' prompt
 print('                  ', end='\r')
 # Print CSAA
-if SHOW_CSAA_OS: print_Color(CSAA, ['yellow', 'green'], advanced_mode=True)
+if SHOW_CSAA_OS:
+    print_Color(CSAA, ['yellow', 'green'], advanced_mode=True)
 # Start INFO
 VER = f'V{CLI_Ver}' + datetime.now().strftime(" CDT(%Y/%m/%d | %H:%M:%S)")
 gpus = tf.config.list_physical_devices('GPU')
@@ -582,7 +641,8 @@ if gpus:
     TF_CUDA_VER = TF_sys_details['cuda_version']
     TF_CUDNN_VER = TF_sys_details['cudnn_version']  # NOT USED
     try:
-        gpu_name = subprocess.check_output(["nvidia-smi", "-L"]).decode("utf-8").split(":")[1].split("(")[0].strip()
+        gpu_name = subprocess.check_output(
+            ["nvidia-smi", "-L"]).decode("utf-8").split(":")[1].split("(")[0].strip()
         # GPU 0: NVIDIA `THE GPU NAME` (UUID: GPU-'xxxxxxxxxxxxxxxxxxxx')
         #     │                       │
         # ┌---┴----------┐        ┌---┴----------┐
@@ -620,7 +680,8 @@ if __name__ == '__main__':
         IEH(id=f'F[SYS],RFunc[main],Error[{e}]', DEV=True)
     else:
         logger.info('CLI Exit.')
-        print_Color('\n~*[PDAI CLI] ~*closed.', ['yellow', 'red'], advanced_mode=True)
+        print_Color('\n~*[PDAI CLI] ~*closed.',
+                    ['yellow', 'red'], advanced_mode=True)
 else:
     logger.info('CLI Imported.')
 # end(EOF)
