@@ -181,14 +181,15 @@ def Debug(ID, DEBUG_IF, SFL: bool = True, Force: bool = False, SFCS: bool = True
             ['red', 'yellow'], advanced_mode=True)
 
 # download_file_from_github
+def download_file_from_github(url: str, file_name: str, save_as: str, chunk_size: int):
+    """Downloads a file from a GitHub release API URL to a local path.
 
-def download_file_from_github(url, file_name, save_as, chunk_size):
-    # Get the JSON data of the latest release
-    # Downloads a file from a GitHub release API URL to a local path.
-    # url: The GitHub API URL for the release to download from.
-    # file_name: The name of the file to download from the release.
-    # save_as: The local path to save the downloaded file to.
-    # chunk_size: The chunk size to use when streaming the download.
+    Args:
+        url (str): The GitHub API URL for the release to download from.
+        file_name (str): The name of the file to download from the release.
+        save_as (str): The local path to save the downloaded file to.
+        chunk_size (int): The chunk size to use when streaming the download.
+    """
     response = requests.get(url)
     data = response.json()
 
@@ -487,7 +488,7 @@ def CI_uaim():
     download_file_from_github(Github_repo_Releases_URL,
                               Github_repo_Releases_Model_name,
                               Model_dir,
-                              2048)
+                              4096)
 
 # CMT>>>
 command_tuple = (
