@@ -1,0 +1,6 @@
+numpy
+keras
+Pillow
+py-cpuinfo
+tensorflow
+tqdm
