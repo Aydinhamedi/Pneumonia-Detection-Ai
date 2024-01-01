@@ -4,6 +4,8 @@
 # https://opensource.org/licenses/MIT
 
 # start L1
+print('Loading the CLI...', end='\r')
+# pylib
 import os
 import re
 import sys
@@ -25,8 +27,6 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.utils import to_categorical
 import numpy as np
 from PrintColor.Print_color import print_Color
-print('Loading the CLI...', end='\r')
-# pylib
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 # global vars>>>
 # CONST SYS
