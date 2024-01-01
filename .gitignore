@@ -28,3 +28,4 @@ Samples/*
 /venv
 /.ipynb_checkpoints
 /Utils/behavioral_overfitting_detection
+/Interface/CLI/Data/dataset.npy

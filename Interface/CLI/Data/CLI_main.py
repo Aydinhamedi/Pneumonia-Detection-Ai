@@ -114,7 +114,7 @@ def check_arg(arg_list: list, arg_str: str, return_arg: bool = False, bool_OUTPU
 
 
 check_arg_ERROR_LIST_USAGE = ['![IER:02]']
-check_arg_ERROR_LIST_RT = ['![IER:04]', '![IER:03]']
+check_arg_ERROR_LIST_RT = ['![IER:03]']
 
 # open_file_GUI
 def open_file_GUI():
@@ -330,7 +330,7 @@ def CI_tmwd(argv_Split: list = ['none']):
         print_Color(f'~*WARNING: ~*Invalid arg for -e. Using default value {train_epochs_def}.', ['red', 'yellow'],
                     advanced_mode=True)
         train_epochs = train_epochs_def
-    elif train_epochs == '![IER:01]':
+    elif train_epochs in ['![IER:01]', '![IER:04]']:
         train_epochs = train_epochs_def
     train_epochs = int(train_epochs)
     # check the dataset file
