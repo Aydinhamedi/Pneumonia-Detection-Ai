@@ -135,6 +135,8 @@ def open_file_GUI():
         return file_path
 
 # Debug
+
+# Debug
 def Debug(ID, DEBUG_IF, SFL: bool = True, Force: bool = False, SFCS: bool = True):
     """
     This function is used for debugging purposes. It prints out various information about the data passed to it.
