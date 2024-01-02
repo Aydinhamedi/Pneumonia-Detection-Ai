@@ -442,8 +442,7 @@ def CI_liid():
         try:
             _, file_extension = os.path.splitext(img_dir)
         except TypeError:
-            pass
-        # Check if file is an image of acceptable format
+            file_extension = 'TEMP FILE EXTENSION'
         if file_extension.upper()[1:] not in IMG_AF:
             print_Color('~*ERROR: ~*Invalid file format. Please provide an image file.', ['red', 'yellow'],
                         advanced_mode=True)
@@ -468,8 +467,8 @@ def CI_liid():
                 img_array = np.expand_dims(img_array, axis=0)
 
                 # Assign labels to the image
-                print_Color('Enter label (0 for Normal, 1 for Pneumonia, 2 Unknown): ', [
-                            'yellow'], print_END='')
+                print_Color('~*Enter label ~*(0 for Normal, 1 for Pneumonia, 2 Unknown): ', [
+                            'normal', 'yellow'], print_END='', advanced_mode=True)
                 try:
                     label = int(input(''))
                 except ValueError:
