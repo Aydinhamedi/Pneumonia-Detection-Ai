@@ -221,11 +221,14 @@ def download_file_from_github(url: str, file_name: str, save_as: str, chunk_size
         progress_bar.close()
 
         if file_size != 0 and progress_bar.n != file_size:
-            print('ERROR: Something went wrong while downloading the file.')
+            print_Color('~*ERROR: ~*Something went wrong while downloading the file.', ['red', 'yellow'], advanced_mode=True)
+            logger.warning('download_file_from_github>>ERROR: Something went wrong while downloading the file.')
         else:
             print(f"File '{save_as}' downloaded successfully.")
+            logger.debug(f"download_file_from_github>>Debug: File '{save_as}' downloaded successfully.")
     else:
-        print('ERROR: Something went wrong while finding the file.')
+        print_Color('~*ERROR: ~*Something went wrong while finding the file.', ['red', 'yellow'], advanced_mode=True)
+        logger.warning('download_file_from_github>>ERROR: Something went wrong while finding the file.')
 
 # CF>>>
 # CI_help
@@ -296,6 +299,7 @@ def CI_atmd():
         if os.path.exists(Database_dir):
             # Load the dataset file
             print_Color('loading the existing dataset...', ['normal'])
+            logger.debug(f'CI_atmd>>Debug: loading the existing dataset...')
             dataset = np.load(Database_dir, allow_pickle=True).item()
         else:
             # Create a new dataset file if it doesn't exist
@@ -311,6 +315,7 @@ def CI_atmd():
         np.save(Database_dir, dataset)
         # Display the length of the dataset
         print(f"Dataset length: {len(dataset['images'])}")
+        logger.debug(f'CI_atmd>>Debug: Dataset length: {len(dataset["images"])}')
         print_Color(f"Saved label: ~*{label_class}",
                     [label_class_color], advanced_mode=True)
         print_Color('The image and its label are saved.', ['green'])
@@ -318,6 +323,7 @@ def CI_atmd():
     else:
         print_Color('~*ERROR: ~*a image with a label doesnt exist.',
                     ['red', 'yellow'], advanced_mode=True)
+        logger.warning('CI_atmd>>ERROR: A image with a label doesnt exist.')
 
 # CI_tmwd
 def CI_tmwd(argv_Split: list = ['none']):
@@ -439,7 +445,7 @@ def CI_liid():
         if img_dir.lower() == 'g':
             img_dir = open_file_GUI()
 
-        logger.debug(f'liid:img_dir {img_dir}')
+        logger.debug(f'CI_liid:img_dir {img_dir}')
         # Extract file extension from img_dir
         try:
             _, file_extension = os.path.splitext(img_dir)
@@ -448,6 +454,7 @@ def CI_liid():
         if file_extension.upper()[1:] not in IMG_AF:
             print_Color('~*ERROR: ~*Invalid file format. Please provide an image file.', ['red', 'yellow'],
                         advanced_mode=True)
+            logger.warning('CI_liid>>ERROR: Invalid file format. Please provide an image file.')
         else:
             try:
                 # Load and resize the image
@@ -455,6 +462,7 @@ def CI_liid():
             except Exception:
                 print_Color('~*ERROR: ~*Invalid file dir. Please provide an image file.', ['red', 'yellow'],
                             advanced_mode=True)
+                logger.warning('CI_liid>>ERROR: Invalid file dir. Please provide an image file.')
             else:
                 # Check for RGB mode
                 if img.mode != 'RGB':
@@ -476,7 +484,9 @@ def CI_liid():
                 except ValueError:
                     print_Color('~*ERROR: ~*Invalid input.',
                                 ['red', 'yellow'], advanced_mode=True)
+                    logger.warning('CI_liid>>ERROR: Invalid input label.')
                 else:
+                    logger.debug(f'CI_liid:(INPUT) label {label}')
                     if label in [0, 1]:
                         # Convert label to categorical format
                         label = to_categorical(int(label), num_classes=2)
@@ -506,7 +516,7 @@ command_tuple = (
     'rlmw',  # reload model
     'liid',  # load img input data
     'csaa',  # Creator Signature ASCII ART
-    'debug',  # Debug
+    'debug', # Debug
     'uaim',  # Update AI model
     'exit',  # Quit the CLI
     'clear'  # Clear the CLI
