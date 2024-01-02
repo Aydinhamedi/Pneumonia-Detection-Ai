@@ -439,7 +439,10 @@ def CI_liid():
 
         logger.debug(f'liid:img_dir {img_dir}')
         # Extract file extension from img_dir
-        _, file_extension = os.path.splitext(img_dir)
+        try:
+            _, file_extension = os.path.splitext(img_dir)
+        except TypeError:
+            pass
         # Check if file is an image of acceptable format
         if file_extension.upper()[1:] not in IMG_AF:
             print_Color('~*ERROR: ~*Invalid file format. Please provide an image file.', ['red', 'yellow'],
