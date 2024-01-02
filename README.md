@@ -26,11 +26,15 @@ Interface\CLI
 - **Operating System (OS)**: Windows 11 Pro
 - **Processor (CPU)**: Intel Core i7-12700KF
 
-
 ## Model
 
-The model is a Convolutional Neural Network (CNN) trained on a dataset of 8888 X-ray images. The dataset is a combination of the [chest-xray-pneumonia](https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia) dataset from Kaggle and the [Covid19-Pneumonia-Normal Chest X-Ray Images](https://data.mendeley.com/datasets/dvntn9yhd2/1) from Mendeley.
+The model is a Convolutional Neural Network (CNN) trained on a dataset of 23681 X-ray images. The dataset is a combination of the following:
 
+- Chest X-ray Pneumonia dataset from Kaggle
+- Covid19-Pneumonia-Normal Chest X-Ray Images from Mendeley
+- RSNA dataset
+
+This combined dataset provides a comprehensive set of images for training the model.
 
 ## Training Methods
 ### The AI model supports two distinct training approaches:
