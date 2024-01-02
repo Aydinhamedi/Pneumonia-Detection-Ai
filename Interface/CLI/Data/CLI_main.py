@@ -194,7 +194,7 @@ def download_file_from_github(url: str, file_name: str, save_as: str, chunk_size
     """
     response = requests.get(url)
     data = response.json()
-
+    logger.debug(f'download_file_from_github:data(json) {data}')
     # Get the name of the latest release
     release_name = data['name']
     print(f'Latest release: {release_name}')
@@ -492,7 +492,7 @@ def CI_csaa():
 # CI_uaim
 def CI_uaim():
     download_file_from_github(Github_repo_Releases_URL,
-                              'dfgfdg',
+                              Github_repo_Releases_Model_name,
                               Model_dir,
                               4096)
 
