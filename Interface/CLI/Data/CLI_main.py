@@ -30,7 +30,7 @@ from PrintColor.Print_color import print_Color
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 # global vars>>>
 # CONST SYS
-CLI_Ver = '0.98'
+CLI_Ver = '0.88'
 Model_dir = 'Data/PAI_model'  # without file extention
 Database_dir = 'Data/dataset.npy'
 IMG_AF = ('JPEG', 'PNG', 'BMP', 'TIFF', 'JPG')
