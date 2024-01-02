@@ -85,8 +85,8 @@ The model provided in this project should not be used for medical diagnosis with
 ![img_](doc/V6/D1.png)
 ![img_](doc/V6/D2.png)
 ![img_](doc/V6/D3.png)
-![img_](doc/V6/D4.png)
 ![img_](doc/V6/D6.png)
+![img_](doc/V6/D4.png)
 ![img_](doc/V6/D5.png)
 <!--
 ![img_](doc/V6/D6.png)
