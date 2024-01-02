@@ -82,15 +82,17 @@ The model provided in this project should not be used for medical diagnosis with
 > Results were achived using Rev2 training method and Rev1.2 model and
 > with `backup/V6/Model_T&T.ipynb` code.
 <!-- #### N/A --> 
-![img1](doc/V5/D7.png)
-![img1](doc/V5/D8.png)
-![img1](doc/V5/D9.png)
-![img1](doc/V5/D1.png)
-![img1](doc/V5/D2.png)
-![img1](doc/V5/D3.png)
-![img1](doc/V5/D4.png)
-![img1](doc/V5/D5.png)
-![img1](doc/V5/D6.png)
+![img_](doc/V6/D1.png)
+![img_](doc/V6/D2.png)
+![img_](doc/V6/D3.png)
+![img_](doc/V6/D4.png)
+![img_](doc/V6/D5.png)
+<!--
+![img_](doc/V6/D6.png)
+![img_](doc/V6/D7.png)
+![img_](doc/V6/D8.png)
+![img_](doc/V6/D9.png)
+--> 
 <!--
 ![img3](doc/Screenshot.png)  
 -->
