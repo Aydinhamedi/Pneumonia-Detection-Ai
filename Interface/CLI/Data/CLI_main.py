@@ -194,10 +194,10 @@ def download_file_from_github(url: str, file_name: str, save_as: str, chunk_size
     """
     response = requests.get(url)
     data = response.json()
-
+    logger.debug(f'download_file_from_github:data(json) {data}')
     # Get the name of the latest release
     release_name = data['name']
-    print(f"Latest release: {release_name}")
+    print(f'Latest release: {release_name}')
 
     # Get the assets of the latest release
     assets = data['assets']
@@ -207,23 +207,25 @@ def download_file_from_github(url: str, file_name: str, save_as: str, chunk_size
         if asset['name'] == file_name:
             download_url = asset['browser_download_url']
             break
+    if 'download_url' in locals():
+        # Download the file with a progress bar
+        response = requests.get(download_url, stream=True)
+        file_size = int(response.headers['Content-Length'])
+        progress_bar = tqdm(total=file_size, unit='b', unit_scale=True)
 
-    # Download the file with a progress bar
-    response = requests.get(download_url, stream=True)
-    file_size = int(response.headers['Content-Length'])
-    progress_bar = tqdm(total=file_size, unit='b', unit_scale=True)
+        with open(save_as, 'wb') as f:
+            for chunk in response.iter_content(chunk_size=chunk_size):
+                progress_bar.update(len(chunk))
+                f.write(chunk)
 
-    with open(save_as, 'wb') as f:
-        for chunk in response.iter_content(chunk_size=chunk_size):
-            progress_bar.update(len(chunk))
-            f.write(chunk)
+        progress_bar.close()
 
-    progress_bar.close()
-
-    if file_size != 0 and progress_bar.n != file_size:
-        print("ERROR: Something went wrong while downloading the file.")
+        if file_size != 0 and progress_bar.n != file_size:
+            print('ERROR: Something went wrong while downloading the file.')
+        else:
+            print(f"File '{save_as}' downloaded successfully.")
     else:
-        print(f"File '{save_as}' downloaded successfully.")
+        print('ERROR: Something went wrong while finding the file.')
 
 # CF>>>
 # CI_help
@@ -442,8 +444,7 @@ def CI_liid():
         try:
             _, file_extension = os.path.splitext(img_dir)
         except TypeError:
-            pass
-        # Check if file is an image of acceptable format
+            file_extension = 'TEMP FILE EXTENSION'
         if file_extension.upper()[1:] not in IMG_AF:
             print_Color('~*ERROR: ~*Invalid file format. Please provide an image file.', ['red', 'yellow'],
                         advanced_mode=True)
@@ -468,8 +469,8 @@ def CI_liid():
                 img_array = np.expand_dims(img_array, axis=0)
 
                 # Assign labels to the image
-                print_Color('Enter label (0 for Normal, 1 for Pneumonia, 2 Unknown): ', [
-                            'yellow'], print_END='')
+                print_Color('~*Enter label ~*(0 for Normal, 1 for Pneumonia, 2 Unknown): ', [
+                            'normal', 'yellow'], print_END='', advanced_mode=True)
                 try:
                     label = int(input(''))
                 except ValueError:
