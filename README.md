@@ -1,9 +1,9 @@
 # Pneumonia Detection AI
 <img src="https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue"/> <img src="https://img.shields.io/badge/TensorFlow-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white"/> <img src="https://img.shields.io/badge/Keras-FF0000?style=for-the-badge&logo=keras&logoColor=white"/>
 
-### This project uses a deep learning model built with the TensorFlow framework to detect pneumonia in X-ray images. The model architecture is based on the EfficientNetB7 model, which has achieved an accuracy of approximately 97% (96.96%) on our test data. This high accuracy rate is one of the strengths of our AI model.
+### This project uses a deep learning model built with the TensorFlow framework to detect pneumonia in X-ray images. The model architecture is based on the EfficientNetB7 model, which has achieved an accuracy of approximately 97.12% (97.11538%) on our test data. This high accuracy rate is one of the strengths of our AI model.
 > [!IMPORTANT]
-> The code that have achived the highest acc is `backup/V5/Model_T&T.ipynb`.
+> The code that have achived the highest acc is `backup/V6/Model_T&T.ipynb`.
 ## Usage
 > [!TIP]
 > If you just want the model go to the Github Releases.
@@ -26,11 +26,15 @@ Interface\CLI
 - **Operating System (OS)**: Windows 11 Pro
 - **Processor (CPU)**: Intel Core i7-12700KF
 
-
 ## Model
 
-The model is a Convolutional Neural Network (CNN) trained on a dataset of 8888 X-ray images. The dataset is a combination of the [chest-xray-pneumonia](https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia) dataset from Kaggle and the [Covid19-Pneumonia-Normal Chest X-Ray Images](https://data.mendeley.com/datasets/dvntn9yhd2/1) from Mendeley.
+The model is a Convolutional Neural Network (CNN) trained on a dataset of 23681 X-ray images. The dataset is a combination of the following:
 
+- Chest X-ray Pneumonia dataset from Kaggle
+- Covid19-Pneumonia-Normal Chest X-Ray Images from Mendeley
+- RSNA dataset
+
+This combined dataset provides a comprehensive set of images for training the model.
 
 ## Training Methods
 ### The AI model supports two distinct training approaches:
@@ -74,22 +78,22 @@ The model provided in this project should not be used for medical diagnosis with
 
 ## Results
 
-> [!IMPORTANT]
-> The code that have achived accuracy of approximately 97% (96.96%).
-
 > [!WARNING]
 > Results were achived using Rev2 training method and Rev1.2 model and
-> with `backup/V5/Model_T&T.ipynb` code.
+> with `backup/V6/Model_T&T.ipynb` code.
 <!-- #### N/A --> 
-![img1](doc/V5/D7.png)
-![img1](doc/V5/D8.png)
-![img1](doc/V5/D9.png)
-![img1](doc/V5/D1.png)
-![img1](doc/V5/D2.png)
-![img1](doc/V5/D3.png)
-![img1](doc/V5/D4.png)
-![img1](doc/V5/D5.png)
-![img1](doc/V5/D6.png)
+![img_](doc/V6/D1.png)
+![img_](doc/V6/D2.png)
+![img_](doc/V6/D3.png)
+![img_](doc/V6/D4.png)
+![img_](doc/V6/D6.png)
+![img_](doc/V6/D5.png)
+<!--
+![img_](doc/V6/D6.png)
+![img_](doc/V6/D7.png)
+![img_](doc/V6/D8.png)
+![img_](doc/V6/D9.png)
+--> 
 <!--
 ![img3](doc/Screenshot.png)  
 -->

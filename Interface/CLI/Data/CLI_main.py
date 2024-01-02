@@ -4,6 +4,8 @@
 # https://opensource.org/licenses/MIT
 
 # start L1
+print('Loading the CLI...', end='\r')
+# pylib
 import os
 import re
 import sys
@@ -25,12 +27,10 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.utils import to_categorical
 import numpy as np
 from PrintColor.Print_color import print_Color
-print('Loading the CLI...', end='\r')
-# pylib
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 # global vars>>>
 # CONST SYS
-CLI_Ver = '0.98'
+CLI_Ver = '0.88'
 Model_dir = 'Data/PAI_model'  # without file extention
 Database_dir = 'Data/dataset.npy'
 IMG_AF = ('JPEG', 'PNG', 'BMP', 'TIFF', 'JPG')
@@ -114,7 +114,7 @@ def check_arg(arg_list: list, arg_str: str, return_arg: bool = False, bool_OUTPU
 
 
 check_arg_ERROR_LIST_USAGE = ['![IER:02]']
-check_arg_ERROR_LIST_RT = ['![IER:04]', '![IER:03]']
+check_arg_ERROR_LIST_RT = ['![IER:03]']
 
 # open_file_GUI
 def open_file_GUI():
@@ -133,6 +133,8 @@ def open_file_GUI():
         filetypes=[("Image Files", formats)])
     if file_path:
         return file_path
+
+# Debug
 
 # Debug
 def Debug(ID, DEBUG_IF, SFL: bool = True, Force: bool = False, SFCS: bool = True):
@@ -330,7 +332,7 @@ def CI_tmwd(argv_Split: list = ['none']):
         print_Color(f'~*WARNING: ~*Invalid arg for -e. Using default value {train_epochs_def}.', ['red', 'yellow'],
                     advanced_mode=True)
         train_epochs = train_epochs_def
-    elif train_epochs == '![IER:01]':
+    elif train_epochs in ['![IER:01]', '![IER:04]']:
         train_epochs = train_epochs_def
     train_epochs = int(train_epochs)
     # check the dataset file
@@ -437,7 +439,10 @@ def CI_liid():
 
         logger.debug(f'liid:img_dir {img_dir}')
         # Extract file extension from img_dir
-        _, file_extension = os.path.splitext(img_dir)
+        try:
+            _, file_extension = os.path.splitext(img_dir)
+        except TypeError:
+            pass
         # Check if file is an image of acceptable format
         if file_extension.upper()[1:] not in IMG_AF:
             print_Color('~*ERROR: ~*Invalid file format. Please provide an image file.', ['red', 'yellow'],
@@ -530,7 +535,6 @@ cmd_descriptions_other = {
    │       └────\'-e\' The number after \'e\' will be training epochs (default: {train_epochs_def}).\n\
    │            └────Example: \'-e10\'',
     'ulmd': 'Upload model data set (currently not available)',
-    'csaa': 'Creator Signature ASCII ART',
     'uaim': 'Update the AI model',
     'rlmw': 'Reload/Load Ai model',
     'exit': 'Quit the CLI',
