@@ -197,7 +197,7 @@ def download_file_from_github(url: str, file_name: str, save_as: str, chunk_size
 
     # Get the name of the latest release
     release_name = data['name']
-    print(f"Latest release: {release_name}")
+    print(f'Latest release: {release_name}')
 
     # Get the assets of the latest release
     assets = data['assets']
@@ -207,23 +207,25 @@ def download_file_from_github(url: str, file_name: str, save_as: str, chunk_size
         if asset['name'] == file_name:
             download_url = asset['browser_download_url']
             break
+    if 'download_url' in locals():
+        # Download the file with a progress bar
+        response = requests.get(download_url, stream=True)
+        file_size = int(response.headers['Content-Length'])
+        progress_bar = tqdm(total=file_size, unit='b', unit_scale=True)
 
-    # Download the file with a progress bar
-    response = requests.get(download_url, stream=True)
-    file_size = int(response.headers['Content-Length'])
-    progress_bar = tqdm(total=file_size, unit='b', unit_scale=True)
+        with open(save_as, 'wb') as f:
+            for chunk in response.iter_content(chunk_size=chunk_size):
+                progress_bar.update(len(chunk))
+                f.write(chunk)
 
-    with open(save_as, 'wb') as f:
-        for chunk in response.iter_content(chunk_size=chunk_size):
-            progress_bar.update(len(chunk))
-            f.write(chunk)
+        progress_bar.close()
 
-    progress_bar.close()
-
-    if file_size != 0 and progress_bar.n != file_size:
-        print("ERROR: Something went wrong while downloading the file.")
+        if file_size != 0 and progress_bar.n != file_size:
+            print('ERROR: Something went wrong while downloading the file.')
+        else:
+            print(f"File '{save_as}' downloaded successfully.")
     else:
-        print(f"File '{save_as}' downloaded successfully.")
+        print('ERROR: Something went wrong while finding the file.')
 
 # CF>>>
 # CI_help
@@ -490,7 +492,7 @@ def CI_csaa():
 # CI_uaim
 def CI_uaim():
     download_file_from_github(Github_repo_Releases_URL,
-                              Github_repo_Releases_Model_name,
+                              'dfgfdg',
                               Model_dir,
                               4096)
 
