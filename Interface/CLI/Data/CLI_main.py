@@ -535,7 +535,6 @@ cmd_descriptions_other = {
    │       └────\'-e\' The number after \'e\' will be training epochs (default: {train_epochs_def}).\n\
    │            └────Example: \'-e10\'',
     'ulmd': 'Upload model data set (currently not available)',
-    'csaa': 'Creator Signature ASCII ART',
     'uaim': 'Update the AI model',
     'rlmw': 'Reload/Load Ai model',
     'exit': 'Quit the CLI',
