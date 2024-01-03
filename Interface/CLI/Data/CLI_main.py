@@ -410,7 +410,7 @@ def CI_pwai():
             model_prediction = np.argmax(model_prediction_ORG, axis=1)
             pred_class = 'PNEUMONIA' if model_prediction == 1 else 'NORMAL'
             class_color = 'red' if model_prediction == 1 else 'green'
-            confidence = np.max(model_prediction_ORG)
+            confidence = (np.max(model_prediction_ORG) / 2) + 0.5
             print_Color(f'~*the Ai model prediction: ~*{pred_class}~* with confidence ~*{confidence:.2f}~*.',
                         ['normal', class_color, 'normal', 'green', 'normal'], advanced_mode=True)
             if confidence < 0.82:
