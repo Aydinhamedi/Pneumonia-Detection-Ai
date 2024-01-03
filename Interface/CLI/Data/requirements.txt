@@ -3,3 +3,6 @@ keras
 Pillow
 py-cpuinfo
 tensorflow
+tqdm
+opencv-python
+numpy
