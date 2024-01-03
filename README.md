@@ -13,7 +13,7 @@ The project includes a Command Line Interface (CLI) for easy use of the model. T
 ```
 Interface\CLI
 ```
-### Example Image of the CLI:
+### Example Image of the CLI (OLD REV):
 ![Example](doc/Screenshot.png)  
 ## Release
 > ### Newest release 📃
@@ -90,8 +90,8 @@ The model provided in this project should not be used for medical diagnosis with
 ![img_](doc/V6/D2.png)
 ### Other:
 ![img_](doc/V6/D4.png)
-![img_](doc/V6/D5.png)
 <!--
+![img_](doc/V6/D5.png)
 ![img_](doc/V6/D6.png)
 ![img_](doc/V6/D7.png)
 ![img_](doc/V6/D8.png)
