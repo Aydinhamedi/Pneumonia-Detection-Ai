@@ -47,14 +47,14 @@ if /i "%restart%"=="y" (
 pip show %1 >nul
 if ERRORLEVEL 1 (
     echo Package %1 not found. Do you want to automatically install it? [Y/n]
-    set /p userinput="Answer: "
-    if /I "%userinput%"=="Y" (
-        echo Installing package %1
-        pip install %1
-        if ERRORLEVEL 1 (
-            echo Failed to install package %1.
-            exit /B
-        )
+)
+set /p userinput="Answer: "
+if /I "%userinput%"=="Y" (
+    echo Installing package %1
+    pip install %1
+    if ERRORLEVEL 1 (
+        echo Failed to install package %1.
+        exit /B
     )
 ) else if "%DEBUG%"=="1" (
     echo Package %1 is already installed.
