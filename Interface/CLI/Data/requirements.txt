@@ -4,7 +4,7 @@ Pillow
 py-cpuinfo
 tensorflow
 tqdm
+matplotlib
 opencv-python
 numpy
 loguru
-efficientnet
