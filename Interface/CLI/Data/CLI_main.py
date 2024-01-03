@@ -8,6 +8,7 @@ print('Loading the CLI...', end='\r')
 # pylib
 import os
 import re
+import cv2
 import sys
 import difflib
 import inspect
@@ -26,11 +27,17 @@ from keras.models import load_model
 from keras.preprocessing.image import ImageDataGenerator
 from keras.utils import to_categorical
 import numpy as np
-from PrintColor.Print_color import print_Color
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+# Utils
+from Utils.one_cycle import OneCycleLr
+from Utils.lr_find import LrFinder
+from Utils.Grad_cam import make_gradcam_heatmap
+from Utils.print_color_V2_NEW import print_Color_V2
+from Utils.print_color_V1_OLD import print_Color
+from Utils.Other import *
 # global vars>>>
 # CONST SYS
-CLI_Ver = '0.88'
+CLI_Ver = '0.88.1'
 Model_dir = 'Data/PAI_model'  # without file extention
 Database_dir = 'Data/dataset.npy'
 IMG_AF = ('JPEG', 'PNG', 'BMP', 'TIFF', 'JPG')
@@ -45,11 +52,15 @@ img_array = None
 Debug_m = False
 label = None
 model = None
-# other
+# Other
 logger.remove()
 logger.add('Data\\logs\\SYS_LOG_{time}.log',
            backtrace=True, diagnose=True, compression='zip')
 logger.info('CLI Start...\n')
+tf.get_logger().setLevel('ERROR')
+physical_devices = tf.config.list_physical_devices('GPU')
+for gpu_instance in physical_devices:
+    tf.config.experimental.set_memory_growth(gpu_instance, True)
 # crator
 CSAA = '''
 ~*
@@ -405,6 +416,30 @@ def CI_pwai():
             if confidence < 0.82:
                 print_Color('~*WARNING: ~*the confidence is low.',
                             ['red', 'yellow'], advanced_mode=True)
+            if model_prediction == 1:
+                print_Color('~*Do you want to see a Grad cam of the model (BETA)? ~*[~*Y~*/~*n~*]: ',
+                        ['yellow', 'normal', 'green', 'normal', 'red', 'normal'],
+                        advanced_mode=True,
+                        print_END='')
+                Grad_cam_use = input('')
+                if Grad_cam_use.lower() == 'y':
+                    Grad_cam_heatmap = make_gradcam_heatmap(img_array,
+                                                            model, 'top_activation',
+                                                            second_last_conv_layer_name = 'top_conv',
+                                                            sensitivity_map = 2, pred_index=tf.argmax(model_prediction_ORG[0])) 
+                    Grad_cam_heatmap = cv2.resize(Grad_cam_heatmap, (img_array.shape[1], img_array.shape[2]))
+                    Grad_cam_heatmap = np.uint8(255 * Grad_cam_heatmap)
+                    Grad_cam_heatmap = cv2.applyColorMap(Grad_cam_heatmap, cv2.COLORMAP_JET)
+                    Grad_cam_heatmap = np.clip(np.uint8((Grad_cam_heatmap * 0.4) + ((img_array * 255) * 0.6)), 0, 255)
+                    # Resize the heatmap for a larger display
+                    display_size = (600, 600)  # Change this to your desired display size
+                    Grad_cam_heatmap = cv2.resize(Grad_cam_heatmap[0], display_size)
+                    reference_image = cv2.resize(img_array[0], display_size)
+                    # Display the heatmap in a new window
+                    cv2.imshow('Grad-CAM Heatmap', Grad_cam_heatmap)
+                    cv2.imshow('Reference Original Image', reference_image)
+                    cv2.waitKey(0)  # Wait for any key to be pressed
+                    cv2.destroyAllWindows() # Close the window
     else:
         print_Color('~*ERROR: ~*image data doesnt exist.',
                     ['red', 'yellow'], advanced_mode=True)
@@ -478,7 +513,7 @@ def CI_liid():
 
                 # Assign labels to the image
                 print_Color('~*Enter label ~*(0 for Normal, 1 for Pneumonia, 2 Unknown): ', [
-                            'normal', 'yellow'], print_END='', advanced_mode=True)
+                            'yellow', 'normal'], print_END='', advanced_mode=True)
                 try:
                     label = int(input(''))
                 except ValueError:
