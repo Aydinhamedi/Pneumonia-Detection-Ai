@@ -1,3 +1,4 @@
+#the print_Color func
 def print_Color(Input: str, colors: list, print_END: str = '\n', advanced_mode: bool = False):
     """
     Prints colored text to the console using advanced terminal colors.
@@ -30,8 +31,8 @@ def print_Color(Input: str, colors: list, print_END: str = '\n', advanced_mode: 
         'cyan': '\x1b[0;36m',
         'white': '\x1b[0;37m',
         'normal': '\x1b[0m',
-        'bg_red': '\x1b[41m',
         'bg_black': '\x1b[40m',
+        'bg_red': '\x1b[41m',
         'bg_green': '\x1b[42m',
         'bg_yellow': '\x1b[43m',
         'bg_blue': '\x1b[44m',
@@ -54,7 +55,10 @@ def print_Color(Input: str, colors: list, print_END: str = '\n', advanced_mode: 
         'bg_light_blue': '\x1b[0;104m',
         'bg_light_magenta': '\x1b[0;105m',
         'bg_light_cyan': '\x1b[0;106m',
-        'bg_light_white': '\x1b[0;107m'
+        'bg_light_white': '\x1b[0;107m',
+        'bold': '\x1b[1m',
+        'underline': '\x1b[4m',
+        'blink': '\x1b[5m'
     }
 
     if not advanced_mode:
@@ -73,3 +77,4 @@ def print_Color(Input: str, colors: list, print_END: str = '\n', advanced_mode: 
                 else:
                     print(f"\n[print_Color] ERROR: Invalid color!!! The input color: '{color}' input list index: {colors.index(color)}")
             print('', end=print_END)
+#the func end
