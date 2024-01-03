@@ -44,6 +44,7 @@ if /i "%restart%"=="y" (
 
 
 :check_install
+set userinput=Y
 pip show %1 >nul
 if ERRORLEVEL 1 (
     echo Package %1 not found. Do you want to automatically install it? [Y/n]
