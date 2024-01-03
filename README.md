@@ -13,7 +13,7 @@ The project includes a Command Line Interface (CLI) for easy use of the model. T
 ```
 Interface\CLI
 ```
-### Example Image of the CLI:
+### Example Image of the CLI (OLD REV):
 ![Example](doc/Screenshot.png)  
 ## Release
 > ### Newest release 📃
