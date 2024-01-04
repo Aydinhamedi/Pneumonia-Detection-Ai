@@ -24,10 +24,4 @@ Samples/*
 /Interface/CLI/Data/PAI_model.h5
 /TEMP.txt
 /freearc1.tmp
-/.idea
-/venv
-/.ipynb_checkpoints
-/Utils/behavioral_overfitting_detection
-/Interface/CLI/Data/dataset.npy
-/Interface/CLI/Data/PAI_model_T.h5
 /Interface/CLI/Data/logs
