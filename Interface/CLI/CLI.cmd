@@ -47,6 +47,7 @@ if /i "%restart%"=="y" (
 :errorNoPython
 echo Error^: Python is not installed
 pause
+goto :EOF
 
 :check_install
 set userinput=Y
