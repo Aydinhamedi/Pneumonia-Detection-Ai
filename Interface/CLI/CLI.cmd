@@ -6,6 +6,8 @@ if "%arg%"=="-f" (
     goto :FAST_START)
 REM Check Python version
 echo Checking Python version...
+python --version 2>NUL >NUL
+if errorlevel 1 goto errorNoPython
 FOR /F "tokens=2 delims=." %%i IN ('python --version 2^>^&1') DO set python_version=%%i
 if %python_version% LSS 9 (
     echo Warning: Please update your Python version to 3.9.x or higher!
@@ -60,4 +62,7 @@ if ERRORLEVEL 1 (
 ) else if "%DEBUG%"=="1" (
     echo Package %1 is already installed.
 )
+:errorNoPython
+echo Error^: Python is not installed
+pause
 GOTO:EOF
