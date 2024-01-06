@@ -25,3 +25,4 @@ Samples/*
 /TEMP.txt
 /freearc1.tmp
 /Interface/CLI/Data/logs
+/Interface/CLI/Data/dataset.npy

@@ -37,7 +37,7 @@ from Utils.print_color_V1_OLD import print_Color
 from Utils.Other import *
 # global vars>>>
 # CONST SYS
-CLI_Ver = '0.88.1'
+CLI_Ver = '0.88.2'
 Model_dir = 'Data/PAI_model'  # without file extention
 Database_dir = 'Data/dataset.npy'
 IMG_AF = ('JPEG', 'PNG', 'BMP', 'TIFF', 'JPG')
@@ -423,21 +423,25 @@ def CI_pwai():
                         print_END='')
                 Grad_cam_use = input('')
                 if Grad_cam_use.lower() == 'y':
+                    clahe = cv2.createCLAHE(clipLimit=1.8)
                     Grad_cam_heatmap = make_gradcam_heatmap(img_array,
                                                             model, 'top_activation',
                                                             second_last_conv_layer_name = 'top_conv',
                                                             sensitivity_map = 2, pred_index=tf.argmax(model_prediction_ORG[0])) 
                     Grad_cam_heatmap = cv2.resize(Grad_cam_heatmap, (img_array.shape[1], img_array.shape[2]))
                     Grad_cam_heatmap = np.uint8(255 * Grad_cam_heatmap)
-                    Grad_cam_heatmap = cv2.applyColorMap(Grad_cam_heatmap, cv2.COLORMAP_JET)
-                    Grad_cam_heatmap = np.clip(np.uint8((Grad_cam_heatmap * 0.4) + ((img_array * 255) * 0.6)), 0, 255)
+                    Grad_cam_heatmap = cv2.applyColorMap(Grad_cam_heatmap, cv2.COLORMAP_VIRIDIS)
+                    Grad_cam_heatmap = np.clip(np.uint8((Grad_cam_heatmap * 0.3) + ((img_array * 255) * 0.7)), 0, 255)
                     # Resize the heatmap for a larger display
                     display_size = (600, 600)  # Change this to your desired display size
                     Grad_cam_heatmap = cv2.resize(Grad_cam_heatmap[0], display_size)
-                    reference_image = cv2.resize(img_array[0], display_size)
+                    reference_image = np.uint8(cv2.resize(img_array[0] * 255, display_size))
+                    # Apply the CLAHE algorithm to the reference image
+                    reference_image_CLAHE = np.clip(clahe.apply(cv2.cvtColor(reference_image, cv2.COLOR_BGR2GRAY)), 0, 255)
                     # Display the heatmap in a new window
                     cv2.imshow('Grad-CAM Heatmap', Grad_cam_heatmap)
                     cv2.imshow('Reference Original Image', reference_image)
+                    cv2.imshow('Reference Original Image (CLAHE)', reference_image_CLAHE)
                     cv2.waitKey(0)  # Wait for any key to be pressed
                     cv2.destroyAllWindows() # Close the window
     else:
