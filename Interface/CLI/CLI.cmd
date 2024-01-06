@@ -44,6 +44,10 @@ if /i "%restart%"=="y" (
     goto :EOF
 )
 
+:errorNoPython
+echo Error^: Python is not installed
+pause
+goto :EOF
 
 :check_install
 set userinput=Y
@@ -62,7 +66,4 @@ if ERRORLEVEL 1 (
 ) else if "%DEBUG%"=="1" (
     echo Package %1 is already installed.
 )
-:errorNoPython
-echo Error^: Python is not installed
-pause
 GOTO:EOF
