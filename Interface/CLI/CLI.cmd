@@ -19,7 +19,6 @@ if not exist %PV_filepath% (
     goto :PASS_PVF_CHECK
 )
 set /p file_python_version=<%PV_filepath%
-FOR /f "tokens=* delims= " %%a in ("%file_python_version%") DO set file_python_version=%%a
 if "%file_python_version%"=="%current_python_version% " (
     goto :FAST_START
 )
