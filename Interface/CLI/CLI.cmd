@@ -12,9 +12,14 @@ if "%arg%"=="-f" (
 REM Check if Python is installed
 python --version 2>NUL >NUL
 if errorlevel 1 goto :errorNoPython
-
+@REM Geting the Python path and Python install time
+FOR /f "delims=" %%p in ('where python') do SET PYTHONPATH=%%p
+FOR %%A in (%PYTHONPATH%) do (
+    SET Python_INSTALLTIME=%%~tA
+)
 REM Check if the Python version file exists and matches the current Python version
 FOR /F "delims=" %%i IN ('python --version 2^>^&1') DO set current_python_version=%%i
+set "current_python_version=%current_python_version% | %Python_INSTALLTIME%"
 if not exist %PV_filepath% (
     goto :PASS_PVF_CHECK
 )
@@ -26,8 +31,6 @@ if "%file_python_version%"=="%current_python_version% " (
 :PASS_PVF_CHECK
 REM Write the current Python version to the file
 echo Checking Python version...
-echo %current_python_version% > %PV_filepath%
-
 REM Ensure Python version is 3.9 or higher
 FOR /F "tokens=2 delims=." %%i IN ('python --version 2^>^&1') DO set python_version_major=%%i
 if %python_version_major% LSS 9 (
@@ -41,7 +44,9 @@ echo Checking the required packages...
 for /F "usebackq delims==" %%i in ("Data\requirements.txt") do (
     call :check_install %%i
 )
-
+REM Write the current Python version + Python install time to the file
+echo %current_python_version% > %PV_filepath%
+@REM Pause for user input
 echo Press any key to load the CLI...
 pause > nul
 
