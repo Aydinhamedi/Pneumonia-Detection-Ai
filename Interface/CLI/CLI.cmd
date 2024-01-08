@@ -19,7 +19,7 @@ FOR %%A in (%PYTHONPATH%) do (
 )
 REM Check if the Python version file exists and matches the current Python version
 FOR /F "delims=" %%i IN ('python --version 2^>^&1') DO set current_python_version=%%i
-set "current_python_version=%current_python_version% | %Python_INSTALLTIME%"
+set "current_python_version=%current_python_version%  %Python_INSTALLTIME%"
 if not exist %PV_filepath% (
     goto :PASS_PVF_CHECK
 )
