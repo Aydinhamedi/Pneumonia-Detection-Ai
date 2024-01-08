@@ -1,0 +1,10 @@
+numpy
+keras
+Pillow
+py-cpuinfo
+tensorflow
+tqdm
+matplotlib
+opencv-python
+numpy
+loguru

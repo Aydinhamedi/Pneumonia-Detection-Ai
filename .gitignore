@@ -27,3 +27,5 @@ Samples/*
 /Interface/CLI/Data/logs
 /Interface/CLI/Data/dataset.npy
 /Interface/CLI/Data/Python Ver.tmp
+/Interface/GUI/Data/PAI_model.h5
+/Interface/GUI/Data/Python Ver.tmp
