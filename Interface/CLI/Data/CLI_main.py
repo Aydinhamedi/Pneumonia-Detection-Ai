@@ -393,7 +393,7 @@ def CI_ulmd():
         ['yellow'])
 
 # CI_pwai
-def CI_pwai():
+def CI_pwai(Auto: bool = False):
     # global var import
     global model
     # check for input img
@@ -418,11 +418,14 @@ def CI_pwai():
                 print_Color('~*WARNING: ~*the confidence is low.',
                             ['red', 'yellow'], advanced_mode=True)
             if model_prediction == 1:
-                print_Color('~*Do you want to see a Grad cam of the model (BETA)? ~*[~*Y~*/~*n~*]: ',
-                        ['yellow', 'normal', 'green', 'normal', 'red', 'normal'],
-                        advanced_mode=True,
-                        print_END='')
-                Grad_cam_use = input('')
+                if not Auto:
+                    print_Color('~*Do you want to see a Grad cam of the model? ~*[~*Y~*/~*n~*]: ',
+                            ['yellow', 'normal', 'green', 'normal', 'red', 'normal'],
+                            advanced_mode=True,
+                            print_END='')
+                    Grad_cam_use = input('')
+                else:
+                    Grad_cam_use = 'y'    
                 if Grad_cam_use.lower() == 'y':
                     clahe = cv2.createCLAHE(clipLimit=1.8)
                     Grad_cam_heatmap = make_gradcam_heatmap(img_array,
@@ -464,13 +467,13 @@ def CI_rlmw():
     print_Color('loading the Ai model done.', ['normal'])
 
 # CI_liid
-def CI_liid():
+def CI_liid(Auto: bool = False):
     # global var import
     global img_array
     global label
     replace_img = 'y'
     # check for img
-    if img_array is not None:
+    if img_array is not None and not Auto:
         # Ask the user if they want to replace the image
         print_Color('~*Warning: An image is already loaded. Do you want to replace it? ~*[~*Y~*/~*n~*]: ',
                     ['yellow', 'normal', 'green', 'normal', 'red', 'normal'],
@@ -479,12 +482,14 @@ def CI_liid():
         replace_img = input('')
         # If the user answers 'n' or 'N', return the existing img_array
     if replace_img.lower() == 'y':
-        print_Color('img dir. Enter \'G\' for using GUI: ',
-                    ['yellow'], print_END='')
-        img_dir = input().strip('"')
-        if img_dir.lower() == 'g':
+        if not Auto:
+            print_Color('img dir. Enter \'G\' for using GUI: ',
+                        ['yellow'], print_END='')
+            img_dir = input().strip('"')
+            if img_dir.lower() == 'g':
+                img_dir = open_file_GUI()
+        else:
             img_dir = open_file_GUI()
-
         logger.debug(f'CI_liid:img_dir {img_dir}')
         # Extract file extension from img_dir
         try:
@@ -517,23 +522,24 @@ def CI_liid():
                 img_array = np.expand_dims(img_array, axis=0)
 
                 # Assign labels to the image
-                print_Color('~*Enter label ~*(0 for Normal, 1 for Pneumonia, 2 Unknown): ', [
-                            'yellow', 'normal'], print_END='', advanced_mode=True)
-                try:
-                    label = int(input(''))
-                except ValueError:
-                    print_Color('~*ERROR: ~*Invalid input.',
-                                ['red', 'yellow'], advanced_mode=True)
-                    logger.warning('CI_liid>>ERROR: Invalid input label.')
-                else:
-                    logger.debug(f'CI_liid:(INPUT) label {label}')
-                    if label in [0, 1]:
-                        # Convert label to categorical format
-                        label = to_categorical(int(label), num_classes=2)
-                        print_Color('The label is saved.', ['green'])
+                if not Auto:
+                    print_Color('~*Enter label ~*(0 for Normal, 1 for Pneumonia, 2 Unknown): ', [
+                                'yellow', 'normal'], print_END='', advanced_mode=True)
+                    try:
+                        label = int(input(''))
+                    except ValueError:
+                        print_Color('~*ERROR: ~*Invalid input.',
+                                    ['red', 'yellow'], advanced_mode=True)
+                        logger.warning('CI_liid>>ERROR: Invalid input label.')
                     else:
-                        label = None
-                    print_Color('The image is loaded.', ['green'])
+                        logger.debug(f'CI_liid:(INPUT) label {label}')
+                        if label in [0, 1]:
+                            # Convert label to categorical format
+                            label = to_categorical(int(label), num_classes=2)
+                            print_Color('The label is saved.', ['green'])
+                        else:
+                            label = None
+                        print_Color('The image is loaded.', ['green'])
 
 # CI_csaa
 def CI_csaa():
@@ -562,6 +568,7 @@ def CI_uaim():
 command_tuple = (
     'help',  # help
     'atmd',  # add to model dataset
+    'axid',  # simple image classification
     'tmwd',  # train model with dataset
     'ulmd',  # upload model data set (not available!!!)
     'pwai',  # predict with Ai
@@ -587,10 +594,11 @@ command_tuple = (
 # '─'
 cmd_descriptions = {
     'help': 'Show the help menu with the list of all available commands',
-    'liid': 'Load image data for input',
-    'pwai': 'Make predictions using the trained AI model'
+    'axid': 'simple auto classification'
 }
 cmd_descriptions_other = {
+    'liid': 'Load image data for input',
+    'pwai': 'Make predictions using the trained AI model',
     'atmd': 'Add data to the model dataset for training',
     'tmwd': f'Train the model with the existing dataset. \x1b[31m(deprecated!)\x1b[0m\n\
    │  └────Optional Args:\n\
@@ -671,6 +679,9 @@ def main():
                 CI_ulmd()
             case 'pwai':
                 CI_pwai()
+            case 'axid':
+                CI_liid(Auto=True)
+                CI_pwai(Auto=True)
             case 'rlmw':
                 CI_rlmw()
             case 'liid':
