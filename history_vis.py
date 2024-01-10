@@ -17,7 +17,7 @@ chunk_size = 6  # Change this to your desired chunk size
 
 
 def chunked_data(data, chunk_size):
-    return [data[i:i + chunk_size] for i in range(0, len(data), chunk_size)
+    return [data[i:i + chunk_size] for i in range(0, len(data), chunk_size)]
 
 
 try:
