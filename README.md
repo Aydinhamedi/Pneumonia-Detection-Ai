@@ -4,10 +4,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ### This project uses a deep learning model built with the TensorFlow framework to detect pneumonia in X-ray images. The model architecture is based on the EfficientNetB7 model, which has achieved an accuracy of approximately 97.12% (97.11538%) on our test data. This high accuracy rate is one of the strengths of our AI model.
 > [!IMPORTANT]
-> The code that have achived the highest acc is `backup/V6/Model_T&T.ipynb`.
-
-> [!IMPORTANT]
-> For the newest code take a look at `Beta-b` or `Alpha-b` branches.
+> The code that have achived the highest acc is `backup/V6/Model_T&T.ipynb`.\
+> And the code with the light model is `backup/V7/Model_T&T.ipynb`.
 
 ## Usage
 > [!TIP]

@@ -1,28 +1,70 @@
+# Exclude Visual Studio Code project settings
 /.vscode
+
+# Exclude Visual Studio project settings
 /.vs
+
+# Exclude database files
 /Database
+
+# Exclude downloaded files
 /download
+
+# Exclude model files
 /models
+
+# Exclude Python cache files
 __pycache__/
 
-# Ignore everything in the directory
+# Ignore all files in the logs/fit directory
 logs/fit/*
+
+# Ignore all files in the Samples directory
 Samples/*
-# Except for directories ending with _STR
+
+# Do not ignore directories in logs/fit that end with _STR
 !logs/fit/*_STR/
+
+# Do not ignore directories in Samples that end with _STR
 !Samples/*_STR/
+
+# Do not ignore .gz files in directories in Samples that end with _STR
 !Samples/*_STR.gz
 
+# Exclude specific model weight files
 /PAI_model_weights.h5
 /PAI_model_weights_BL.h5
 /PAI_model_T.h5
 /PAI_model_T_BL.h5
+
+# Exclude cache files
 /cache
+
+# Exclude build artifacts
 /Build
+
+# Exclude validation files
 /validation
+
+# Exclude project file for Pneumonia AI
 /Pneumonia AI.pyproj
+
+# Exclude specific model file used in the CLI interface
 /Interface/CLI/Data/PAI_model.h5
+
+# Exclude temporary files
 /TEMP.txt
 /freearc1.tmp
+
+# Exclude logs and dataset files in the CLI interface
 /Interface/CLI/Data/logs
 /Interface/CLI/Data/dataset.npy
+
+# Exclude temporary Python version file in the CLI interface
+/Interface/CLI/Data/Python Ver.tmp
+
+# Exclude specific model file used in the GUI interface
+/Interface/GUI/Data/PAI_model.h5
+
+# Exclude temporary Python version file in the GUI interface
+/Interface/GUI/Data/Python Ver.tmp
