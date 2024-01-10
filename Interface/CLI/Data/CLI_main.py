@@ -432,7 +432,7 @@ def CI_pwai(Auto: bool = False):
                                                             model, 'top_activation',
                                                             second_last_conv_layer_name = 'top_conv',
                                                             sensitivity_map = 2, pred_index=tf.argmax(model_prediction_ORG[0])) 
-                    Grad_cam_heatmap = cv2.resize(Grad_cam_heatmap, (img_array.shape[1], img_array.shape[2]))
+                    Grad_cam_heatmap = cv2.resize(np.clip(Grad_cam_heatmap, 0, 1), (img_array.shape[1], img_array.shape[2]))
                     Grad_cam_heatmap = np.uint8(255 * Grad_cam_heatmap)
                     Grad_cam_heatmap = cv2.applyColorMap(Grad_cam_heatmap, cv2.COLORMAP_VIRIDIS)
                     Grad_cam_heatmap = np.clip(np.uint8((Grad_cam_heatmap * 0.3) + ((img_array * 255) * 0.7)), 0, 255)
