@@ -1,7 +1,9 @@
+import os
 import glob
 import numpy as np
 import tensorflow as tf
 # Other
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 tf.get_logger().setLevel('ERROR')
 physical_devices = tf.config.list_physical_devices('GPU')
 for gpu_instance in physical_devices:
@@ -37,7 +39,7 @@ def make_gradcam_heatmap(img_array,
                          model,
                          last_conv_layer_name,
                          second_last_conv_layer_name=None,
-                         pred_index=None, threshold=0,
+                         pred_index=None,
                          sensitivity_map=1.0):
     """
     Function to compute the Grad-CAM heatmap for a specific class, given an input image.
@@ -48,17 +50,11 @@ def make_gradcam_heatmap(img_array,
 
     # Compute heatmap for the last convolutional layer
     heatmap = _compute_heatmap(model, img_array, last_conv_layer_name, pred_index)
-    
-    # Apply threshold and adjust sensitivity
-    heatmap = np.where(heatmap > threshold, heatmap, 0)
     heatmap = heatmap ** sensitivity_map
 
     if second_last_conv_layer_name is not None:
         # Compute heatmap for the second last convolutional layer
         heatmap_second = _compute_heatmap(model, img_array, second_last_conv_layer_name, pred_index)
-        
-        # Apply threshold and adjust sensitivity
-        heatmap_second = np.where(heatmap_second > threshold, heatmap_second, 0)
         heatmap_second = heatmap_second ** sensitivity_map
         
         # Average the two heatmaps
