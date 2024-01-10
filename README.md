@@ -2,6 +2,8 @@
 <img src="https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue"/> <img src="https://img.shields.io/badge/TensorFlow-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white"/> <img src="https://img.shields.io/badge/Keras-FF0000?style=for-the-badge&logo=keras&logoColor=white"/>
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![CodeQL](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/actions/workflows/codeql.yml)
+
 ### This project uses a deep learning model built with the TensorFlow framework to detect pneumonia in X-ray images. The model architecture is based on the EfficientNetB7 model, which has achieved an accuracy of approximately 97.12% (97.11538%) on our test data. This high accuracy rate is one of the strengths of our AI model.
 > [!IMPORTANT]
 > The code that have achived the highest acc is `backup/V6/Model_T&T.ipynb`.\
