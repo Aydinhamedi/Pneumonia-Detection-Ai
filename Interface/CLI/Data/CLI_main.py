@@ -42,6 +42,7 @@ Model_dir = 'Data/PAI_model'  # without file extention
 Database_dir = 'Data/dataset.npy'
 IMG_AF = ('JPEG', 'PNG', 'BMP', 'TIFF', 'JPG')
 Github_repo_Releases_Model_name = 'PAI_model_T.h5'
+Github_repo_Releases_Model_light_name = 'PAI_model_light_T.h5'
 Github_repo_Releases_URL = 'https://api.github.com/repos/Aydinhamedi/Pneumonia-Detection-Ai/releases/latest'
 Model_FORMAT = 'H5_SF'  # TF_dir/H5_SF
 IMG_RES = (224, 224, 3)
@@ -370,7 +371,7 @@ def CI_tmwd(argv_Split: list = ['none']):
                     print_Color('loading the Ai model...', ['normal'])
                     model = load_model(Model_dir)
             except (ImportError, IOError):
-                print_Color('~*ERROR: ~*Failed to load the model.',
+                print_Color('~*ERROR: ~*Failed to load the model. Try running `uaim` first.',
                             ['red', 'yellow'], advanced_mode=True)
             else:
                 print('Training the model...\n')
@@ -402,7 +403,7 @@ def CI_pwai():
                 print_Color('loading the Ai model...', ['normal'])
                 model = load_model(Model_dir)
         except (ImportError, IOError):
-            print_Color('~*ERROR: ~*Failed to load the model.',
+            print_Color('~*ERROR: ~*Failed to load the model. Try running `uaim` first.',
                         ['red', 'yellow'], advanced_mode=True)
         else:
             print_Color('predicting with the Ai model...', ['normal'])
@@ -458,7 +459,7 @@ def CI_rlmw():
     try:
         model = load_model(Model_dir)
     except (ImportError, IOError):
-        print_Color('~*ERROR: ~*Failed to load the model.',
+        print_Color('~*ERROR: ~*Failed to load the model. Try running `uaim` first.',
                     ['red', 'yellow'], advanced_mode=True)
     print_Color('loading the Ai model done.', ['normal'])
 
@@ -540,10 +541,22 @@ def CI_csaa():
     
 # CI_uaim
 def CI_uaim():
-    download_file_from_github(Github_repo_Releases_URL,
-                              Github_repo_Releases_Model_name,
-                              Model_dir,
-                              4096)
+    print_Color('~*Do you want to download the light model? ~*[~*Y~*/~*n~*]: ',
+            ['yellow', 'normal', 'green', 'normal', 'red', 'normal'],
+            advanced_mode=True,
+            print_END='')
+    download_light_model = input('')
+    if download_light_model.lower() == 'y':
+        Github_repo_Releases_Model_name_temp = Github_repo_Releases_Model_light_name
+    else:
+        Github_repo_Releases_Model_name_temp = Github_repo_Releases_Model_name
+    try:
+        download_file_from_github(Github_repo_Releases_URL,
+                                Github_repo_Releases_Model_name_temp,
+                                Model_dir,
+                                1024)
+    except Exception:
+        print_Color('\n~*ERROR: ~*Failed to download the model.', ['red', 'yellow'], advanced_mode=True)
 
 # CMT>>>
 command_tuple = (
@@ -579,7 +592,7 @@ cmd_descriptions = {
 }
 cmd_descriptions_other = {
     'atmd': 'Add data to the model dataset for training',
-    'tmwd': f'Train the model with the existing dataset.\n\
+    'tmwd': f'Train the model with the existing dataset. \x1b[31m(deprecated!)\x1b[0m\n\
    │  └────Optional Args:\n\
    │       ├────\'-i\' Ignore the limits.\n\
    │       └────\'-e\' The number after \'e\' will be training epochs (default: {train_epochs_def}).\n\
