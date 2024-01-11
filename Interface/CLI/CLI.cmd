@@ -1,5 +1,6 @@
 @echo off
-TITLE Pneumonia AI CLI
+TITLE Pneumonia-Detection-Ai-CLI
+set python_min_VER=10
 set DEBUG=0
 set arg=%1
 set PV_filepath="Data\\Python Ver.tmp"
@@ -31,10 +32,10 @@ if "%file_python_version%"=="%current_python_version% " (
 :PASS_PVF_CHECK
 REM Write the current Python version to the file
 echo Checking Python version...
-REM Ensure Python version is 3.9 or higher
+REM Ensure Python version is %python_min_VER% or higher
 FOR /F "tokens=2 delims=." %%i IN ('python --version 2^>^&1') DO set python_version_major=%%i
-if %python_version_major% LSS 9 (
-    echo Warning: Please update your Python version to 3.9.x or higher!
+if %python_version_major% LSS %python_min_VER% (
+    echo Warning: Please update your Python version to 3.%python_min_VER%.x or higher!
     pause
     exit /B
 )
