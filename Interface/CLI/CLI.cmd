@@ -1,4 +1,5 @@
 @echo off
+REM Conf:
 TITLE Pneumonia-Detection-Ai-CLI
 set python_min_VER=10
 set DEBUG=0
