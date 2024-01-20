@@ -1,8 +1,3 @@
-# Copyright (c) 2023 Aydin Hamedi
-# 
-# This software is released under the MIT License.
-# https://opensource.org/licenses/MIT
-
 from Utils.Other import *
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
