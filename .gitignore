@@ -68,4 +68,7 @@ Samples/*
 
 # Exclude temporary Python version file in the GUI interface
 /Interface/GUI/Data/Python Ver.tmp
+
+# venv
 /venv_2
+/venv
