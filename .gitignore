@@ -72,3 +72,5 @@ Samples/*
 # venv
 /venv_2
 /venv
+/Interface/CLI/Data/Python Embed 3.10.11
+/Interface/CLI/Data/Use_Python_Embed.tmp
