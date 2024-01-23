@@ -17,7 +17,7 @@ if "%arg%"=="-f" (
 
 REM Check if Python is installed
 "%python_path%" --version 2>nul >nul
-if errorlevel 0 goto :errorNoPython
+if errorlevel 1 goto :errorNoPython
 :errorNoPython_C
 
 @REM Geting the Python path and Python install time
