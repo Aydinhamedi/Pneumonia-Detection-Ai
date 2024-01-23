@@ -7,5 +7,4 @@ efficientnet
 tqdm
 matplotlib
 opencv-python
-numpy
 loguru
