@@ -68,4 +68,9 @@ Samples/*
 
 # Exclude temporary Python version file in the GUI interface
 /Interface/GUI/Data/Python Ver.tmp
+
+# venv
 /venv_2
+/venv
+/Interface/CLI/Data/Python Embed 3.10.11
+/Interface/CLI/Data/Use_Python_Embed.tmp
