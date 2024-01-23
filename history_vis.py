@@ -1,3 +1,4 @@
+from turtle import left
 from Utils.Other import *
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -51,7 +52,7 @@ try:
         print('\033[91mfailed to load val_loss (density plot).')
     plt.title('Density Plot for Loss')
     plt.xlabel('Loss')
-    plt.xlim(right=max(history['val_loss'][10:])) # (max(history['val_loss'][8:]) + min(history['val_loss'])) / 2
+    plt.xlim(right=max(history['val_loss'][10:]), left=0) # (max(history['val_loss'][8:]) + min(history['val_loss'])) / 2
     plt.grid(True)
     
     
