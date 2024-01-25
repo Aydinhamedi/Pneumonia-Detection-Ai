@@ -49,19 +49,24 @@ def P_warning(msg):
     """
     print_Color_V2(f'<light_red>Warning: <yellow>{msg}')
 
-def evaluate_model_full(model, x_test, y_test):
+def evaluate_model_full(y_test, model_pred, model=None, x_test=None):
     """Evaluates a machine learning model on a test set.
 
     Args:
-        model: The model to evaluate.
-        x_test: The test data features.
-        y_test: The test data labels.
+        x_test: Test set features.
+        y_test: Test set labels.  
+        model_pred: Model predictions.
+        model: The model object.
 
     Returns:
-        None. Prints a table with accuracy, precision, recall and F1 score.
+        None. Prints a table with accuracy, precision, recall and 
+        F1 score.
     """
     # Get the model predictions
-    y_pred = model.predict(x_test)
+    if model_pred is None:
+        y_pred = model.predict(x_test)
+    else:
+        y_pred = model_pred
 
     # Convert one-hot encoded predictions and labels to label encoded form
     y_pred_bin = np.argmax(y_pred, axis=1)
