@@ -1,5 +1,6 @@
 @echo off
 REM Conf:
+setlocal enabledelayedexpansion
 TITLE Pneumonia-Detection-Ai-CLI
 set python_min_VER=10
 set DEBUG=0
@@ -7,6 +8,8 @@ set arg=%1
 set quotation=\"
 set PV_filepath="Data\\Python Ver.tmp"
 set PUE_filepath="Data\\Use_Python_Embed.tmp"
+set Python_Embed_URL="https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/releases/download/Other-Data-V1/Python.Embed.3.10.11.exe"
+set Python_Embed_Name="Python.Embed.3.10.11.exe"
 set python_path=python
 set pip_path=pip
 
@@ -17,7 +20,7 @@ if "%arg%"=="-f" (
 
 REM Check if Python is installed
 "%python_path%" --version 2>nul >nul
-if errorlevel 1 goto :errorNoPython
+if errorlevel 0 goto :errorNoPython
 :errorNoPython_C
 
 @REM Geting the Python path and Python install time
@@ -121,6 +124,26 @@ if /I "%UserInput%"=="y" (
         )
     )
     echo Error: Failed to find embedded Python.
+    set /p downloadPython="Do you want to download the embedded Python (y/n)? "
+    if /I "!downloadPython!"=="y" (
+        REM Download the file using curl
+        echo Downloading the embedded Python...
+
+        curl -l -o %Python_Embed_Name% %Python_Embed_URL%
+
+        REM Extract the file to the Data folder
+        echo Extracting the embedded Python...
+        "%Python_Embed_Name%" -o"%cd%\\Data" -y
+
+        REM Delete the original file
+        echo Deleting the original file...
+        del "%Python_Embed_Name%"
+
+        REM Restarting the CLI luncher...
+        timeout /t 5 >nul
+        start "" "%~f0"
+        exit
+    )
 )
 pause
 goto :EOF
