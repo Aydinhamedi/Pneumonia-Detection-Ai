@@ -129,7 +129,7 @@ if /I "%UserInput%"=="y" (
         REM Download the file using curl
         echo Downloading the embedded Python...
 
-        curl -l -o %Python_Embed_Name% %Python_Embed_URL%
+        curl -L -o %Python_Embed_Name% %Python_Embed_URL%
 
         REM Extract the file to the Data folder
         echo Extracting the embedded Python...
