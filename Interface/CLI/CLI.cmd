@@ -5,7 +5,6 @@ TITLE Pneumonia-Detection-Ai-CLI
 set python_min_VER=10
 set DEBUG=0
 set arg=%1
-set quotation=\"
 set PV_filepath="Data\\Python Ver.tmp"
 set PUE_filepath="Data\\Use_Python_Embed.tmp"
 set Python_Embed_URL="https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/releases/download/Other-Data-V1/Python.Embed.3.10.11.exe"
