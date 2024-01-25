@@ -63,7 +63,7 @@ def evaluate_model_full(y_test, model_pred, model=None, x_test=None):
         F1 score.
     """
     # Get the model predictions
-    if model_pred == None:
+    if model_pred is None:
         y_pred = model.predict(x_test)
     else:
         y_pred = model_pred
