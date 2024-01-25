@@ -112,7 +112,7 @@ if exist %PUE_filepath% (
 )
 echo Error: Python is not installed
 set /p UserInput="Do you want to use the embedded Python (y/n)? "
-if /I "%UserInput%"=="y" (
+if /I "!UserInput!"=="y" (
     for /D %%X in ("Data\\Python Embed*") do (
         if exist "%%X\python.exe" (
             if exist "%%X\\Scripts\\pip.exe" (
@@ -140,7 +140,8 @@ if /I "%UserInput%"=="y" (
         del "%Python_Embed_Name%"
 
         REM Restarting the CLI luncher...
-        timeout /t 5 >nul
+        echo Restarting the CLI luncher (in 8 seconds)...
+        timeout /t 8 >nul
         start "" "%~f0"
         exit
     )
