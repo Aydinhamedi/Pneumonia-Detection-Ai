@@ -20,7 +20,7 @@ if "%arg%"=="-f" (
 
 REM Check if Python is installed
 "%python_path%" --version 2>nul >nul
-if errorlevel 0 goto :errorNoPython
+if errorlevel 1 goto :errorNoPython
 :errorNoPython_C
 
 @REM Geting the Python path and Python install time
@@ -140,7 +140,7 @@ if /I "!UserInput!"=="y" (
         del "%Python_Embed_Name%"
 
         REM Restarting the CLI luncher...
-        echo Restarting the CLI luncher (in 8 seconds)...
+        echo Restarting the CLI luncher (in 8 seconds^^^)...
         timeout /t 8 >nul
         start "" "%~f0"
         exit
