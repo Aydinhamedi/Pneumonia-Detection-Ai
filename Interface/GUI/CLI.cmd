@@ -1,14 +1,11 @@
 @echo off
 REM Conf:
 setlocal enabledelayedexpansion
-TITLE Pneumonia-Detection-Ai-CLI
+TITLE Pneumonia-Detection-Ai-GUI
 set python_min_VER=10
 set DEBUG=0
 set arg=%1
 set PV_filepath="Data\\Python Ver.tmp"
-set PUE_filepath="Data\\Use_Python_Embed.tmp"
-set Python_Embed_URL="https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/releases/download/Other-Data-V1/Python.Embed.3.10.11.exe"
-set Python_Embed_Name="Python.Embed.3.10.11.exe"
 set python_path=python
 set pip_path=pip
 
@@ -20,14 +17,10 @@ if "%arg%"=="-f" (
 REM Check if Python is installed
 "%python_path%" --version 2>nul >nul
 if errorlevel 1 goto :errorNoPython
-:errorNoPython_C
 
 @REM Geting the Python path and Python install time
 for /f "delims=" %%p in ('where "%python_path%" 2^>^&1 ^| findstr /v "INFO:"') do (
     set "python_path_env=%%p"
-)
-if not defined python_path_env (
-    set "python_path_env=%python_path%"
 )
 for %%A in ("%python_path_env%") do (
     set Python_INSTALLTIME=%%~tA
@@ -63,91 +56,36 @@ for /F "usebackq delims==" %%i in ("Data\requirements.txt") do (
 REM Write the current Python version + Python install time to the file
 echo %current_python_version% > %PV_filepath%
 @REM Pause for user input
-echo Press any key to load the CLI...
+echo Press any key to load the GUI...
 pause > nul
 
 :FAST_START
 REM Print the appropriate loading message
 if "%arg%"=="-f" (
-    echo Loading the CLI fast...
+    echo Loading the GUI fast...
 ) else (
-    echo Loading the CLI...
+    echo Loading the GUI...
 )
 
 :restart
-REM Clear the terminal and start the Python CLI script
+REM Clear the terminal and start the Python GUI script
 timeout /t 1 >nul
 cls
-"%python_path%" "Data\CLI_main.py"
+"%python_path%" "Data\GUI_main.py"
 
-REM Prompt to restart or quit the CLI
-set /p restart="Do you want to restart the CLI or quit the CLI (y/n)? "
+REM Prompt to restart or quit the GUI
+set /p restart="Do you want to restart the GUI or quit the GUI (y/n)? "
 if /i "%restart%"=="y" (
     goto :restart
 ) else (
     goto :EOF
 )
 
-REM Check it 🚧Beta🚧 --- [>>>
+REM errorNoPython
 :errorNoPython
-REM Handle the error if Python is not installed
-if exist %PUE_filepath% (
-    for /D %%X in ("Data\\Python Embed*") do (
-        if exist "%%X\python.exe" (
-            if exist "%%X\\Scripts\\pip.exe" (
-                set "python_path=%%X\\python.exe"
-                set "pip_path=%%X\\Scripts\\pip.exe"
-                echo `Conf file` > %PUE_filepath%
-            goto :errorNoPython_C
-            )
-        )
-    )
-    echo Error: Failed to find embedded Python.
-    echo Error: Python is not installed
-    del %PUE_filepath% >nul >nul
-    del %PV_filepath% >nul >nul
-    pause
-    goto :EOF
-)
 echo Error: Python is not installed
-set /p UserInput="Do you want to use the embedded Python (y/n)? "
-if /I "!UserInput!"=="y" (
-    for /D %%X in ("Data\\Python Embed*") do (
-        if exist "%%X\python.exe" (
-            if exist "%%X\\Scripts\\pip.exe" (
-                set "python_path=%%X\\python.exe"
-                set "pip_path=%%X\\Scripts\\pip.exe"
-                echo `Conf file` > %PUE_filepath%
-            goto :errorNoPython_C
-            )
-        )
-    )
-    echo Error: Failed to find embedded Python.
-    set /p downloadPython="Do you want to download the embedded Python (y/n)? "
-    if /I "!downloadPython!"=="y" (
-        REM Download the file using curl
-        echo Downloading the embedded Python...
-
-        curl -L -o %Python_Embed_Name% %Python_Embed_URL%
-
-        REM Extract the file to the Data folder
-        echo Extracting the embedded Python...
-        "%Python_Embed_Name%" -o"%cd%\\Data" -y
-
-        REM Delete the original file
-        echo Deleting the original file...
-        del "%Python_Embed_Name%"
-
-        REM Restarting the CLI luncher...
-        echo Restarting the CLI luncher (in 8 seconds^^^)...
-        timeout /t 8 >nul
-        start "" "%~f0"
-        exit
-    )
-)
 pause
 goto :EOF
-REM Check it 🚧Beta🚧 --- <<<]
 
 :check_install
 REM Check if a package is installed and offer to install it if not
