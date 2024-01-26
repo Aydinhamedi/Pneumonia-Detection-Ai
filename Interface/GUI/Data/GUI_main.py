@@ -8,10 +8,12 @@ print('Loading the GUI...', end='\r')
 # pylib
 import os
 import re
-from time import sleep
+import time
 import cv2
 import sys
+import json
 import queue
+import hashlib
 import cpuinfo
 import difflib
 import inspect
@@ -20,6 +22,7 @@ import subprocess
 import threading
 import requests
 from tqdm import tqdm
+from time import sleep
 import PySimpleGUI as sg  
 from loguru import logger
 import efficientnet.tfkeras
@@ -41,12 +44,13 @@ from Utils.print_color_V1_OLD import print_Color
 from Utils.Other import *
 # global vars>>>
 # CONST SYS
-GUI_Ver = '0.8.9.5 (GUI)'
+GUI_Ver = '0.8.9.6'
 Model_dir = 'Data/PAI_model'  # without file extention
 Database_dir = 'Data/dataset.npy'
 IMG_AF = ('JPEG', 'PNG', 'BMP', 'TIFF', 'JPG')
 Github_repo_Releases_Model_name = 'PAI_model_T.h5'
 Github_repo_Releases_Model_light_name = 'PAI_model_light_T.h5'
+Github_repo_Releases_Model_info_name = 'model_info.json'
 Github_repo_Releases_URL = 'https://api.github.com/repos/Aydinhamedi/Pneumonia-Detection-Ai/releases/latest'
 Model_FORMAT = 'H5_SF'  # TF_dir/H5_SF
 IMG_RES = (224, 224, 3)
@@ -124,6 +128,68 @@ GUI_text_logo = '''
                           
 '''
 # HF>>>
+# calculate_file_hash
+def calculate_file_hash(file_path):
+    """Calculates a SHA256 hash for the contents of the given file.
+    
+    Args:
+        file_path (str): The path to the file to hash.
+    
+    Returns:
+        str: The hex string of the SHA256 hash.
+    """
+    with open(file_path, 'rb') as f:
+        bytes = f.read()
+        readable_hash = hashlib.sha256(bytes).hexdigest()
+    return readable_hash
+# get_model_info
+def get_model_info(model_path):
+    """Gets information about a model file.
+    
+    Checks if the model file exists at the given path, calculates its hash, 
+    and looks up version information in a JSON file if it exists.
+    
+    Args:
+        model_path: Path to the model file.
+    
+    Returns:
+        Dict with file hash, whether it exists, version, and model type.
+    """
+    
+    # Check if the model exists
+    model_exists = os.path.exists(model_path)
+    
+    if model_exists:
+        # Calculate the hash of the file
+        file_hash = calculate_file_hash(model_path)
+
+        # Load the JSON data
+        with open('Data/model_info.json', 'r') as json_file:
+            model_info = json.load(json_file)
+
+        # Check if the file's hash is in the JSON data
+        if file_hash in model_info:
+            # Return the 'Ver' and 'stored_type' attributes for the file
+            return {
+                'file_hash': file_hash,
+                'file_exists': True,
+                'Ver': model_info[file_hash]['Ver'],
+                'stored_type': model_info[file_hash]['stored_type']
+            }
+        else:
+            return {
+                'file_hash': file_hash,
+                'file_exists': True,
+                'Ver': 'Unknown',
+                'stored_type': 'Unknown'
+            }
+    else:
+        return {
+            'file_hash': 'Unknown',
+            'file_exists': False,
+            'Ver': 'Unknown',
+           'stored_type': 'Unknown'
+        }
 # open_file_GUI
 def open_file_GUI():
     """Opens a file selection dialog GUI to allow the user to select an image file.
@@ -249,13 +315,13 @@ def CI_rlmw():
     global model
     # main proc
     model = None
-    print_Color('loading the Ai model...', ['normal'])
+    Queue_ins.put('loading the Ai model...')
     try:
         model = load_model(Model_dir)
     except (ImportError, IOError):
-        print_Color('~*ERROR: ~*Failed to load the model. Try running `uaim` first.',
-                    ['red', 'yellow'], advanced_mode=True)
-    print_Color('loading the Ai model done.', ['normal'])
+        Queue_ins.put('ERROR: Failed to load the model.')
+        return None
+    Queue_ins.put('loading the Ai model done.')
 
 # CI_liid
 def CI_liid(img_dir) -> str:
@@ -296,10 +362,10 @@ def CI_liid(img_dir) -> str:
 # CI_uaim
 def CI_uaim(download_light_model: bool = False):
     if download_light_model:
-        Log_temp_txt = 'Downloading the model...\n'
+        Log_temp_txt = 'Downloading the light model...\n'
         Github_repo_Releases_Model_name_temp = Github_repo_Releases_Model_light_name
     else:
-        Log_temp_txt = 'Downloading the light model...\n'
+        Log_temp_txt = 'Downloading the model...\n'
         Github_repo_Releases_Model_name_temp = Github_repo_Releases_Model_name
     Queue_ins.put(Log_temp_txt)
     try:
@@ -312,6 +378,36 @@ def CI_uaim(download_light_model: bool = False):
     except Exception:
         Queue_ins.put('ERROR: Failed to download the model.')
     Queue_ins.put('Model downloaded.')
+
+# CI_umij
+def CI_umij():
+    try:
+        download_file_from_github(Github_repo_Releases_URL,
+                                    Github_repo_Releases_Model_info_name,
+                                    'Data\\model_info.json',
+                                    256)
+    except Exception:
+        Queue_ins.put('ERROR: Failed to download the model info.')
+    Queue_ins.put('Model info downloaded.')
+
+# CI_gmi
+def CI_gmi():
+    if not os.path.isfile('Data\\model_info.json') or time.time() - os.path.getmtime('Data/model_info.json') > 4 * 60 * 60:
+        CI_umij()
+    model_info_dict = get_model_info(Model_dir)
+    if model_info_dict['Ver'] != 'Unknown':
+        Model_State = 'OK'
+    elif model_info_dict['Ver'] == 'Unknown' and model_info_dict["file_exists"]:
+        Model_State = 'Model is not a valid model. (hash not found!)'
+    else:
+        Model_State = 'Model file is missing.'
+    model_info_str = f'File_exists: {str(model_info_dict["file_exists"])}\n'
+    model_info_str += f'Model_hash (SHA256): {model_info_dict["file_hash"].strip()}\n'
+    model_info_str += f'stored_type: {model_info_dict["stored_type"]}\n'
+    model_info_str += f'State: {Model_State}\n'
+    model_info_str += f'Ver: {model_info_dict["Ver"]}'
+    return model_info_str
+
 # funcs(INTERNAL)>>>
 # IEH
 def IEH(id: str = 'Unknown', stop: bool = True, DEV: bool = True):
@@ -343,42 +439,77 @@ def main():
     )
     # prep var
     IMG_dir = None
-    # Making the GUI layout
-    GUI_layout = [
-        [sg.Text('Enter the image dir:')],
+    Update_model_info_LXT = None
+    # prep GUI
+    sg.theme('GrayGrayGray') 
+    # Making the GUI layout >>>
+    # Main
+    GUI_layout_Tab_main = [
+        [sg.Text('Enter the image dir:', font=(None, 10, "bold"))],
         [
             sg.Input(key='-INPUT_IMG_dir-'),
             sg.Button('Browse', key='-BUTTON_BROWSE_IMG_dir-'),
             sg.Button('Ok', key='-BUTTON_OK_IMG_dir-')
         ],
-        [sg.Text('Log:')],
-        [sg.Text(key='-OUTPUT_ST-', size=(48, 4))],
-        [sg.Text('Result:')],
-        [sg.Text(key='-OUTPUT_ST_R-', size=(48, 2))],
+        [sg.Text('Log:', font=(None, 10, "bold"))],
+        [sg.Multiline(key='-OUTPUT_ST-', size=(54, 6))],
+        [sg.Text('Result:', font=(None, 10, "bold"))],
+        [sg.Text(key='-OUTPUT_ST_R-', size=(50, 2), background_color='white')],
         [
-            sg.Checkbox('Show Grad-CAM', key='-CHECKBOX_SHOW_Grad-CAM-', default=True),
-            sg.Checkbox('Download Light Model', key='-CHECKBOX_DOWNLOAD_LIGHT_MODEL-', default=False)
+            sg.Checkbox('Show Grad-CAM', key='-CHECKBOX_SHOW_Grad-CAM-', default=True)
         ],
         [
-            sg.Button('Update/Download Model', key='-BUTTON_UPDATE_MODEL-'),
             sg.Button('Analyse'),
             sg.Button('Close')
         ]
     ]
+    # Other
+    GUI_layout_Tab_other = [
+        [sg.Text('Ai Model Settings:', font=(None, 10, "bold"))],
+        [
+            sg.Button('Update/Download Model', key='-BUTTON_UPDATE_MODEL-'),
+            sg.Button('Reload Model', key='-BUTTON_RELOAD_MODEL-')
+        ],
+        [
+            sg.Checkbox('Download Light Model', key='-CHECKBOX_DOWNLOAD_LIGHT_MODEL-', default=False)
+        ],
+        [sg.Text('Ai Model Info:', font=(None, 10, "bold"))],
+        [
+            sg.Text(key='-OUTPUT_Model_info-', size=(40, 7), pad=(4, 0))
+        ]
+    ]
+    # Create the tabs
+    GUI_tab_main = sg.Tab('Main', GUI_layout_Tab_main)
+    GUI_tab_other = sg.Tab('Ai Model', GUI_layout_Tab_other)
+    GUI_layout_group = [[sg.TabGroup([[GUI_tab_main, GUI_tab_other]])]]
     # Create the window
-    GUI_window = sg.Window('Pneumonia-Detection-Ai-GUI', GUI_layout)
+    GUI_window = sg.Window(f'Pneumonia-Detection-Ai-GUI V{GUI_Ver}', GUI_layout_group)
+    # Pre up
+    CI_umij()
     # Main loop for the Graphical User Interface (GUI)
     while True:
         # Read events and values from the GUI window
-        event, values = GUI_window.read(timeout=250, timeout_key='-TIMEOUT-')
+        event, values = GUI_window.read(timeout=100, timeout_key='-TIMEOUT-')
         if not event == '-TIMEOUT-':
             logger.debug(f'GUI_window:event: {event}')
             logger.debug(f'GUI_window:values: {values}')
         
         # Check if the window has been closed or the 'Close' button has been clicked
         if event == sg.WINDOW_CLOSED or event == 'Close':
+            # close GUI_window
+            GUI_window.close()
+            # try to stop the CI_uaim_Thread
+            try:
+                CI_uaim_Thread.stop()
+            except Exception:
+                pass
             break  # Exit the loop and close the window
 
+        # Handle event for updating the model
+        if event == '-BUTTON_RELOAD_MODEL-':
+            # Call the function to reload the model
+            CI_rlmw()
+            
         # Handle event for browsing and selecting an image directory
         if event == '-BUTTON_BROWSE_IMG_dir-':
             # Open file dialog to select an image, and update the input field with the selected directory
@@ -413,12 +544,17 @@ def main():
         # Handle event for updating the AI model
         if event == '-BUTTON_UPDATE_MODEL-':
             # Start a new thread to download the model without freezing the GUI
-            threading.Thread(
+            CI_uaim_Thread = threading.Thread(
                 target=CI_uaim,
                 args=(values['-CHECKBOX_DOWNLOAD_LIGHT_MODEL-'],),
                 daemon=True
-            ).start()
-
+            )
+            CI_uaim_Thread.start()
+        # Updating the model info
+        if Update_model_info_LXT is None or time.time() - Update_model_info_LXT > 6:
+            Update_model_info_LXT = time.time()
+            GUI_window['-OUTPUT_Model_info-'].update(CI_gmi(), text_color='black')
+            GUI_window.finalize()
         # Continuously check if there are results in the queue to be processed
         if Queue_ins.is_updated:
             # Retrieve the result from the queue
@@ -429,7 +565,7 @@ def main():
             # Update the GUI with the result message
             for block in result:
                 result_expanded += f'> {block}\n'
-            GUI_window['-OUTPUT_ST-'].update(result_expanded, text_color='yellow')
+            GUI_window['-OUTPUT_ST-'].update(result_expanded, text_color='black')
             GUI_window.finalize()
 
 # start>>>
