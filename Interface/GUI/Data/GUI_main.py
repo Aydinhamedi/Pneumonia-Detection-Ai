@@ -8,6 +8,7 @@ print('Loading the GUI...', end='\r')
 # pylib
 import os
 import re
+from time import sleep
 import cv2
 import sys
 import cpuinfo
@@ -38,7 +39,7 @@ from Utils.print_color_V1_OLD import print_Color
 from Utils.Other import *
 # global vars>>>
 # CONST SYS
-GUI_Ver = '0.8.9.3'
+GUI_Ver = '0.8.9.4 (GUI-Beta)'
 Model_dir = 'Data/PAI_model'  # without file extention
 Database_dir = 'Data/dataset.npy'
 IMG_AF = ('JPEG', 'PNG', 'BMP', 'TIFF', 'JPG')
@@ -168,7 +169,7 @@ def CI_ulmd():
         ['yellow'])
 
 # CI_pwai
-def CI_pwai(Auto: bool = False):
+def CI_pwai(show_gradcam: bool = True) -> str:
     # global var import
     global model
     # check for input img
@@ -178,54 +179,40 @@ def CI_pwai(Auto: bool = False):
                 print_Color('loading the Ai model...', ['normal'])
                 model = load_model(Model_dir)
         except (ImportError, IOError):
-            print_Color('~*ERROR: ~*Failed to load the model. Try running `uaim` first.',
-                        ['red', 'yellow'], advanced_mode=True)
+            return 'ERROR: Failed to load the model.'
         else:
             print_Color('predicting with the Ai model...', ['normal'])
             model_prediction_ORG = model.predict(img_array)
             model_prediction = np.argmax(model_prediction_ORG, axis=1)
             pred_class = 'PNEUMONIA' if model_prediction == 1 else 'NORMAL'
-            class_color = 'red' if model_prediction == 1 else 'green'
             confidence = np.max(model_prediction_ORG)
-            print_Color(f'~*the Ai model prediction: ~*{pred_class}~* with confidence ~*{confidence:.2f}~*.',
-                        ['normal', class_color, 'normal', 'green', 'normal'], advanced_mode=True)
+            return_temp = f'the Ai model prediction: {pred_class} with confidence {confidence:.2f}.'
             if confidence < 0.82:
-                print_Color('~*WARNING: ~*the confidence is low.',
-                            ['red', 'yellow'], advanced_mode=True)
-            if model_prediction == 1:
-                if not Auto:
-                    print_Color('~*Do you want to see a Grad cam of the model? ~*[~*Y~*/~*n~*]: ',
-                            ['yellow', 'normal', 'green', 'normal', 'red', 'normal'],
-                            advanced_mode=True,
-                            print_END='')
-                    Grad_cam_use = input('')
-                else:
-                    Grad_cam_use = 'y'    
-                if Grad_cam_use.lower() == 'y':
-                    clahe = cv2.createCLAHE(GUIpLimit=1.8)
-                    Grad_cam_heatmap = make_gradcam_heatmap(img_array,
-                                                            model, 'top_activation',
-                                                            second_last_conv_layer_name = 'top_conv',
-                                                            sensitivity_map = 2, pred_index=tf.argmax(model_prediction_ORG[0])) 
-                    Grad_cam_heatmap = cv2.resize(np.GUIp(Grad_cam_heatmap, 0, 1), (img_array.shape[1], img_array.shape[2]))
-                    Grad_cam_heatmap = np.uint8(255 * Grad_cam_heatmap)
-                    Grad_cam_heatmap = cv2.applyColorMap(Grad_cam_heatmap, cv2.COLORMAP_VIRIDIS)
-                    Grad_cam_heatmap = np.GUIp(np.uint8((Grad_cam_heatmap * 0.3) + ((img_array * 255) * 0.7)), 0, 255)
-                    # Resize the heatmap for a larger display
-                    display_size = (600, 600)  # Change this to your desired display size
-                    Grad_cam_heatmap = cv2.resize(Grad_cam_heatmap[0], display_size)
-                    reference_image = np.uint8(cv2.resize(img_array[0] * 255, display_size))
-                    # Apply the CLAHE algorithm to the reference image
-                    reference_image_CLAHE = np.GUIp(clahe.apply(cv2.cvtColor(reference_image, cv2.COLOR_BGR2GRAY)), 0, 255)
-                    # Display the heatmap in a new window
-                    cv2.imshow('Grad-CAM Heatmap', Grad_cam_heatmap)
-                    cv2.imshow('Reference Original Image', reference_image)
-                    cv2.imshow('Reference Original Image (CLAHE)', reference_image_CLAHE)
-                    cv2.waitKey(0)  # Wait for any key to be pressed
-                    cv2.destroyAllWindows() # Close the window
+                return_temp +='WARNING: the confidence is low.'           
+            if model_prediction == 1 and show_gradcam:
+                clahe = cv2.createCLAHE(clipLimit=1.8)
+                Grad_cam_heatmap = make_gradcam_heatmap(img_array,
+                                                        model, 'top_activation',
+                                                        second_last_conv_layer_name = 'top_conv',
+                                                        sensitivity_map = 2, pred_index=tf.argmax(model_prediction_ORG[0])) 
+                Grad_cam_heatmap = cv2.resize(np.clip(Grad_cam_heatmap, 0, 1), (img_array.shape[1], img_array.shape[2]))
+                Grad_cam_heatmap = np.uint8(255 * Grad_cam_heatmap)
+                Grad_cam_heatmap = cv2.applyColorMap(Grad_cam_heatmap, cv2.COLORMAP_VIRIDIS)
+                Grad_cam_heatmap = np.clip(np.uint8((Grad_cam_heatmap * 0.3) + ((img_array * 255) * 0.7)), 0, 255)
+                # Resize the heatmap for a larger display
+                display_size = (600, 600)  # Change this to your desired display size
+                Grad_cam_heatmap = cv2.resize(Grad_cam_heatmap[0], display_size)
+                reference_image = np.uint8(cv2.resize(img_array[0] * 255, display_size))
+                # Apply the CLAHE algorithm to the reference image
+                reference_image_CLAHE = np.clip(clahe.apply(cv2.cvtColor(reference_image, cv2.COLOR_BGR2GRAY)), 0, 255)
+                # Display the heatmap in a new window
+                cv2.imshow('Grad-CAM Heatmap', Grad_cam_heatmap)
+                cv2.imshow('Reference Original Image', reference_image)
+                cv2.imshow('Reference Original Image (CLAHE)', reference_image_CLAHE)
+            return return_temp 
     else:
         print_Color('~*ERROR: ~*image data doesnt exist.',
-                    ['red', 'yellow'], advanced_mode=True)
+                    ['red', 'yellow'], advanced_mode=True, return_str=True)
 
 # CI_rlmw
 def CI_rlmw():
@@ -242,102 +229,62 @@ def CI_rlmw():
     print_Color('loading the Ai model done.', ['normal'])
 
 # CI_liid
-def CI_liid(Auto: bool = False):
+def CI_liid(img_dir) -> str:
     # global var import
     global img_array
-    global label
-    replace_img = 'y'
     # check for img
-    if img_array is not None and not Auto:
-        # Ask the user if they want to replace the image
-        print_Color('~*Warning: An image is already loaded. Do you want to replace it? ~*[~*Y~*/~*n~*]: ',
-                    ['yellow', 'normal', 'green', 'normal', 'red', 'normal'],
-                    advanced_mode=True,
-                    print_END='')
-        replace_img = input('')
-        # If the user answers 'n' or 'N', return the existing img_array
-    if replace_img.lower() == 'y':
-        if not Auto:
-            print_Color('img dir. Enter \'G\' for using GUI: ',
-                        ['yellow'], print_END='')
-            img_dir = input().strip('"')
-            if img_dir.lower() == 'g':
-                img_dir = open_file_GUI()
-        else:
-            img_dir = open_file_GUI()
-        logger.debug(f'CI_liid:img_dir {img_dir}')
-        # Extract file extension from img_dir
+    logger.debug(f'CI_liid:img_dir {img_dir}')
+    # Extract file extension from img_dir
+    try:
+        _, file_extension = os.path.splitext(img_dir)
+    except TypeError:
+        file_extension = 'TEMP FILE EXTENSION'
+    if file_extension.upper()[1:] not in IMG_AF:
+        logger.warning('CI_liid>>ERROR: Invalid file format. Please provide an image file.')
+        return 'ERROR: Invalid file format. Please provide an image file.'    
+    else:
         try:
-            _, file_extension = os.path.splitext(img_dir)
-        except TypeError:
-            file_extension = 'TEMP FILE EXTENSION'
-        if file_extension.upper()[1:] not in IMG_AF:
-            print_Color('~*ERROR: ~*Invalid file format. Please provide an image file.', ['red', 'yellow'],
-                        advanced_mode=True)
-            logger.warning('CI_liid>>ERROR: Invalid file format. Please provide an image file.')
+            # Load and resize the image
+            img = Image.open(img_dir).resize((IMG_RES[1], IMG_RES[0]))
+        except Exception:
+            logger.warning('CI_liid>>ERROR: Invalid file dir. Please provide an image file.')
+            return 'ERROR: Invalid file dir. Please provide an image file.'
         else:
-            try:
-                # Load and resize the image
-                img = Image.open(img_dir).resize((IMG_RES[1], IMG_RES[0]))
-            except Exception:
-                print_Color('~*ERROR: ~*Invalid file dir. Please provide an image file.', ['red', 'yellow'],
-                            advanced_mode=True)
-                logger.warning('CI_liid>>ERROR: Invalid file dir. Please provide an image file.')
-            else:
-                # Check for RGB mode
-                if img.mode != 'RGB':
-                    img = img.convert('RGB')
-                # Convert to numpy array
-                img_array = np.asarray(img)
+            # Check for RGB mode
+            if img.mode != 'RGB':
+                img = img.convert('RGB')
+            # Convert to numpy array
+            img_array = np.asarray(img)
 
-                # Normalize pixel values to [0, 1]
-                img_array = img_array / 255.0
+            # Normalize pixel values to [0, 1]
+            img_array = img_array / 255.0
 
-                # Add a dimension to transform from (height, width, channels) to (batch_size, height, width, channels)
-                img_array = np.expand_dims(img_array, axis=0)
+            # Add a dimension to transform from (height, width, channels) to (batch_size, height, width, channels)
+            img_array = np.expand_dims(img_array, axis=0)
+            
+            return 'Image loaded.'
 
-                # Assign labels to the image
-                if not Auto:
-                    print_Color('~*Enter label ~*(0 for Normal, 1 for Pneumonia, 2 Unknown): ', [
-                                'yellow', 'normal'], print_END='', advanced_mode=True)
-                    try:
-                        label = int(input(''))
-                    except ValueError:
-                        print_Color('~*ERROR: ~*Invalid input.',
-                                    ['red', 'yellow'], advanced_mode=True)
-                        logger.warning('CI_liid>>ERROR: Invalid input label.')
-                    else:
-                        logger.debug(f'CI_liid:(INPUT) label {label}')
-                        if label in [0, 1]:
-                            # Convert label to categorical format
-                            label = to_categorical(int(label), num_classes=2)
-                            print_Color('The label is saved.', ['green'])
-                        else:
-                            label = None
-                        print_Color('The image is loaded.', ['green'])
-
-# CI_csaa
-def CI_csaa():
-    print_Color(CSAA, ['yellow', 'green'], advanced_mode=True)
-    
 # CI_uaim
-def CI_uaim():
-    print_Color('~*Do you want to download the light model? ~*[~*Y~*/~*n~*]: ',
-            ['yellow', 'normal', 'green', 'normal', 'red', 'normal'],
-            advanced_mode=True,
-            print_END='')
-    download_light_model = input('')
-    if download_light_model.lower() == 'y':
+def CI_uaim(download_light_model: bool = False):
+    if download_light_model:
         Github_repo_Releases_Model_name_temp = Github_repo_Releases_Model_light_name
+        return_temp = 'Downloading the light model...\n'
+        GUI_window['-OUTPUT_ST-'].update(return_temp, text_color='yellow')
+        GUI_window.finalize()
     else:
         Github_repo_Releases_Model_name_temp = Github_repo_Releases_Model_name
+        return_temp = 'Downloading the model...\n'
+        GUI_window['-OUTPUT_ST-'].update(return_temp, text_color='yellow')
+        GUI_window.finalize()
     try:
         download_file_from_github(Github_repo_Releases_URL,
                                 Github_repo_Releases_Model_name_temp,
                                 Model_dir,
                                 1024)
+        CI_rlmw()
     except Exception:
-        print_Color('\n~*ERROR: ~*Failed to download the model.', ['red', 'yellow'], advanced_mode=True)
+        return return_temp + 'ERROR: Failed to download the model.'
+    return return_temp + 'Model downloaded.'
 
 # funcs(INTERNAL)>>>
 # IEH
@@ -360,20 +307,73 @@ def IEH(id: str = 'Unknown', stop: bool = True, DEV: bool = True):
 
 # main
 def main():
+    # global
+    global GUI_window
     # Text print
     print_Color(
         GUI_text_logo,
         ['yellow', 'green'],
         advanced_mode=True
     )
+    # prep var
+    IMG_dir = None
     # Making the GUI layout
     GUI_layout = [
-        
+        [sg.Text('Enter the image dir:')],
+        [
+            sg.Input(key='-INPUT_IMG_dir-'),
+            sg.Button('Browse', key='-BUTTON_BROWSE_IMG_dir-'),
+            sg.Button('Ok', key='-BUTTON_OK_IMG_dir-')
+        ],
+        [sg.Text('Log:')],
+        [sg.Text(key='-OUTPUT_ST-', size=(48, 4))],
+        [sg.Text('Result:')],
+        [sg.Text(key='-OUTPUT_ST_R-', size=(48, 2))],
+        [
+            sg.Checkbox('Show Grad-CAM', key='-CHECKBOX_SHOW_Grad-CAM-', default=True),
+            sg.Checkbox('Download Light Model', key='-CHECKBOX_DOWNLOAD_LIGHT_MODEL-', default=False)
+        ],
+        [
+            sg.Button('Update/Download Model', key='-BUTTON_UPDATE_MODEL-'),
+            sg.Button('Analyse'),
+            sg.Button('Close')
+        ]
     ]
+    # Create the window
+    GUI_window = sg.Window('Pneumonia-Detection-Ai-GUI', GUI_layout)
     # GUI loop
     while True:
-        
-
+        event, values = GUI_window.read()
+        # Check for closing window
+        if event == sg.WINDOW_CLOSED or event == 'Close':
+            break
+        # Input GUI dir
+        if event == '-BUTTON_BROWSE_IMG_dir-':
+            IMG_dir = open_file_GUI()
+            GUI_window['-INPUT_IMG_dir-'].update(IMG_dir)
+        if event == '-BUTTON_OK_IMG_dir-':
+            IMG_dir = GUI_window['-INPUT_IMG_dir-'].get()
+            GUI_window['-INPUT_IMG_dir-'].update(IMG_dir)
+        # Analyse image
+        if event == 'Analyse':
+            Log_temp_txt = CI_liid(IMG_dir)
+            GUI_window['-OUTPUT_ST-'].update(Log_temp_txt, text_color='yellow')
+            GUI_window.finalize()
+            if Log_temp_txt == 'Image loaded.':
+                Log_temp_txt += '\nAnalyzing...\n'
+                GUI_window['-OUTPUT_ST-'].update(Log_temp_txt)
+                GUI_window.finalize()
+                Log_temp_txt2 = CI_pwai(show_gradcam=values['-CHECKBOX_SHOW_Grad-CAM-'])
+                GUI_window['-OUTPUT_ST_R-'].update(Log_temp_txt2,
+                                                   text_color='red' if Log_temp_txt2.__contains__('PNEUMONIA') else 'green',
+                                                   background_color='white'
+                                                   )
+                GUI_window.finalize()
+        if event == '-BUTTON_UPDATE_MODEL-':
+            Log_temp_txt = CI_uaim(download_light_model=values['-CHECKBOX_DOWNLOAD_LIGHT_MODEL-'])
+            GUI_window['-OUTPUT_ST-'].update(Log_temp_txt, text_color='yellow')
+            GUI_window.finalize()
+            
 # start>>>
 # clear the 'start L1' prompt
 print('                  ', end='\r')
@@ -381,7 +381,7 @@ print('                  ', end='\r')
 if SHOW_CSAA_OS:
     print_Color(CSAA, ['yellow', 'green'], advanced_mode=True)
 # Start INFO
-VER = f'V{GUI_Ver}' + datetime.now().strftime(" CDT(%Y/%m/%d | %H:%M:%S)")
+VER = f'V{GUI_Ver}' + datetime.now().strftime(" | CDT(%Y/%m/%d | %H:%M:%S)")
 gpus = tf.config.list_physical_devices('GPU')
 if gpus:
     TF_MODE = 'GPU'

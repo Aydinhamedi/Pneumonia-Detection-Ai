@@ -73,13 +73,7 @@ timeout /t 1 >nul
 cls
 "%python_path%" "Data\GUI_main.py"
 
-REM Prompt to restart or quit the GUI
-set /p restart="Do you want to restart the GUI or quit the GUI (y/n)? "
-if /i "%restart%"=="y" (
-    goto :restart
-) else (
-    goto :EOF
-)
+goto :EOF
 
 REM errorNoPython
 :errorNoPython
