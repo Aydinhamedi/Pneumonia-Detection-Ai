@@ -28,7 +28,7 @@ Interface\GUI
 ### Example Image of the CLI (V0.8.9.3) ⤵
 ![Example](doc/Other/CLI_V0.8.9.3.png)  
 ### Example Image of the GUI (V0.8.9.4 (GUI-Beta)) ⤵
-![Example](doc/Other/GUI_V0.8.9.4.png)  
+![Example](doc/Other/GUI_V0.8.9.6.png)  
 ## Release
 > ### Newest release 📃
 > #### [Go to newest release](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/releases/latest)
