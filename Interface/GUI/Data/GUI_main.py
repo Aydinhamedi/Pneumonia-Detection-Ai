@@ -370,9 +370,10 @@ def main():
     # Main loop for the Graphical User Interface (GUI)
     while True:
         # Read events and values from the GUI window
-        event, values = GUI_window.read(timeout=2)
-        logger.debug(f'GUI_window:event {event}')
-        logger.debug(f'GUI_window:values {values}')
+        event, values = GUI_window.read(timeout=250, timeout_key='-TIMEOUT-')
+        if not event == '-TIMEOUT-':
+            logger.debug(f'GUI_window:event: {event}')
+            logger.debug(f'GUI_window:values: {values}')
         
         # Check if the window has been closed or the 'Close' button has been clicked
         if event == sg.WINDOW_CLOSED or event == 'Close':
@@ -424,12 +425,13 @@ def main():
             result_expanded = ''
             result = Queue_ins.get()
             print(f'Queue Data: {result}')
-            logger.debug(f'Queue:get {result}')
+            logger.debug(f'Queue:get: {result}')
             # Update the GUI with the result message
             for block in result:
                 result_expanded += f'> {block}\n'
             GUI_window['-OUTPUT_ST-'].update(result_expanded, text_color='yellow')
             GUI_window.finalize()
+
 # start>>>
 # clear the 'start L1' prompt
 print('                  ', end='\r')
