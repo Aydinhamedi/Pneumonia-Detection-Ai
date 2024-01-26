@@ -11,11 +11,13 @@ import re
 from time import sleep
 import cv2
 import sys
+import queue
 import cpuinfo
 import difflib
 import inspect
 import traceback
 import subprocess
+import threading
 import requests
 from tqdm import tqdm
 import PySimpleGUI as sg  
@@ -39,7 +41,7 @@ from Utils.print_color_V1_OLD import print_Color
 from Utils.Other import *
 # global vars>>>
 # CONST SYS
-GUI_Ver = '0.8.9.4 (GUI-Beta)'
+GUI_Ver = '0.8.9.5 (GUI)'
 Model_dir = 'Data/PAI_model'  # without file extention
 Database_dir = 'Data/dataset.npy'
 IMG_AF = ('JPEG', 'PNG', 'BMP', 'TIFF', 'JPG')
@@ -55,6 +57,33 @@ img_array = None
 label = None
 model = None
 # Other
+class CustomQueue:
+    # Custom queue class with size limit 
+    #
+    # Initializes a Queue instance with a max size. Provides put(), get(), 
+    # and is_updated() methods to add items, retrieve items, and check if 
+    # updated since last get() call.
+    def __init__(self, max_items=4):
+        self.q = queue.Queue()
+        self.max_items = max_items
+        self.is_updated = False
+
+    def put(self, item):
+        if self.q.qsize() == self.max_items:
+            self.q.get()
+        self.q.put(item)
+        self.is_updated = True
+
+    def get(self, reset_updated=True):
+        items = list(self.q.queue)
+        if reset_updated:
+            self.is_updated = False
+        return items
+
+    def is_updated(self):
+        return self.is_updated
+
+Queue_ins = CustomQueue()
 logger.remove()
 logger.add('Data\\logs\\SYS_LOG_{time}.log',
            backtrace=True, diagnose=True, compression='zip')
@@ -267,25 +296,22 @@ def CI_liid(img_dir) -> str:
 # CI_uaim
 def CI_uaim(download_light_model: bool = False):
     if download_light_model:
+        Log_temp_txt = 'Downloading the model...\n'
         Github_repo_Releases_Model_name_temp = Github_repo_Releases_Model_light_name
-        return_temp = 'Downloading the light model...\n'
-        GUI_window['-OUTPUT_ST-'].update(return_temp, text_color='yellow')
-        GUI_window.finalize()
     else:
+        Log_temp_txt = 'Downloading the light model...\n'
         Github_repo_Releases_Model_name_temp = Github_repo_Releases_Model_name
-        return_temp = 'Downloading the model...\n'
-        GUI_window['-OUTPUT_ST-'].update(return_temp, text_color='yellow')
-        GUI_window.finalize()
+    Queue_ins.put(Log_temp_txt)
     try:
         download_file_from_github(Github_repo_Releases_URL,
                                 Github_repo_Releases_Model_name_temp,
                                 Model_dir,
                                 1024)
         CI_rlmw()
+        print('Model downloaded.')
     except Exception:
-        return return_temp + 'ERROR: Failed to download the model.'
-    return return_temp + 'Model downloaded.'
-
+        Queue_ins.put('ERROR: Failed to download the model.')
+    Queue_ins.put('Model downloaded.')
 # funcs(INTERNAL)>>>
 # IEH
 def IEH(id: str = 'Unknown', stop: bool = True, DEV: bool = True):
@@ -341,39 +367,69 @@ def main():
     ]
     # Create the window
     GUI_window = sg.Window('Pneumonia-Detection-Ai-GUI', GUI_layout)
-    # GUI loop
+    # Main loop for the Graphical User Interface (GUI)
     while True:
-        event, values = GUI_window.read()
-        # Check for closing window
+        # Read events and values from the GUI window
+        event, values = GUI_window.read(timeout=2)
+        logger.debug(f'GUI_window:event {event}')
+        logger.debug(f'GUI_window:values {values}')
+        
+        # Check if the window has been closed or the 'Close' button has been clicked
         if event == sg.WINDOW_CLOSED or event == 'Close':
-            break
-        # Input GUI dir
+            break  # Exit the loop and close the window
+
+        # Handle event for browsing and selecting an image directory
         if event == '-BUTTON_BROWSE_IMG_dir-':
+            # Open file dialog to select an image, and update the input field with the selected directory
             IMG_dir = open_file_GUI()
             GUI_window['-INPUT_IMG_dir-'].update(IMG_dir)
+
+        # Handle event for confirming the selected image directory
         if event == '-BUTTON_OK_IMG_dir-':
+            # Retrieve the image directory from the input field and update the display
             IMG_dir = GUI_window['-INPUT_IMG_dir-'].get()
             GUI_window['-INPUT_IMG_dir-'].update(IMG_dir)
-        # Analyse image
+
+        # Handle event for analyzing the selected image
         if event == 'Analyse':
+            # Call the function to load the image and update the output status
             Log_temp_txt = CI_liid(IMG_dir)
-            GUI_window['-OUTPUT_ST-'].update(Log_temp_txt, text_color='yellow')
-            GUI_window.finalize()
+            Queue_ins.put(Log_temp_txt)
+
+            # If the image is successfully loaded, proceed with analysis
             if Log_temp_txt == 'Image loaded.':
-                Log_temp_txt += '\nAnalyzing...\n'
-                GUI_window['-OUTPUT_ST-'].update(Log_temp_txt)
-                GUI_window.finalize()
+                Queue_ins.put('Analyzing...')
+
+                # Call the function to perform pneumonia analysis and display the results
                 Log_temp_txt2 = CI_pwai(show_gradcam=values['-CHECKBOX_SHOW_Grad-CAM-'])
-                GUI_window['-OUTPUT_ST_R-'].update(Log_temp_txt2,
-                                                   text_color='red' if Log_temp_txt2.__contains__('PNEUMONIA') else 'green',
-                                                   background_color='white'
-                                                   )
+                GUI_window['-OUTPUT_ST_R-'].update(
+                    Log_temp_txt2,
+                    text_color='green' if 'NORMAL' in Log_temp_txt2 else 'red',
+                    background_color='white'
+                )
                 GUI_window.finalize()
+
+        # Handle event for updating the AI model
         if event == '-BUTTON_UPDATE_MODEL-':
-            Log_temp_txt = CI_uaim(download_light_model=values['-CHECKBOX_DOWNLOAD_LIGHT_MODEL-'])
-            GUI_window['-OUTPUT_ST-'].update(Log_temp_txt, text_color='yellow')
+            # Start a new thread to download the model without freezing the GUI
+            threading.Thread(
+                target=CI_uaim,
+                args=(values['-CHECKBOX_DOWNLOAD_LIGHT_MODEL-'],),
+                daemon=True
+            ).start()
+
+        # Continuously check if there are results in the queue to be processed
+        if Queue_ins.is_updated:
+            # Retrieve the result from the queue
+            result_expanded = ''
+            result = Queue_ins.get()
+            print(f'Queue Data: {result}')
+            logger.debug(f'Queue:get {result}')
+            # Update the GUI with the result message
+            for block in result:
+                result_expanded += f'> {block}\n'
+            GUI_window['-OUTPUT_ST-'].update(result_expanded, text_color='yellow')
             GUI_window.finalize()
-            
 # start>>>
 # clear the 'start L1' prompt
 print('                  ', end='\r')
