@@ -11,11 +11,13 @@ import re
 from time import sleep
 import cv2
 import sys
+import queue
 import cpuinfo
 import difflib
 import inspect
 import traceback
 import subprocess
+import threading
 import requests
 from tqdm import tqdm
 import PySimpleGUI as sg  
@@ -55,6 +57,7 @@ img_array = None
 label = None
 model = None
 # Other
+q = queue.Queue()
 logger.remove()
 logger.add('Data\\logs\\SYS_LOG_{time}.log',
            backtrace=True, diagnose=True, compression='zip')
@@ -268,14 +271,8 @@ def CI_liid(img_dir) -> str:
 def CI_uaim(download_light_model: bool = False):
     if download_light_model:
         Github_repo_Releases_Model_name_temp = Github_repo_Releases_Model_light_name
-        return_temp = 'Downloading the light model...\n'
-        GUI_window['-OUTPUT_ST-'].update(return_temp, text_color='yellow')
-        GUI_window.finalize()
     else:
         Github_repo_Releases_Model_name_temp = Github_repo_Releases_Model_name
-        return_temp = 'Downloading the model...\n'
-        GUI_window['-OUTPUT_ST-'].update(return_temp, text_color='yellow')
-        GUI_window.finalize()
     try:
         download_file_from_github(Github_repo_Releases_URL,
                                 Github_repo_Releases_Model_name_temp,
@@ -286,6 +283,9 @@ def CI_uaim(download_light_model: bool = False):
         return return_temp + 'ERROR: Failed to download the model.'
     return return_temp + 'Model downloaded.'
 
+def CI_uaim_wrapper(download_light_model, q):
+    result = CI_uaim(download_light_model)
+    q.put(result)
 # funcs(INTERNAL)>>>
 # IEH
 def IEH(id: str = 'Unknown', stop: bool = True, DEV: bool = True):
@@ -370,9 +370,19 @@ def main():
                                                    )
                 GUI_window.finalize()
         if event == '-BUTTON_UPDATE_MODEL-':
-            Log_temp_txt = CI_uaim(download_light_model=values['-CHECKBOX_DOWNLOAD_LIGHT_MODEL-'])
+            if values['-CHECKBOX_DOWNLOAD_LIGHT_MODEL-']:
+                Log_temp_txt = 'Downloading the light model...\n'
+            else:
+                Log_temp_txt = 'Downloading the model...\n'
             GUI_window['-OUTPUT_ST-'].update(Log_temp_txt, text_color='yellow')
             GUI_window.finalize()
+            threading.Thread(target=CI_uaim_wrapper, args=(values['-CHECKBOX_DOWNLOAD_LIGHT_MODEL-'], q), daemon=True).start()
+            # Check if there is a result in the queue
+            while not q.empty():
+                result = q.get()
+                # Update the GUI with the result
+                GUI_window['-OUTPUT_ST-'].update(result, text_color='yellow')
+                GUI_window.finalize()
             
 # start>>>
 # clear the 'start L1' prompt
