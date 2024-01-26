@@ -21,6 +21,10 @@ The project includes a Command Line Interface (CLI) for easy use of the model. T
 ```
 Interface\CLI
 ```
+Additionally, a Graphical User Interface (GUI) is available, but it’s still in the Beta phase. you can fined the GUI in
+```
+Interface\GUI
+```
 ### Example Image of the CLI (V0.8.9.3) ⤵
 ![Example](doc/Other/CLI_V0.8.9.3.png)  
 ### Example Image of the GUI (V0.8.9.4 (GUI-Beta)) ⤵
