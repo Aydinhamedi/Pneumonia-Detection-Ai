@@ -41,7 +41,7 @@ from Utils.print_color_V1_OLD import print_Color
 from Utils.Other import *
 # global vars>>>
 # CONST SYS
-GUI_Ver = '0.8.9.4 (GUI-Beta)'
+GUI_Ver = '0.8.9.5 (GUI)'
 Model_dir = 'Data/PAI_model'  # without file extention
 Database_dir = 'Data/dataset.npy'
 IMG_AF = ('JPEG', 'PNG', 'BMP', 'TIFF', 'JPG')
@@ -58,6 +58,11 @@ label = None
 model = None
 # Other
 class CustomQueue:
+    # Custom queue class with size limit 
+    #
+    # Initializes a Queue instance with a max size. Provides put(), get(), 
+    # and is_updated() methods to add items, retrieve items, and check if 
+    # updated since last get() call.
     def __init__(self, max_items=4):
         self.q = queue.Queue()
         self.max_items = max_items
