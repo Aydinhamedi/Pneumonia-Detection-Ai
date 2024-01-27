@@ -44,7 +44,7 @@ from Utils.print_color_V1_OLD import print_Color
 from Utils.Other import *
 # global vars>>>
 # CONST SYS
-GUI_Ver = '0.8.9.6'
+GUI_Ver = '0.8.9.7'
 Model_dir = 'Data/PAI_model'  # without file extention
 Database_dir = 'Data/dataset.npy'
 IMG_AF = ('JPEG', 'PNG', 'BMP', 'TIFF', 'JPG')
@@ -87,7 +87,7 @@ class CustomQueue:
     def is_updated(self):
         return self.is_updated
 
-Queue_ins = CustomQueue()
+Queue_ins = CustomQueue(max_items=256)
 logger.remove()
 logger.add('Data\\logs\\SYS_LOG_{time}.log',
            backtrace=True, diagnose=True, compression='zip')
