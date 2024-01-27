@@ -14,6 +14,7 @@ import sys
 import json
 import queue
 import hashlib
+import pydicom
 import cpuinfo
 import difflib
 import inspect
@@ -42,12 +43,14 @@ from Utils.Grad_cam import make_gradcam_heatmap
 from Utils.print_color_V2_NEW import print_Color_V2
 from Utils.print_color_V1_OLD import print_Color
 from Utils.Other import *
+# GUI
+from GUI_layout import *
 # global vars>>>
 # CONST SYS
 GUI_Ver = '0.8.9.7'
 Model_dir = 'Data/PAI_model'  # without file extention
 Database_dir = 'Data/dataset.npy'
-IMG_AF = ('JPEG', 'PNG', 'BMP', 'TIFF', 'JPG')
+IMG_AF = ('JPEG', 'PNG', 'BMP', 'TIFF', 'JPG', 'DCM', 'DICOM')
 Github_repo_Releases_Model_name = 'PAI_model_T.h5'
 Github_repo_Releases_Model_light_name = 'PAI_model_light_T.h5'
 Github_repo_Releases_Model_info_name = 'model_info.json'
@@ -87,7 +90,7 @@ class CustomQueue:
     def is_updated(self):
         return self.is_updated
 
-Queue_ins = CustomQueue(max_items=256)
+Queue_ins = CustomQueue(max_items=128)
 logger.remove()
 logger.add('Data\\logs\\SYS_LOG_{time}.log',
            backtrace=True, diagnose=True, compression='zip')
@@ -248,12 +251,14 @@ def download_file_from_github(url: str, file_name: str, save_as: str, chunk_size
 
         if file_size != 0 and progress_bar.n != file_size:
             print_Color('~*ERROR: ~*Something went wrong while downloading the file.', ['red', 'yellow'], advanced_mode=True)
+            Queue_ins.put('ERROR: Something went wrong while downloading the file.')
             logger.warning('download_file_from_github>>ERROR: Something went wrong while downloading the file.')
         else:
             print(f"File '{save_as}' downloaded successfully.")
             logger.debug(f"download_file_from_github>>Debug: File '{save_as}' downloaded successfully.")
     else:
         print_Color('~*ERROR: ~*Something went wrong while finding the file.', ['red', 'yellow'], advanced_mode=True)
+        Queue_ins.put('ERROR: Something went wrong while finding the file.')
         logger.warning('download_file_from_github>>ERROR: Something went wrong while finding the file.')
 
 # CF>>>
@@ -324,7 +329,7 @@ def CI_rlmw():
     Queue_ins.put('loading the Ai model done.')
 
 # CI_liid
-def CI_liid(img_dir) -> str:
+def CI_liid(img_dir, Show_DICOM_INFO: bool = True) -> str:
     # global var import
     global img_array
     # check for img
@@ -340,8 +345,20 @@ def CI_liid(img_dir) -> str:
     else:
         try:
             # Load and resize the image
-            img = Image.open(img_dir).resize((IMG_RES[1], IMG_RES[0]))
-        except Exception:
+            if file_extension.upper()[1:] in ['DICOM', 'DCM']:
+                ds = pydicom.dcmread(img_dir)
+                img = Image.fromarray(ds.pixel_array).resize(IMG_RES[:2])
+                if Show_DICOM_INFO:
+                    GUI_layout_DICOM_Info_Window_copy = C_GUI_layout_DICOM_Info_Window()
+                    GUI_window = sg.Window('DICOM Info', GUI_layout_DICOM_Info_Window_copy)
+                    GUI_window.read(timeout=1, timeout_key='-TIMEOUT-')
+                    # Write DICOM info to the window
+                    for element in ds:
+                        if element.name != "Pixel Data":
+                            GUI_window['-OUTPUT_DICOM_Info-'].print(f"Tag: {element.tag} VR: {element.VR} Name: {element.name} Value: {element.value}")
+            else:
+                img = Image.open(img_dir).resize(IMG_RES)
+        except NameError:
             logger.warning('CI_liid>>ERROR: Invalid file dir. Please provide an image file.')
             return 'ERROR: Invalid file dir. Please provide an image file.'
         else:
@@ -426,7 +443,19 @@ def IEH(id: str = 'Unknown', stop: bool = True, DEV: bool = True):
     if stop:
         logger.warning('SYS EXIT|ERROR: Internal|by Internal Error Handler')
         sys.exit('SYS EXIT|ERROR: Internal|by Internal Error Handler')
-
+# UWL
+def UWL(Only_finalize: bool = False):
+    if Queue_ins.is_updated and not Only_finalize:
+        # Retrieve the result from the queue
+        result_expanded = ''
+        result = Queue_ins.get()
+        print(f'Queue Data: {result}')
+        logger.debug(f'Queue:get: {result}')
+        # Update the GUI with the result message
+        for block in result:
+            result_expanded += f'> {block}\n'
+        GUI_window['-OUTPUT_ST-'].update(result_expanded, text_color='black')
+    GUI_window.finalize()
 # main
 def main():
     # global
@@ -442,42 +471,6 @@ def main():
     Update_model_info_LXT = None
     # prep GUI
     sg.theme('GrayGrayGray') 
-    # Making the GUI layout >>>
-    # Main
-    GUI_layout_Tab_main = [
-        [sg.Text('Enter the image dir:', font=(None, 10, "bold"))],
-        [
-            sg.Input(key='-INPUT_IMG_dir-'),
-            sg.Button('Browse', key='-BUTTON_BROWSE_IMG_dir-'),
-            sg.Button('Ok', key='-BUTTON_OK_IMG_dir-')
-        ],
-        [sg.Text('Log:', font=(None, 10, "bold"))],
-        [sg.Multiline(key='-OUTPUT_ST-', size=(54, 6))],
-        [sg.Text('Result:', font=(None, 10, "bold"))],
-        [sg.Text(key='-OUTPUT_ST_R-', size=(50, 2), background_color='white')],
-        [
-            sg.Checkbox('Show Grad-CAM', key='-CHECKBOX_SHOW_Grad-CAM-', default=True)
-        ],
-        [
-            sg.Button('Analyse'),
-            sg.Button('Close')
-        ]
-    ]
-    # Other
-    GUI_layout_Tab_other = [
-        [sg.Text('Ai Model Settings:', font=(None, 10, "bold"))],
-        [
-            sg.Button('Update/Download Model', key='-BUTTON_UPDATE_MODEL-'),
-            sg.Button('Reload Model', key='-BUTTON_RELOAD_MODEL-')
-        ],
-        [
-            sg.Checkbox('Download Light Model', key='-CHECKBOX_DOWNLOAD_LIGHT_MODEL-', default=False)
-        ],
-        [sg.Text('Ai Model Info:', font=(None, 10, "bold"))],
-        [
-            sg.Text(key='-OUTPUT_Model_info-', size=(40, 7), pad=(4, 0))
-        ]
-    ]
     # Create the tabs
     GUI_tab_main = sg.Tab('Main', GUI_layout_Tab_main)
     GUI_tab_other = sg.Tab('Ai Model', GUI_layout_Tab_other)
@@ -525,21 +518,24 @@ def main():
         # Handle event for analyzing the selected image
         if event == 'Analyse':
             # Call the function to load the image and update the output status
-            Log_temp_txt = CI_liid(IMG_dir)
+            Log_temp_txt = CI_liid(IMG_dir, Show_DICOM_INFO=values['-CHECKBOX_SHOW_DICOM_INFO-'])
             Queue_ins.put(Log_temp_txt)
+            UWL()
 
             # If the image is successfully loaded, proceed with analysis
             if Log_temp_txt == 'Image loaded.':
                 Queue_ins.put('Analyzing...')
-
+                UWL()
                 # Call the function to perform pneumonia analysis and display the results
                 Log_temp_txt2 = CI_pwai(show_gradcam=values['-CHECKBOX_SHOW_Grad-CAM-'])
+                Queue_ins.put('Done Analyzing.')
+                UWL()
                 GUI_window['-OUTPUT_ST_R-'].update(
                     Log_temp_txt2,
                     text_color='green' if 'NORMAL' in Log_temp_txt2 else 'red',
                     background_color='white'
                 )
-                GUI_window.finalize()
+                UWL()
 
         # Handle event for updating the AI model
         if event == '-BUTTON_UPDATE_MODEL-':
@@ -554,7 +550,7 @@ def main():
         if Update_model_info_LXT is None or time.time() - Update_model_info_LXT > 6:
             Update_model_info_LXT = time.time()
             GUI_window['-OUTPUT_Model_info-'].update(CI_gmi(), text_color='black')
-            GUI_window.finalize()
+            UWL(Only_finalize=True)
         # Continuously check if there are results in the queue to be processed
         if Queue_ins.is_updated:
             # Retrieve the result from the queue
@@ -566,7 +562,7 @@ def main():
             for block in result:
                 result_expanded += f'> {block}\n'
             GUI_window['-OUTPUT_ST-'].update(result_expanded, text_color='black')
-            GUI_window.finalize()
+            UWL()
 
 # start>>>
 # clear the 'start L1' prompt
