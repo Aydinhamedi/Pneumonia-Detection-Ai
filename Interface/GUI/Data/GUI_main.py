@@ -14,6 +14,7 @@ import sys
 import json
 import queue
 import hashlib
+import pydicom
 import cpuinfo
 import difflib
 import inspect
@@ -44,10 +45,10 @@ from Utils.print_color_V1_OLD import print_Color
 from Utils.Other import *
 # global vars>>>
 # CONST SYS
-GUI_Ver = '0.8.9.6'
+GUI_Ver = '0.9.0.1'
 Model_dir = 'Data/PAI_model'  # without file extention
 Database_dir = 'Data/dataset.npy'
-IMG_AF = ('JPEG', 'PNG', 'BMP', 'TIFF', 'JPG')
+IMG_AF = ('JPEG', 'PNG', 'BMP', 'TIFF', 'JPG', 'DCM', 'DICOM')
 Github_repo_Releases_Model_name = 'PAI_model_T.h5'
 Github_repo_Releases_Model_light_name = 'PAI_model_light_T.h5'
 Github_repo_Releases_Model_info_name = 'model_info.json'
@@ -86,8 +87,10 @@ class CustomQueue:
 
     def is_updated(self):
         return self.is_updated
-
-Queue_ins = CustomQueue()
+# GUI_Queue
+GUI_Queue = {
+    '-Main_log-': CustomQueue(max_items=128)
+}
 logger.remove()
 logger.add('Data\\logs\\SYS_LOG_{time}.log',
            backtrace=True, diagnose=True, compression='zip')
@@ -96,6 +99,55 @@ tf.get_logger().setLevel('ERROR')
 physical_devices = tf.config.list_physical_devices('GPU')
 for gpu_instance in physical_devices:
     tf.config.experimental.set_memory_growth(gpu_instance, True)
+# Making the GUI layout >>>
+# prep GUI
+sg.theme('GrayGrayGray') 
+# Main
+GUI_layout_Tab_main = [
+    [sg.Text('Enter the image dir:', font=(None, 10, 'bold'))],
+    [
+        sg.Input(key='-INPUT_IMG_dir-'),
+        sg.Button('Browse', key='-BUTTON_BROWSE_IMG_dir-'),
+        sg.Button('Ok', key='-BUTTON_OK_IMG_dir-')
+    ],
+    [sg.Text('Log:', font=(None, 10, 'bold'))],
+    [sg.Multiline(key='-OUTPUT_ST-', size=(54, 6), autoscroll=True)],
+    [sg.Text('Result:', font=(None, 10, 'bold'))],
+    [sg.Text(key='-OUTPUT_ST_R-', size=(50, 2), background_color='white')],
+    [
+        sg.Checkbox('Show Grad-CAM', key='-CHECKBOX_SHOW_Grad-CAM-', default=True),
+        sg.Checkbox('Show DICOM Info', key='-CHECKBOX_SHOW_DICOM_INFO-', default=True)
+    ],
+    [
+        sg.Button('Analyse'),
+        sg.Button('Close')
+    ]
+]
+# Ai Model
+GUI_layout_Tab_Ai_Model = [
+    [sg.Text('Ai Model Settings:', font=(None, 10, 'bold'))],
+    [
+        sg.Button('Update/Download Model', key='-BUTTON_UPDATE_MODEL-'),
+        sg.Button('Reload Model', key='-BUTTON_RELOAD_MODEL-')
+    ],
+    [
+        sg.Checkbox('Download Light Model', key='-CHECKBOX_DOWNLOAD_LIGHT_MODEL-', default=False)
+    ],
+    [sg.Text('Ai Model Info:', font=(None, 10, 'bold'))],
+    [
+        sg.Text(key='-OUTPUT_Model_info-', size=(40, 7), pad=(4, 0))
+    ]
+]
+# DICOM Info
+def C_GUI_layout_DICOM_Info_Window() -> list:
+    """Returns the layout for the DICOM Info tab.
+    
+    This consists of a single Multiline element to display the DICOM metadata.
+    
+    Returns:
+        list: The layout as a list of rows.
+    """
+    return [[sg.Multiline(key='-OUTPUT_DICOM_Info-', size=(120, 40), font=(None, 11, 'normal'), autoscroll=True)]]
 # crator
 CSAA = '''
 ~*
@@ -129,22 +181,22 @@ GUI_text_logo = '''
 '''
 # HF>>>
 # calculate_file_hash
-def calculate_file_hash(file_path):
-    """Calculates a SHA256 hash for the contents of the given file.
+def calculate_file_hash(file_path) -> str:
+    '''Calculates a SHA256 hash for the contents of the given file.
     
     Args:
         file_path (str): The path to the file to hash.
     
     Returns:
         str: The hex string of the SHA256 hash.
-    """
+    '''
     with open(file_path, 'rb') as f:
         bytes = f.read()
         readable_hash = hashlib.sha256(bytes).hexdigest()
     return readable_hash
 # get_model_info
-def get_model_info(model_path):
-    """Gets information about a model file.
+def get_model_info(model_path) -> dict:
+    '''Gets information about a model file.
     
     Checks if the model file exists at the given path, calculates its hash, 
     and looks up version information in a JSON file if it exists.
@@ -154,7 +206,7 @@ def get_model_info(model_path):
     
     Returns:
         Dict with file hash, whether it exists, version, and model type.
-    """
+    '''
     
     # Check if the model exists
     model_exists = os.path.exists(model_path)
@@ -191,8 +243,8 @@ def get_model_info(model_path):
            'stored_type': 'Unknown'
         }
 # open_file_GUI
-def open_file_GUI():
-    """Opens a file selection dialog GUI to allow the user to select an image file.
+def open_file_GUI() -> str:
+    '''Opens a file selection dialog GUI to allow the user to select an image file.
 
     Builds a filetypes filter from the IMG_AF global variable, joins the extensions 
     together into a filter string, converts to lowercase. Opens the file dialog, 
@@ -200,24 +252,24 @@ def open_file_GUI():
 
     Returns:
         str: The path to the selected image file, or None if no file was chosen.
-    """
-    formats = ";*.".join(IMG_AF)
-    formats = "*." + formats.lower()
+    '''
+    formats = ';*.'.join(IMG_AF)
+    formats = '*.' + formats.lower()
     file_path = filedialog.askopenfilename(
-        filetypes=[("Image Files", formats)])
+        filetypes=[('Image Files', formats)])
     if file_path:
         return file_path
 
 # download_file_from_github
-def download_file_from_github(url: str, file_name: str, save_as: str, chunk_size: int):
-    """Downloads a file from a GitHub release API URL to a local path.
+def download_file_from_github(url: str, file_name: str, save_as: str, chunk_size: int) -> None:
+    '''Downloads a file from a GitHub release API URL to a local path.
 
     Args:
         url (str): The GitHub API URL for the release to download from.
         file_name (str): The name of the file to download from the release.
         save_as (str): The local path to save the downloaded file to.
         chunk_size (int): The chunk size to use when streaming the download.
-    """
+    '''
     response = requests.get(url)
     data = response.json()
     logger.debug(f'download_file_from_github:data(json) {data}')
@@ -248,23 +300,35 @@ def download_file_from_github(url: str, file_name: str, save_as: str, chunk_size
 
         if file_size != 0 and progress_bar.n != file_size:
             print_Color('~*ERROR: ~*Something went wrong while downloading the file.', ['red', 'yellow'], advanced_mode=True)
+            GUI_Queue['-Main_log-'].put('ERROR: Something went wrong while downloading the file.')
             logger.warning('download_file_from_github>>ERROR: Something went wrong while downloading the file.')
         else:
-            print(f"File '{save_as}' downloaded successfully.")
-            logger.debug(f"download_file_from_github>>Debug: File '{save_as}' downloaded successfully.")
+            print(f'File "{save_as}" downloaded successfully.')
+            logger.debug(f'download_file_from_github>>Debug: File "{save_as}" downloaded successfully.')
     else:
         print_Color('~*ERROR: ~*Something went wrong while finding the file.', ['red', 'yellow'], advanced_mode=True)
+        GUI_Queue['-Main_log-'].put('ERROR: Something went wrong while finding the file.')
         logger.warning('download_file_from_github>>ERROR: Something went wrong while finding the file.')
 
 # CF>>>
 # CI_ulmd
-def CI_ulmd():
+def CI_ulmd() -> None:
+    """Prints a warning that model data upload is currently unavailable."""
     print_Color(
         'Warning: upload model data set (currently not available!!!)',
         ['yellow'])
 
 # CI_pwai
 def CI_pwai(show_gradcam: bool = True) -> str:
+    """
+    CI_pwai predicts pneumonia from an input image using a pre-trained deep learning model.
+    
+    It loads the model if not already loaded, runs prediction, computes confidence score
+    and class name. Optionally displays GradCAM visualization heatmap.
+    
+    Returns:
+        str: Prediction result string with class name, confidence score and warnings. 
+    """
     # global var import
     global model
     # check for input img
@@ -310,21 +374,38 @@ def CI_pwai(show_gradcam: bool = True) -> str:
                     ['red', 'yellow'], advanced_mode=True, return_str=True)
 
 # CI_rlmw
-def CI_rlmw():
+def CI_rlmw() -> None:
+    """Loads the AI model on startup.
+    
+    Tries to load the model from the Model_dir path. If successful, logs a message to the GUI queue. If loading fails, logs an error.
+    """
     # global var import
     global model
     # main proc
     model = None
-    Queue_ins.put('loading the Ai model...')
+    GUI_Queue['-Main_log-'].put('loading the Ai model...')
     try:
         model = load_model(Model_dir)
     except (ImportError, IOError):
-        Queue_ins.put('ERROR: Failed to load the model.')
+        GUI_Queue['-Main_log-'].put('ERROR: Failed to load the model.')
         return None
-    Queue_ins.put('loading the Ai model done.')
+    GUI_Queue['-Main_log-'].put('loading the Ai model done.')
 
 # CI_liid
-def CI_liid(img_dir) -> str:
+def CI_liid(img_dir, Show_DICOM_INFO: bool = True) -> str:
+    """Loads an image from the given image file path into a numpy array for model prediction.
+    
+    Supports JPEG, PNG and DICOM image formats. Resizes images to the model input shape, normalizes pixel values, 
+    adds batch dimension, and provides optional DICOM metadata output.
+    
+    Args:
+        img_dir: File path of image to load.
+        Show_DICOM_INFO: Whether to output DICOM metadata to GUI window.
+    
+    Returns:
+        Status message string indicating if image was loaded successfully.
+    
+    """
     # global var import
     global img_array
     # check for img
@@ -340,8 +421,25 @@ def CI_liid(img_dir) -> str:
     else:
         try:
             # Load and resize the image
-            img = Image.open(img_dir).resize((IMG_RES[1], IMG_RES[0]))
-        except Exception:
+            if file_extension.upper()[1:] in ['DICOM', 'DCM']:
+                ds = pydicom.dcmread(img_dir)
+                img = Image.fromarray(ds.pixel_array).resize(IMG_RES[:2])
+                if Show_DICOM_INFO:
+                    GUI_layout_DICOM_Info_Window_layout = C_GUI_layout_DICOM_Info_Window()
+                    GUI_layout_DICOM_Info_Window = sg.Window('DICOM Info - File Metadata', GUI_layout_DICOM_Info_Window_layout, finalize=True)
+                    # Write DICOM info to the window 
+                    for element in ds:
+                        if element.name != 'Pixel Data':
+                            tag_info = f'[Tag: {element.tag} | VR: {element.VR}]'
+                            name_info = f'(Name: {element.name})'
+                            value_info = f'>Value: {element.value}'
+                            GUI_layout_DICOM_Info_Window['-OUTPUT_DICOM_Info-'].print(tag_info, text_color='blue', end='')
+                            GUI_layout_DICOM_Info_Window['-OUTPUT_DICOM_Info-'].print(name_info, text_color='green', end='')
+                            GUI_layout_DICOM_Info_Window['-OUTPUT_DICOM_Info-'].print(value_info, text_color='black', end='\n')
+                    GUI_layout_DICOM_Info_Window.finalize()
+            else:
+                img = Image.open(img_dir).resize((IMG_RES[1], IMG_RES[0]))
+        except NameError:
             logger.warning('CI_liid>>ERROR: Invalid file dir. Please provide an image file.')
             return 'ERROR: Invalid file dir. Please provide an image file.'
         else:
@@ -360,14 +458,19 @@ def CI_liid(img_dir) -> str:
             return 'Image loaded.'
 
 # CI_uaim
-def CI_uaim(download_light_model: bool = False):
+def CI_uaim(download_light_model: bool = False) -> None:
+    """Downloads the model from GitHub releases.
+    
+    Handles logging status messages to the GUI queue and any errors.
+    Supports downloading the full model or a smaller "light" model.
+    """
     if download_light_model:
         Log_temp_txt = 'Downloading the light model...\n'
         Github_repo_Releases_Model_name_temp = Github_repo_Releases_Model_light_name
     else:
         Log_temp_txt = 'Downloading the model...\n'
         Github_repo_Releases_Model_name_temp = Github_repo_Releases_Model_name
-    Queue_ins.put(Log_temp_txt)
+    GUI_Queue['-Main_log-'].put(Log_temp_txt)
     try:
         download_file_from_github(Github_repo_Releases_URL,
                                 Github_repo_Releases_Model_name_temp,
@@ -376,28 +479,33 @@ def CI_uaim(download_light_model: bool = False):
         CI_rlmw()
         print('Model downloaded.')
     except Exception:
-        Queue_ins.put('ERROR: Failed to download the model.')
-    Queue_ins.put('Model downloaded.')
+        GUI_Queue['-Main_log-'].put('ERROR: Failed to download the model.')
+    GUI_Queue['-Main_log-'].put('Model downloaded.')
 
 # CI_umij
-def CI_umij():
+def CI_umij() -> None:
+    """Downloads the model info JSON file from GitHub releases.
+    
+    Handles logging status messages to the GUI queue and any errors.
+    The model info file contains metadata about the model version.
+    """
     try:
         download_file_from_github(Github_repo_Releases_URL,
                                     Github_repo_Releases_Model_info_name,
                                     'Data\\model_info.json',
                                     256)
     except Exception:
-        Queue_ins.put('ERROR: Failed to download the model info.')
-    Queue_ins.put('Model info downloaded.')
+        GUI_Queue['-Main_log-'].put('ERROR: Failed to download the model info.')
+    GUI_Queue['-Main_log-'].put('Model info downloaded.')
 
 # CI_gmi
-def CI_gmi():
+def CI_gmi() -> str:
     if not os.path.isfile('Data\\model_info.json') or time.time() - os.path.getmtime('Data/model_info.json') > 4 * 60 * 60:
         CI_umij()
     model_info_dict = get_model_info(Model_dir)
     if model_info_dict['Ver'] != 'Unknown':
         Model_State = 'OK'
-    elif model_info_dict['Ver'] == 'Unknown' and model_info_dict["file_exists"]:
+    elif model_info_dict['Ver'] == 'Unknown' and model_info_dict['file_exists']:
         Model_State = 'Model is not a valid model. (hash not found!)'
     else:
         Model_State = 'Model file is missing.'
@@ -410,25 +518,47 @@ def CI_gmi():
 
 # funcs(INTERNAL)>>>
 # IEH
-def IEH(id: str = 'Unknown', stop: bool = True, DEV: bool = True):
+def IEH(id: str = 'Unknown', stop: bool = True, DEV: bool = True) -> None:
+    """Prints an error message, logs the exception, optionally shows the traceback, and optionally exits.
+    
+    This is an internal error handler to nicely handle unexpected errors and optionally exit gracefully.
+    """
     print_Color(f'~*ERROR: ~*Internal error info/id:\n~*{id}~*.', ['red', 'yellow', 'bg_red', 'yellow'],
                 advanced_mode=True)
     logger.exception(f'Internal Error Handler [stop:{stop}|DEV:{DEV}|id:{id}]')
     if DEV:
-        print_Color('~*Do you want to see the detailed error message? ~*[~*Y~*/~*n~*]: ',
-                    ['yellow', 'normal', 'green', 'normal', 'red', 'normal'],
-                    advanced_mode=True,
-                    print_END='')
-        show_detailed_error = input('')
-        if show_detailed_error.lower() == 'y':
-            print_Color('detailed error message:', ['yellow'])
-            traceback.print_exc()
+        sg.popup(f'An internal error occurred.\nERROR-INFO:\n\nErr-ID:\n{id}\n\nErr-Traceback:\n{traceback.format_exc()}',
+                 title='Internal Error (Auto Exit in 30 minutes)',
+                 custom_text=('Exit'),
+                 auto_close=True, auto_close_duration=1800)
+        print_Color('detailed error message:', ['yellow'])
+        traceback.print_exc()
     if stop:
         logger.warning('SYS EXIT|ERROR: Internal|by Internal Error Handler')
         sys.exit('SYS EXIT|ERROR: Internal|by Internal Error Handler')
+# UWL
+def UWL(Only_finalize: bool = False) -> None:
+    """Updates the GUI window.
 
+    This is an internal function to update the GUI window.
+    """
+    # Update the GUI window
+    GUI_window.read(timeout=0)
+    if GUI_Queue['-Main_log-'].is_updated and not Only_finalize:
+        # Retrieve the result from the queue
+        result_expanded = ''
+        result = GUI_Queue['-Main_log-'].get()
+        print(f'Queue Data: {result}')
+        logger.debug(f'Queue:get: {result}')
+        # Update the GUI with the result message
+        for block in result:
+            result_expanded += f'> {block}\n'
+        GUI_window['-OUTPUT_ST-'].update(result_expanded, text_color='black')
+    GUI_window.finalize()
 # main
-def main():
+def main() -> None:
+    """Main function for the GUI.
+    """
     # global
     global GUI_window
     # Text print
@@ -440,47 +570,9 @@ def main():
     # prep var
     IMG_dir = None
     Update_model_info_LXT = None
-    # prep GUI
-    sg.theme('GrayGrayGray') 
-    # Making the GUI layout >>>
-    # Main
-    GUI_layout_Tab_main = [
-        [sg.Text('Enter the image dir:', font=(None, 10, "bold"))],
-        [
-            sg.Input(key='-INPUT_IMG_dir-'),
-            sg.Button('Browse', key='-BUTTON_BROWSE_IMG_dir-'),
-            sg.Button('Ok', key='-BUTTON_OK_IMG_dir-')
-        ],
-        [sg.Text('Log:', font=(None, 10, "bold"))],
-        [sg.Multiline(key='-OUTPUT_ST-', size=(54, 6))],
-        [sg.Text('Result:', font=(None, 10, "bold"))],
-        [sg.Text(key='-OUTPUT_ST_R-', size=(50, 2), background_color='white')],
-        [
-            sg.Checkbox('Show Grad-CAM', key='-CHECKBOX_SHOW_Grad-CAM-', default=True)
-        ],
-        [
-            sg.Button('Analyse'),
-            sg.Button('Close')
-        ]
-    ]
-    # Other
-    GUI_layout_Tab_other = [
-        [sg.Text('Ai Model Settings:', font=(None, 10, "bold"))],
-        [
-            sg.Button('Update/Download Model', key='-BUTTON_UPDATE_MODEL-'),
-            sg.Button('Reload Model', key='-BUTTON_RELOAD_MODEL-')
-        ],
-        [
-            sg.Checkbox('Download Light Model', key='-CHECKBOX_DOWNLOAD_LIGHT_MODEL-', default=False)
-        ],
-        [sg.Text('Ai Model Info:', font=(None, 10, "bold"))],
-        [
-            sg.Text(key='-OUTPUT_Model_info-', size=(40, 7), pad=(4, 0))
-        ]
-    ]
     # Create the tabs
     GUI_tab_main = sg.Tab('Main', GUI_layout_Tab_main)
-    GUI_tab_other = sg.Tab('Ai Model', GUI_layout_Tab_other)
+    GUI_tab_other = sg.Tab('Ai Model', GUI_layout_Tab_Ai_Model)
     GUI_layout_group = [[sg.TabGroup([[GUI_tab_main, GUI_tab_other]])]]
     # Create the window
     GUI_window = sg.Window(f'Pneumonia-Detection-Ai-GUI V{GUI_Ver}', GUI_layout_group)
@@ -499,10 +591,10 @@ def main():
             # close GUI_window
             GUI_window.close()
             # try to stop the CI_uaim_Thread
-            try:
-                CI_uaim_Thread.stop()
-            except Exception:
-                pass
+            # try:
+            #     CI_uaim_Thread.()
+            # except Exception:
+            #     pass
             break  # Exit the loop and close the window
 
         # Handle event for updating the model
@@ -525,21 +617,25 @@ def main():
         # Handle event for analyzing the selected image
         if event == 'Analyse':
             # Call the function to load the image and update the output status
-            Log_temp_txt = CI_liid(IMG_dir)
-            Queue_ins.put(Log_temp_txt)
+            Log_temp_txt = CI_liid(IMG_dir, Show_DICOM_INFO=values['-CHECKBOX_SHOW_DICOM_INFO-'])
+            GUI_Queue['-Main_log-'].put(Log_temp_txt)
+            UWL()
 
             # If the image is successfully loaded, proceed with analysis
             if Log_temp_txt == 'Image loaded.':
-                Queue_ins.put('Analyzing...')
-
+                GUI_Queue['-Main_log-'].put('Analyzing...')
+                UWL()
                 # Call the function to perform pneumonia analysis and display the results
                 Log_temp_txt2 = CI_pwai(show_gradcam=values['-CHECKBOX_SHOW_Grad-CAM-'])
+                logger.info(f'CI_pwai: {Log_temp_txt2}')
+                GUI_Queue['-Main_log-'].put('Done Analyzing.')
+                UWL()
                 GUI_window['-OUTPUT_ST_R-'].update(
                     Log_temp_txt2,
                     text_color='green' if 'NORMAL' in Log_temp_txt2 else 'red',
                     background_color='white'
                 )
-                GUI_window.finalize()
+                UWL()
 
         # Handle event for updating the AI model
         if event == '-BUTTON_UPDATE_MODEL-':
@@ -554,19 +650,19 @@ def main():
         if Update_model_info_LXT is None or time.time() - Update_model_info_LXT > 6:
             Update_model_info_LXT = time.time()
             GUI_window['-OUTPUT_Model_info-'].update(CI_gmi(), text_color='black')
-            GUI_window.finalize()
-        # Continuously check if there are results in the queue to be processed
-        if Queue_ins.is_updated:
+            UWL(Only_finalize=True)
+        # Continuously check if there are results in the queue to be processed '-Main_log-'
+        if GUI_Queue['-Main_log-'].is_updated:
             # Retrieve the result from the queue
             result_expanded = ''
-            result = Queue_ins.get()
+            result = GUI_Queue['-Main_log-'].get()
             print(f'Queue Data: {result}')
-            logger.debug(f'Queue:get: {result}')
+            logger.debug(f'Queue[-Main_log-]:get: {result}')
             # Update the GUI with the result message
             for block in result:
                 result_expanded += f'> {block}\n'
             GUI_window['-OUTPUT_ST-'].update(result_expanded, text_color='black')
-            GUI_window.finalize()
+            UWL()
 
 # start>>>
 # clear the 'start L1' prompt
@@ -575,7 +671,7 @@ print('                  ', end='\r')
 if SHOW_CSAA_OS:
     print_Color(CSAA, ['yellow', 'green'], advanced_mode=True)
 # Start INFO
-VER = f'V{GUI_Ver}' + datetime.now().strftime(" | CDT(%Y/%m/%d | %H:%M:%S)")
+VER = f'V{GUI_Ver}' + datetime.now().strftime(' | CDT(%Y/%m/%d | %H:%M:%S)')
 gpus = tf.config.list_physical_devices('GPU')
 if gpus:
     TF_MODE = 'GPU'
@@ -584,11 +680,11 @@ if gpus:
     TF_CUDNN_VER = TF_sys_details['cudnn_version']  # NOT USED
     try:
         gpu_name = subprocess.check_output(
-            ["nvidia-smi", "-L"]).decode("utf-8").split(":")[1].split("(")[0].strip()
+            ['nvidia-smi', '-L']).decode('utf-8').split(':')[1].split('(')[0].strip()
         # GPU 0: NVIDIA `THE GPU NAME` (UUID: GPU-'xxxxxxxxxxxxxxxxxxxx')
         #     │                       │
         # ┌---┴----------┐        ┌---┴----------┐
-        # │.split(":")[1]│        │.split("(")[0]│
+        # │.split(':')[1]│        │.split('(')[0]│
         # └--------------┘        └--------------┘
     except Exception:
         gpu_name = '\x1b[0;31mNVIDIA-SMI-ERROR\x1b[0m'
