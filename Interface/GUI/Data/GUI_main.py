@@ -426,11 +426,16 @@ def CI_liid(img_dir, Show_DICOM_INFO: bool = True) -> str:
                 img = Image.fromarray(ds.pixel_array).resize(IMG_RES[:2])
                 if Show_DICOM_INFO:
                     GUI_layout_DICOM_Info_Window_layout = C_GUI_layout_DICOM_Info_Window()
-                    GUI_layout_DICOM_Info_Window = sg.Window('DICOM Info', GUI_layout_DICOM_Info_Window_layout, finalize=True)
-                    # Write DICOM info to the window
+                    GUI_layout_DICOM_Info_Window = sg.Window('DICOM Info - File Metadata', GUI_layout_DICOM_Info_Window_layout, finalize=True)
+                    # Write DICOM info to the window 
                     for element in ds:
                         if element.name != 'Pixel Data':
-                            GUI_layout_DICOM_Info_Window['-OUTPUT_DICOM_Info-'].print(f'[Tag: {element.tag} | VR: {element.VR}]-(Name: {element.name})>Value: {element.value}')
+                            tag_info = f'[Tag: {element.tag} | VR: {element.VR}]'
+                            name_info = f'(Name: {element.name})'
+                            value_info = f'>Value: {element.value}'
+                            GUI_layout_DICOM_Info_Window['-OUTPUT_DICOM_Info-'].print(tag_info, text_color='blue', end='')
+                            GUI_layout_DICOM_Info_Window['-OUTPUT_DICOM_Info-'].print(name_info, text_color='green', end='')
+                            GUI_layout_DICOM_Info_Window['-OUTPUT_DICOM_Info-'].print(value_info, text_color='black', end='\n')
                     GUI_layout_DICOM_Info_Window.finalize()
             else:
                 img = Image.open(img_dir).resize((IMG_RES[1], IMG_RES[0]))
@@ -522,14 +527,12 @@ def IEH(id: str = 'Unknown', stop: bool = True, DEV: bool = True) -> None:
                 advanced_mode=True)
     logger.exception(f'Internal Error Handler [stop:{stop}|DEV:{DEV}|id:{id}]')
     if DEV:
-        print_Color('~*Do you want to see the detailed error message? ~*[~*Y~*/~*n~*]: ',
-                    ['yellow', 'normal', 'green', 'normal', 'red', 'normal'],
-                    advanced_mode=True,
-                    print_END='')
-        show_detailed_error = input('')
-        if show_detailed_error.lower() == 'y':
-            print_Color('detailed error message:', ['yellow'])
-            traceback.print_exc()
+        sg.popup(f'An internal error occurred.\nERROR-INFO:\n\nErr-ID:\n{id}\n\nErr-Traceback:\n{traceback.format_exc()}',
+                 title='Internal Error (Auto Exit in 30 minutes)',
+                 custom_text=('Exit'),
+                 auto_close=True, auto_close_duration=1800)
+        print_Color('detailed error message:', ['yellow'])
+        traceback.print_exc()
     if stop:
         logger.warning('SYS EXIT|ERROR: Internal|by Internal Error Handler')
         sys.exit('SYS EXIT|ERROR: Internal|by Internal Error Handler')
