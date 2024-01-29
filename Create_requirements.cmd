@@ -1,4 +1,4 @@
 @echo off
-del requirements.txt
-pigar generate
+del requirements.txt >nul 2>&1
+pigar -l INFO generate
 
