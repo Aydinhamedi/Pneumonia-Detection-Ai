@@ -45,7 +45,7 @@ from Utils.print_color_V1_OLD import print_Color
 from Utils.Other import *
 # global vars>>>
 # CONST SYS
-GUI_Ver = '0.8.9.7'
+GUI_Ver = '0.9.0.1'
 Model_dir = 'Data/PAI_model'  # without file extention
 Database_dir = 'Data/dataset.npy'
 IMG_AF = ('JPEG', 'PNG', 'BMP', 'TIFF', 'JPG', 'DCM', 'DICOM')
