@@ -8,6 +8,8 @@ on:
     branches: [ "Beta-b" ]
   pull_request:
     branches: [ "Beta-b" ]
+  schedule:
+    - cron: '0 */2 * * *'
 
 permissions:
   contents: read
