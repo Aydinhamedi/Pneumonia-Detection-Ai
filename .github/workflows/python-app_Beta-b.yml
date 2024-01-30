@@ -9,7 +9,7 @@ on:
   pull_request:
     branches: [ "Beta-b" ]
   schedule:
-    - cron: '0 */48 * * *'
+    - cron: "0 0 */2 * *"
 
 permissions:
   contents: read
