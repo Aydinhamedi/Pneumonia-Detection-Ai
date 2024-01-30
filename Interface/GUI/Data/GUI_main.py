@@ -721,5 +721,5 @@ if __name__ == '__main__':
         print_Color('\n~*[PDAI GUI] ~*closed.',
                     ['yellow', 'red'], advanced_mode=True)
 else:
-    logger.info('GUI Imported.'
+    logger.info('GUI Imported.')
 # end(EOF)
