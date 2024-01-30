@@ -530,8 +530,7 @@ def IEH(id: str = 'Unknown', stop: bool = True, DEV: bool = True) -> None:
     if DEV:
         sg.popup(f'An internal error occurred.\nERROR-INFO:\n\nErr-ID:\n{id}\n\nErr-Traceback:\n{traceback.format_exc()}',
                  title='Internal Error (Auto Exit in 30 minutes)',
-                 custom_text=('Exit'),
-                 auto_close=True, auto_close_duration=1800)
+                 custom_text=('Exit'))
         print_Color('detailed error message:', ['yellow'])
         traceback.print_exc()
     if stop:
@@ -720,7 +719,7 @@ if __name__ == '__main__':
     else:
         logger.info('GUI Exit.')
         print_Color('\n~*[PDAI GUI] ~*closed.',
-                    ['yellow', 'red'], advanced_mode=True)
+                    ['yellow', 'red'], advanced_mode=True
 else:
     logger.info('GUI Imported.')
 # end(EOF)
