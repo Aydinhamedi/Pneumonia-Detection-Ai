@@ -276,6 +276,7 @@ def download_file_from_github(url: str, file_name: str, save_as: str, chunk_size
     # Get the name of the latest release
     release_name = data['name']
     print(f'Latest release: {release_name}')
+    GUI_Queue['-Main_log-'].put(f'Latest Github repo release: {release_name}')
 
     # Get the assets of the latest release
     assets = data['assets']
@@ -529,8 +530,7 @@ def IEH(id: str = 'Unknown', stop: bool = True, DEV: bool = True) -> None:
     if DEV:
         sg.popup(f'An internal error occurred.\nERROR-INFO:\n\nErr-ID:\n{id}\n\nErr-Traceback:\n{traceback.format_exc()}',
                  title='Internal Error (Auto Exit in 30 minutes)',
-                 custom_text=('Exit'),
-                 auto_close=True, auto_close_duration=1800)
+                 custom_text=('Exit'))
         print_Color('detailed error message:', ['yellow'])
         traceback.print_exc()
     if stop:

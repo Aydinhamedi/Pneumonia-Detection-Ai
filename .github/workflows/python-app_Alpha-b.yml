@@ -5,11 +5,11 @@ name: Python Test [Alpha-b]
 
 on:
   push:
-    branches: [ "Alpha-b" ]
+    branches: ["Alpha-b"]
   pull_request:
-    branches: [ "Alpha-b" ]
+    branches: ["Alpha-b"]
   schedule:
-    - cron: '0 */48 * * *'
+    - cron: "0 0 */2 * *"
 
 permissions:
   contents: read
