@@ -276,6 +276,7 @@ def download_file_from_github(url: str, file_name: str, save_as: str, chunk_size
     # Get the name of the latest release
     release_name = data['name']
     print(f'Latest release: {release_name}')
+    GUI_Queue['-Main_log-'].put(f'Latest Github repo release: {release_name}')
 
     # Get the assets of the latest release
     assets = data['assets']
