@@ -108,9 +108,10 @@ The model provided in this project should not be used for medical diagnosis with
 ### Acc:
 ![img_](doc/V6/D1.png)
 ### Grad cam:
-![img_](doc/V6+/D1.png)
-![img_](doc/V6+/D2.png)
-![img_](doc/V6+/D3.png)
+| Model    | Grad-cam Ex |
+|----------|----------|
+| V6       | ![img_](doc/V6+/D1.png)![img_](doc/V6+/D2.png)![img_](doc/V6+/D3.png)|
+| V7 light | 🚧None🚧|
 ### Other:
 ![img_](doc/V6/D4.png)
 <!--
