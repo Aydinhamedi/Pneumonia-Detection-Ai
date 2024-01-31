@@ -10,13 +10,13 @@ on:
     branches: ["Alpha-b"]
   schedule:
     - cron: "0 0 */2 * *"
-
-permissions:
-  contents: read
-
+  
+    
 jobs:
-  build:
-
+  Test_Global:
+    permissions:
+      contents: read
+  
     runs-on: ubuntu-latest
 
     steps:
@@ -41,3 +41,4 @@ jobs:
     # - name: Main code Updated
     #   run: |
     #     python Check_MCUS.py
+  
