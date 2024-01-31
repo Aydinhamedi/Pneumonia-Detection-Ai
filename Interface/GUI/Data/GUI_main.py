@@ -57,6 +57,7 @@ Model_FORMAT = 'H5_SF'  # TF_dir/H5_SF
 IMG_RES = (224, 224, 3)
 train_epochs_def = 4
 SHOW_CSAA_OS = False
+Show_GUI_debug = True
 # normal global
 img_array = None
 label = None
@@ -529,7 +530,7 @@ def IEH(id: str = 'Unknown', stop: bool = True, DEV: bool = True) -> None:
     logger.exception(f'Internal Error Handler [stop:{stop}|DEV:{DEV}|id:{id}]')
     if DEV:
         sg.popup(f'An internal error occurred.\nERROR-INFO:\n\nErr-ID:\n{id}\n\nErr-Traceback:\n{traceback.format_exc()}',
-                 title='Internal Error (Auto Exit in 30 minutes)',
+                 title=f'Internal Error Exit[{stop}]',
                  custom_text=('Exit'))
         print_Color('detailed error message:', ['yellow'])
         traceback.print_exc()
@@ -559,6 +560,11 @@ def UWL(Only_finalize: bool = False) -> None:
 def main() -> None:
     """Main function for the GUI.
     """
+    # start
+    sg.SystemTray.notify(f'Pneumonia-Detection-Ai-GUI', f'Gui started.\nV{GUI_Ver}')
+    if Show_GUI_debug:
+        sg.SystemTray.notify(f'Pneumonia-Detection-Ai-GUI', f'Looks like you are a programmer\nWow.\nV{GUI_Ver}')
+        sg.show_debugger_window()
     # global
     global GUI_window
     # Text print
