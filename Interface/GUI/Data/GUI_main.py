@@ -466,10 +466,10 @@ def CI_uaim(download_light_model: bool = False) -> None:
     Supports downloading the full model or a smaller "light" model.
     """
     if download_light_model:
-        Log_temp_txt = 'Downloading the light model...\n'
+        Log_temp_txt = 'Downloading the light model...'
         Github_repo_Releases_Model_name_temp = Github_repo_Releases_Model_light_name
     else:
-        Log_temp_txt = 'Downloading the model...\n'
+        Log_temp_txt = 'Downloading the model...'
         Github_repo_Releases_Model_name_temp = Github_repo_Releases_Model_name
     GUI_Queue['-Main_log-'].put(Log_temp_txt)
     try:
