@@ -51,7 +51,13 @@ The model is a Convolutional Neural Network (CNN) trained on a dataset of 23681 
 - Covid19-Pneumonia-Normal Chest X-Ray Images from Mendeley
 - RSNA dataset
 
-This combined dataset provides a comprehensive set of images for training the model.
+This combined dataset provides a comprehensive set of images for training the model.\
+
+### Model list:
+| Model    | Base Model      | Params | acc    |
+|----------|-----------------|--------|--------|
+| V6       | efficientnet-b7 | 65.4M  | 97.12% |
+| V7 light | efficientnet-b4 | 29.7M  | 97.12% |
 
 ## Training Methods
 ### The AI model supports two distinct training approaches:
