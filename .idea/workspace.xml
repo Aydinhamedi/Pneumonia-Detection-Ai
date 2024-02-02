@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e7bb71b4-f9a5-4158-b99a-3702887460c7" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Interface/GUI/Data/CLI_main.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/Pneumonia AI Dev.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Pneumonia AI Dev.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Interface/GUI/Data/GUI_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Interface/GUI/Data/GUI_main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -11,6 +12,9 @@
   </component>
   <component name="CodyActiveAccount">
     <option name="activeAccountId" value="VXNlcjoyMDUwODY=" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -24,14 +28,16 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.CodyProjectSettingsMigration&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.CodyProjectSettingsMigration": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "Alpha-b",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -49,7 +55,11 @@
       <updated>1706187970886</updated>
       <workItem from="1706187973741" duration="2000" />
       <workItem from="1706381451359" duration="2000" />
+      <workItem from="1706810276195" duration="128000" />
     </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
 </project>
