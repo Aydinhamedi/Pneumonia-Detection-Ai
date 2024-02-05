@@ -62,19 +62,6 @@ tf.get_logger().setLevel('ERROR')
 physical_devices = tf.config.list_physical_devices('GPU')
 for gpu_instance in physical_devices:
     tf.config.experimental.set_memory_growth(gpu_instance, True)
-# crator
-CSAA = '''
-~*
-  ___                              _        ___      _          _   _              _   _   ___      _ 
- | _ \_ _  ___ _  _ _ __  ___ _ _ (_)__ _  |   \ ___| |_ ___ __| |_(_)___ _ _     /_\ (_) | _ )_  _(_)
- |  _/ ' \/ -_) || | '  \/ _ \ ' \| / _` | | |) / -_)  _/ -_) _|  _| / _ \ ' \   / _ \| | | _ \ || |_ 
- |_| |_||_\___|\_,_|_|_|_\___/_||_|_\__,_| |___/\___|\__\___\__|\__|_\___/_||_| /_/ \_\_| |___/\_, (_)
-                                                                                               |__/   
-~*    _   ____ ___ 
-   /_\ |__  | __|
-  / _ \  / /|__ \\
- /_/ \_\/_/ |___/                                                                                                                                               
-'''
 # HF>>>
 # check_args
 def check_arg(arg_list: list, arg_str: str, return_arg: bool = False, bool_OUTPUT_ONLY: bool = False):
@@ -541,10 +528,6 @@ def CI_liid(Auto: bool = False):
                             label = None
                         print_Color('The image is loaded.', ['green'])
 
-# CI_csaa
-def CI_csaa():
-    print_Color(CSAA, ['yellow', 'green'], advanced_mode=True)
-    
 # CI_uaim
 def CI_uaim():
     print_Color('~*Do you want to download the light model? ~*[~*Y~*/~*n~*]: ',
@@ -574,7 +557,6 @@ command_tuple = (
     'pwai',  # predict with Ai
     'rlmw',  # reload model
     'liid',  # load img input data
-    'csaa',  # Creator Signature ASCII ART
     'debug', # Debug
     'uaim',  # Update AI model
     'exit',  # Quit the CLI
@@ -686,8 +668,6 @@ def main():
                 CI_rlmw()
             case 'liid':
                 CI_liid()
-            case 'csaa':
-                CI_csaa()
             case 'uaim':
                 CI_uaim()
             case 'IIE':
@@ -708,9 +688,6 @@ def main():
 # start>>>
 # clear the 'start L1' prompt
 print('                  ', end='\r')
-# Print CSAA
-if SHOW_CSAA_OS:
-    print_Color(CSAA, ['yellow', 'green'], advanced_mode=True)
 # Start INFO
 VER = f'V{CLI_Ver}' + datetime.now().strftime(" CDT(%Y/%m/%d | %H:%M:%S)")
 gpus = tf.config.list_physical_devices('GPU')

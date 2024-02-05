@@ -24,7 +24,7 @@ import threading
 import requests
 from tqdm import tqdm
 from time import sleep
-import PySimpleGUI as sg  
+import PySimpleGUI as sg
 from loguru import logger
 import efficientnet.tfkeras
 from tkinter import filedialog
@@ -35,6 +35,7 @@ from keras.models import load_model
 from keras.preprocessing.image import ImageDataGenerator
 from keras.utils import to_categorical
 import numpy as np
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 # Utils
 from Utils.one_cycle import OneCycleLr
@@ -43,6 +44,7 @@ from Utils.Grad_cam import make_gradcam_heatmap
 from Utils.print_color_V2_NEW import print_Color_V2
 from Utils.print_color_V1_OLD import print_Color
 from Utils.Other import *
+
 # global vars>>>
 # CONST SYS
 GUI_Ver = '0.9.0.1'
@@ -57,6 +59,7 @@ Model_FORMAT = 'H5_SF'  # TF_dir/H5_SF
 IMG_RES = (224, 224, 3)
 train_epochs_def = 4
 SHOW_CSAA_OS = False
+Show_GUI_debug = False
 # normal global
 img_array = None
 label = None
@@ -87,6 +90,7 @@ class CustomQueue:
 
     def is_updated(self):
         return self.is_updated
+
 # GUI_Queue
 GUI_Queue = {
     '-Main_log-': CustomQueue(max_items=128)
@@ -101,7 +105,7 @@ for gpu_instance in physical_devices:
     tf.config.experimental.set_memory_growth(gpu_instance, True)
 # Making the GUI layout >>>
 # prep GUI
-sg.theme('GrayGrayGray') 
+sg.theme('GrayGrayGray')
 # Main
 GUI_layout_Tab_main = [
     [sg.Text('Enter the image dir:', font=(None, 10, 'bold'))],
@@ -138,6 +142,7 @@ GUI_layout_Tab_Ai_Model = [
         sg.Text(key='-OUTPUT_Model_info-', size=(40, 7), pad=(4, 0))
     ]
 ]
+
 # DICOM Info
 def C_GUI_layout_DICOM_Info_Window() -> list:
     """Returns the layout for the DICOM Info tab.
@@ -148,19 +153,7 @@ def C_GUI_layout_DICOM_Info_Window() -> list:
         list: The layout as a list of rows.
     """
     return [[sg.Multiline(key='-OUTPUT_DICOM_Info-', size=(120, 40), font=(None, 11, 'normal'), autoscroll=True)]]
-# crator
-CSAA = '''
-~*
-  ___                              _        ___      _          _   _              _   _   ___      _ 
- | _ \_ _  ___ _  _ _ __  ___ _ _ (_)__ _  |   \ ___| |_ ___ __| |_(_)___ _ _     /_\ (_) | _ )_  _(_)
- |  _/ ' \/ -_) || | '  \/ _ \ ' \| / _` | | |) / -_)  _/ -_) _|  _| / _ \ ' \   / _ \| | | _ \ || |_ 
- |_| |_||_\___|\_,_|_|_|_\___/_||_|_\__,_| |___/\___|\__\___\__|\__|_\___/_||_| /_/ \_\_| |___/\_, (_)
-                                                                                               |__/   
-~*    _   ____ ___ 
-   /_\ |__  | __|
-  / _ \  / /|__ \\
- /_/ \_\/_/ |___/                                                                                                                                               
-'''
+
 # GUI logo
 GUI_text_logo = '''
 ~*
@@ -179,6 +172,7 @@ GUI_text_logo = '''
  \______/  |__| \__|                                                  
                           
 '''
+
 # HF>>>
 # calculate_file_hash
 def calculate_file_hash(file_path) -> str:
@@ -194,6 +188,7 @@ def calculate_file_hash(file_path) -> str:
         bytes = f.read()
         readable_hash = hashlib.sha256(bytes).hexdigest()
     return readable_hash
+
 # get_model_info
 def get_model_info(model_path) -> dict:
     '''Gets information about a model file.
@@ -207,10 +202,10 @@ def get_model_info(model_path) -> dict:
     Returns:
         Dict with file hash, whether it exists, version, and model type.
     '''
-    
+
     # Check if the model exists
     model_exists = os.path.exists(model_path)
-    
+
     if model_exists:
         # Calculate the hash of the file
         file_hash = calculate_file_hash(model_path)
@@ -240,8 +235,9 @@ def get_model_info(model_path) -> dict:
             'file_hash': 'Unknown',
             'file_exists': False,
             'Ver': 'Unknown',
-           'stored_type': 'Unknown'
+            'stored_type': 'Unknown'
         }
+
 # open_file_GUI
 def open_file_GUI() -> str:
     '''Opens a file selection dialog GUI to allow the user to select an image file.
@@ -276,6 +272,7 @@ def download_file_from_github(url: str, file_name: str, save_as: str, chunk_size
     # Get the name of the latest release
     release_name = data['name']
     print(f'Latest release: {release_name}')
+    GUI_Queue['-Main_log-'].put(f'Latest Github repo release: {release_name}')
 
     # Get the assets of the latest release
     assets = data['assets']
@@ -299,7 +296,8 @@ def download_file_from_github(url: str, file_name: str, save_as: str, chunk_size
         progress_bar.close()
 
         if file_size != 0 and progress_bar.n != file_size:
-            print_Color('~*ERROR: ~*Something went wrong while downloading the file.', ['red', 'yellow'], advanced_mode=True)
+            print_Color('~*ERROR: ~*Something went wrong while downloading the file.', ['red', 'yellow'],
+                        advanced_mode=True)
             GUI_Queue['-Main_log-'].put('ERROR: Something went wrong while downloading the file.')
             logger.warning('download_file_from_github>>ERROR: Something went wrong while downloading the file.')
         else:
@@ -347,13 +345,14 @@ def CI_pwai(show_gradcam: bool = True) -> str:
             confidence = np.max(model_prediction_ORG)
             return_temp = f'the Ai model prediction: {pred_class} with confidence {confidence:.2f}.'
             if confidence < 0.82:
-                return_temp +='WARNING: the confidence is low.'           
+                return_temp += 'WARNING: the confidence is low.'
             if model_prediction == 1 and show_gradcam:
                 clahe = cv2.createCLAHE(clipLimit=1.8)
                 Grad_cam_heatmap = make_gradcam_heatmap(img_array,
                                                         model, 'top_activation',
-                                                        second_last_conv_layer_name = 'top_conv',
-                                                        sensitivity_map = 2, pred_index=tf.argmax(model_prediction_ORG[0])) 
+                                                        second_last_conv_layer_name='top_conv',
+                                                        sensitivity_map=2,
+                                                        pred_index=tf.argmax(model_prediction_ORG[0]))
                 Grad_cam_heatmap = cv2.resize(np.clip(Grad_cam_heatmap, 0, 1), (img_array.shape[1], img_array.shape[2]))
                 Grad_cam_heatmap = np.uint8(255 * Grad_cam_heatmap)
                 Grad_cam_heatmap = cv2.applyColorMap(Grad_cam_heatmap, cv2.COLORMAP_VIRIDIS)
@@ -368,7 +367,7 @@ def CI_pwai(show_gradcam: bool = True) -> str:
                 cv2.imshow('Grad-CAM Heatmap', Grad_cam_heatmap)
                 cv2.imshow('Reference Original Image', reference_image)
                 cv2.imshow('Reference Original Image (CLAHE)', reference_image_CLAHE)
-            return return_temp 
+            return return_temp
     else:
         print_Color('~*ERROR: ~*image data doesnt exist.',
                     ['red', 'yellow'], advanced_mode=True, return_str=True)
@@ -417,7 +416,7 @@ def CI_liid(img_dir, Show_DICOM_INFO: bool = True) -> str:
         file_extension = 'TEMP FILE EXTENSION'
     if file_extension.upper()[1:] not in IMG_AF:
         logger.warning('CI_liid>>ERROR: Invalid file format. Please provide an image file.')
-        return 'ERROR: Invalid file format. Please provide an image file.'    
+        return 'ERROR: Invalid file format. Please provide an image file.'
     else:
         try:
             # Load and resize the image
@@ -426,16 +425,20 @@ def CI_liid(img_dir, Show_DICOM_INFO: bool = True) -> str:
                 img = Image.fromarray(ds.pixel_array).resize(IMG_RES[:2])
                 if Show_DICOM_INFO:
                     GUI_layout_DICOM_Info_Window_layout = C_GUI_layout_DICOM_Info_Window()
-                    GUI_layout_DICOM_Info_Window = sg.Window('DICOM Info - File Metadata', GUI_layout_DICOM_Info_Window_layout, finalize=True)
+                    GUI_layout_DICOM_Info_Window = sg.Window('DICOM Info - File Metadata',
+                                                             GUI_layout_DICOM_Info_Window_layout, finalize=True)
                     # Write DICOM info to the window 
                     for element in ds:
                         if element.name != 'Pixel Data':
                             tag_info = f'[Tag: {element.tag} | VR: {element.VR}]'
                             name_info = f'(Name: {element.name})'
                             value_info = f'>Value: {element.value}'
-                            GUI_layout_DICOM_Info_Window['-OUTPUT_DICOM_Info-'].print(tag_info, text_color='blue', end='')
-                            GUI_layout_DICOM_Info_Window['-OUTPUT_DICOM_Info-'].print(name_info, text_color='green', end='')
-                            GUI_layout_DICOM_Info_Window['-OUTPUT_DICOM_Info-'].print(value_info, text_color='black', end='\n')
+                            GUI_layout_DICOM_Info_Window['-OUTPUT_DICOM_Info-'].print(tag_info, text_color='blue',
+                                                                                      end='')
+                            GUI_layout_DICOM_Info_Window['-OUTPUT_DICOM_Info-'].print(name_info, text_color='green',
+                                                                                      end='')
+                            GUI_layout_DICOM_Info_Window['-OUTPUT_DICOM_Info-'].print(value_info, text_color='black',
+                                                                                      end='\n')
                     GUI_layout_DICOM_Info_Window.finalize()
             else:
                 img = Image.open(img_dir).resize((IMG_RES[1], IMG_RES[0]))
@@ -454,7 +457,7 @@ def CI_liid(img_dir, Show_DICOM_INFO: bool = True) -> str:
 
             # Add a dimension to transform from (height, width, channels) to (batch_size, height, width, channels)
             img_array = np.expand_dims(img_array, axis=0)
-            
+
             return 'Image loaded.'
 
 # CI_uaim
@@ -465,17 +468,17 @@ def CI_uaim(download_light_model: bool = False) -> None:
     Supports downloading the full model or a smaller "light" model.
     """
     if download_light_model:
-        Log_temp_txt = 'Downloading the light model...\n'
+        Log_temp_txt = 'Downloading the light model...'
         Github_repo_Releases_Model_name_temp = Github_repo_Releases_Model_light_name
     else:
-        Log_temp_txt = 'Downloading the model...\n'
+        Log_temp_txt = 'Downloading the model...'
         Github_repo_Releases_Model_name_temp = Github_repo_Releases_Model_name
     GUI_Queue['-Main_log-'].put(Log_temp_txt)
     try:
         download_file_from_github(Github_repo_Releases_URL,
-                                Github_repo_Releases_Model_name_temp,
-                                Model_dir,
-                                1024)
+                                  Github_repo_Releases_Model_name_temp,
+                                  Model_dir,
+                                  1024)
         CI_rlmw()
         print('Model downloaded.')
     except Exception:
@@ -491,16 +494,17 @@ def CI_umij() -> None:
     """
     try:
         download_file_from_github(Github_repo_Releases_URL,
-                                    Github_repo_Releases_Model_info_name,
-                                    'Data\\model_info.json',
-                                    256)
+                                  Github_repo_Releases_Model_info_name,
+                                  'Data\\model_info.json',
+                                  256)
     except Exception:
         GUI_Queue['-Main_log-'].put('ERROR: Failed to download the model info.')
     GUI_Queue['-Main_log-'].put('Model info downloaded.')
 
 # CI_gmi
 def CI_gmi() -> str:
-    if not os.path.isfile('Data\\model_info.json') or time.time() - os.path.getmtime('Data/model_info.json') > 4 * 60 * 60:
+    if not os.path.isfile('Data\\model_info.json') or time.time() - os.path.getmtime(
+            'Data/model_info.json') > 4 * 60 * 60:
         CI_umij()
     model_info_dict = get_model_info(Model_dir)
     if model_info_dict['Ver'] != 'Unknown':
@@ -527,15 +531,16 @@ def IEH(id: str = 'Unknown', stop: bool = True, DEV: bool = True) -> None:
                 advanced_mode=True)
     logger.exception(f'Internal Error Handler [stop:{stop}|DEV:{DEV}|id:{id}]')
     if DEV:
-        sg.popup(f'An internal error occurred.\nERROR-INFO:\n\nErr-ID:\n{id}\n\nErr-Traceback:\n{traceback.format_exc()}',
-                 title='Internal Error (Auto Exit in 30 minutes)',
-                 custom_text=('Exit'),
-                 auto_close=True, auto_close_duration=1800)
+        sg.popup(
+            f'An internal error occurred.\nERROR-INFO:\n\nErr-ID:\n{id}\n\nErr-Traceback:\n{traceback.format_exc()}',
+            title=f'Internal Error Exit[{stop}]',
+            custom_text=('Exit'))
         print_Color('detailed error message:', ['yellow'])
         traceback.print_exc()
     if stop:
         logger.warning('SYS EXIT|ERROR: Internal|by Internal Error Handler')
         sys.exit('SYS EXIT|ERROR: Internal|by Internal Error Handler')
+
 # UWL
 def UWL(Only_finalize: bool = False) -> None:
     """Updates the GUI window.
@@ -555,10 +560,16 @@ def UWL(Only_finalize: bool = False) -> None:
             result_expanded += f'> {block}\n'
         GUI_window['-OUTPUT_ST-'].update(result_expanded, text_color='black')
     GUI_window.finalize()
+
 # main
 def main() -> None:
     """Main function for the GUI.
     """
+    # start
+    sg.SystemTray.notify(f'Pneumonia-Detection-Ai-GUI', f'Gui started.\nV{GUI_Ver}')
+    if Show_GUI_debug:
+        sg.SystemTray.notify(f'Pneumonia-Detection-Ai-GUI', f'Looks like you are a programmer\nWow.\nV{GUI_Ver}')
+        sg.show_debugger_window()
     # global
     global GUI_window
     # Text print
@@ -585,7 +596,7 @@ def main() -> None:
         if not event == '-TIMEOUT-':
             logger.debug(f'GUI_window:event: {event}')
             logger.debug(f'GUI_window:values: {values}')
-        
+
         # Check if the window has been closed or the 'Close' button has been clicked
         if event == sg.WINDOW_CLOSED or event == 'Close':
             # close GUI_window
@@ -601,7 +612,7 @@ def main() -> None:
         if event == '-BUTTON_RELOAD_MODEL-':
             # Call the function to reload the model
             CI_rlmw()
-            
+
         # Handle event for browsing and selecting an image directory
         if event == '-BUTTON_BROWSE_IMG_dir-':
             # Open file dialog to select an image, and update the input field with the selected directory
@@ -664,12 +675,10 @@ def main() -> None:
             GUI_window['-OUTPUT_ST-'].update(result_expanded, text_color='black')
             UWL()
 
+
 # start>>>
 # clear the 'start L1' prompt
 print('                  ', end='\r')
-# Print CSAA
-if SHOW_CSAA_OS:
-    print_Color(CSAA, ['yellow', 'green'], advanced_mode=True)
 # Start INFO
 VER = f'V{GUI_Ver}' + datetime.now().strftime(' | CDT(%Y/%m/%d | %H:%M:%S)')
 gpus = tf.config.list_physical_devices('GPU')

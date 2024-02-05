@@ -5,18 +5,18 @@ name: Python Test [Alpha-b]
 
 on:
   push:
-    branches: [ "Alpha-b" ]
+    branches: ["Alpha-b"]
   pull_request:
-    branches: [ "Alpha-b" ]
+    branches: ["Alpha-b"]
   schedule:
-    - cron: '0 */48 * * *'
-
-permissions:
-  contents: read
-
+    - cron: "0 0 */2 * *"
+  
+    
 jobs:
-  build:
-
+  Test_Global:
+    permissions:
+      contents: read
+  
     runs-on: ubuntu-latest
 
     steps:
@@ -41,3 +41,4 @@ jobs:
     # - name: Main code Updated
     #   run: |
     #     python Check_MCUS.py
+  
