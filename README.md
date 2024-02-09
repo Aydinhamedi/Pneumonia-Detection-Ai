@@ -19,7 +19,7 @@
 > [!TIP]
 > If you just want the model go to the Github Releases.
 
-> [!TIP]
+> [!NOTE]
 >  This model was built using the [EfficientNet ](https://github.com/qubvel/efficientnet) library,
 >  which is a collection of state-of-the-art models for image classification. To use the model,
 >  you need to install the library and import it as follows:
