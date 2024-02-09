@@ -87,11 +87,11 @@ REM Check if a package is installed and offer to install it if not
 set userinput=Y
 "%pip_path%" show %1 >nul
 if ERRORLEVEL 1 (
-    if not if "%Full_Auto%"=="1" (
-    echo Package %1 not found. Do you want to automatically install it? [Y/n]
-    set /p userinput="Answer: "
+    if not "%Full_Auto%"=="1" (
+        echo Package %1 not found. Do you want to automatically install it? [Y/n]
+        set /p userinput="Answer: "
     )
-    if /I "%userinput%"=="Y" or "%Full_Auto%"=="1"(
+    if /I "%userinput%"=="Y" (
         echo Installing package %1
         "%pip_path%" install %1
         if ERRORLEVEL 1 (
