@@ -77,9 +77,9 @@ def evaluate_model_full(y_test, model_pred, model=None, x_test=None):
 
     # Calculate weighted metrics
     weighted_precision = precision_score(
-        y_test_bin, y_pred_bin, average='weighted')
-    weighted_f1 = f1_score(y_test_bin, y_pred_bin, average='weighted')
-    weighted_recall = recall_score(y_test_bin, y_pred_bin, average='weighted')
+        y_test_bin, y_pred_bin, average='macro')
+    weighted_f1 = f1_score(y_test_bin, y_pred_bin, average='macro')
+    weighted_recall = recall_score(y_test_bin, y_pred_bin, average='macro')
 
     # Prepare data for the table
     metrics = [["Accuracy", round(accuracy * 100, 6)],
