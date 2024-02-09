@@ -83,3 +83,4 @@ Samples/*
 
 # Exclude logs in GUI interface
 /Interface/GUI/Data/logs
+/Test_ENV_G.py
