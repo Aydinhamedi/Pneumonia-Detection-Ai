@@ -19,6 +19,14 @@
 > [!TIP]
 > If you just want the model go to the Github Releases.
 
+> [!TIP]
+>  This model was built using the [EfficientNet ](https://github.com/qubvel/efficientnet) library,
+>  which is a collection of state-of-the-art models for image classification. To use the model,
+>  you need to install the library and import it as follows:
+> ```python
+> import efficientnet.tfkeras
+> ```
+
 The project includes a Command Line Interface (CLI) and a (GUI) Graphical User Interface for easy use of the model. The CLI, which is based on the [Python CLI template](https://github.com/Aydinhamedi/Python-CLI-template) from the same author, provides a user-friendly, colorful interface that allows you to interact with the model. you can fined the CLI in 
 
 ```
