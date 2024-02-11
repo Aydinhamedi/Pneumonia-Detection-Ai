@@ -3,7 +3,6 @@ keras
 Pillow
 py-cpuinfo
 tensorflow
-efficientnet
 tqdm
 matplotlib
 opencv-python

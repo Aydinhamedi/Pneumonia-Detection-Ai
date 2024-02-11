@@ -83,4 +83,8 @@ Samples/*
 
 # Exclude logs in GUI interface
 /Interface/GUI/Data/logs
+
+# Other
 /Test_ENV_G.py
+/scc.exe
+/SCC_Auto.cmd
