@@ -88,7 +88,6 @@ if /i "%restart%"=="y" (
     goto :EOF
 )
 
-REM Check it 🚧Beta🚧 --- [>>>
 :errorNoPython
 REM Handle the error if Python is not installed
 if exist %PUE_filepath% (
@@ -147,7 +146,6 @@ if /I "!UserInput!"=="y" (
 )
 pause
 goto :EOF
-REM Check it 🚧Beta🚧 --- <<<]
 
 :check_install
 REM Check if a package is installed and offer to install it if not
