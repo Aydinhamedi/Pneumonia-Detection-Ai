@@ -26,7 +26,6 @@ from tqdm import tqdm
 from time import sleep
 import PySimpleGUI as sg
 from loguru import logger
-import efficientnet.tfkeras
 from tkinter import filedialog
 from datetime import datetime
 from PIL import Image
@@ -43,6 +42,7 @@ from Utils.lr_find import LrFinder
 from Utils.Grad_cam import make_gradcam_heatmap
 from Utils.print_color_V2_NEW import print_Color_V2
 from Utils.print_color_V1_OLD import print_Color
+from Utils.FixedDropout import FixedDropout
 from Utils.Other import *
 
 # global vars>>>
@@ -135,7 +135,7 @@ GUI_layout_Tab_Ai_Model = [
         sg.Button('Reload Model', key='-BUTTON_RELOAD_MODEL-')
     ],
     [
-        sg.Checkbox('Download Light Model', key='-CHECKBOX_DOWNLOAD_LIGHT_MODEL-', default=False)
+        sg.Checkbox('Download Light Model', key='-CHECKBOX_DOWNLOAD_LIGHT_MODEL-', default=True)
     ],
     [sg.Text('Ai Model Info:', font=(None, 10, 'bold'))],
     [
@@ -334,7 +334,7 @@ def CI_pwai(show_gradcam: bool = True) -> str:
         try:
             if model is None:
                 print_Color('loading the Ai model...', ['normal'])
-                model = load_model(Model_dir)
+                model = load_model(Model_dir, custom_objects={'FixedDropout': FixedDropout})
         except (ImportError, IOError):
             return 'ERROR: Failed to load the model.'
         else:
@@ -384,7 +384,7 @@ def CI_rlmw() -> None:
     model = None
     GUI_Queue['-Main_log-'].put('loading the Ai model...')
     try:
-        model = load_model(Model_dir)
+        model = load_model(Model_dir, custom_objects={'FixedDropout': FixedDropout})
     except (ImportError, IOError):
         GUI_Queue['-Main_log-'].put('ERROR: Failed to load the model.')
         return None

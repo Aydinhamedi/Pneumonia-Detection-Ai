@@ -13,3 +13,13 @@
 ## Grad_cam (by GPT-4 😁)
 
 ## Other.py (by Me)
+
+## FixedDropout.py (by Me)
+For EfficientNet model. Example:
+```python
+from Utils.FixedDropout import FixedDropout
+from keras.models import load_model
+
+# Load the model
+model = load_model('PAI_model_T.h5', custom_objects={'FixedDropout': FixedDropout})
+```
