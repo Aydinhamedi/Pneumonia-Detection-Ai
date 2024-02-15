@@ -1,0 +1,1 @@
+For the first time run it by GUI.cmd if loaded and didn't have any problem use Silent_Run.vbs to run it without a terminal.
