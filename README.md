@@ -32,6 +32,14 @@ Interface\GUI
 ![Example](doc/Other/CLI_V0.8.9.3.png)  
 ### Example Image of the GUI (V0.8.9.6) ⤵
 ![Example](doc/Other/GUI_V0.8.9.6.png)  
+#### __If you want to use the model in your project:__
+```python
+from Utils.FixedDropout import FixedDropout
+from keras.models import load_model
+
+# Load the model
+model = load_model('PAI_model_T.h5', custom_objects={'FixedDropout': FixedDropout})
+```
 ## Release
 > ### Newest release 📃
 > #### [Go to newest release](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/releases/latest)
