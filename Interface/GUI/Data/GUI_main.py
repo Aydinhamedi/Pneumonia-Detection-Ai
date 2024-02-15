@@ -135,7 +135,7 @@ GUI_layout_Tab_Ai_Model = [
         sg.Button('Reload Model', key='-BUTTON_RELOAD_MODEL-')
     ],
     [
-        sg.Checkbox('Download Light Model', key='-CHECKBOX_DOWNLOAD_LIGHT_MODEL-', default=False)
+        sg.Checkbox('Download Light Model', key='-CHECKBOX_DOWNLOAD_LIGHT_MODEL-', default=True)
     ],
     [sg.Text('Ai Model Info:', font=(None, 10, 'bold'))],
     [

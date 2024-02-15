@@ -19,6 +19,14 @@
 > [!TIP]
 > If you just want the model go to the Github Releases.
 
+> [!NOTE]
+>  This model was built using the [EfficientNet ](https://github.com/qubvel/efficientnet) library,
+>  which is a collection of state-of-the-art models for image classification. To use the model,
+>  you need to install the library and import it as follows:
+> ```python
+> import efficientnet.tfkeras
+> ```
+
 The project includes a Command Line Interface (CLI) and a (GUI) Graphical User Interface for easy use of the model. The CLI, which is based on the [Python CLI template](https://github.com/Aydinhamedi/Python-CLI-template) from the same author, provides a user-friendly, colorful interface that allows you to interact with the model. you can fined the CLI in 
 
 ```
@@ -32,6 +40,14 @@ Interface\GUI
 ![Example](doc/Other/CLI_V0.8.9.3.png)  
 ### Example Image of the GUI (V0.8.9.6) ⤵
 ![Example](doc/Other/GUI_V0.8.9.6.png)  
+#### __If you want to use the model in your project:__
+```python
+from Utils.FixedDropout import FixedDropout
+from keras.models import load_model
+
+# Load the model
+model = load_model('PAI_model_T.h5', custom_objects={'FixedDropout': FixedDropout})
+```
 ## Release
 > ### Newest release 📃
 > #### [Go to newest release](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/releases/latest)
@@ -54,10 +70,10 @@ The model is a Convolutional Neural Network (CNN) trained on a dataset of 23681 
 This combined dataset provides a comprehensive set of images for training the model.\
 
 ### Model list:
-| Model    | Base Model      | Params | acc    |
-|----------|-----------------|--------|--------|
-| V6       | efficientnet-b7 | 65.4M  | 97.12% |
-| V7 light | efficientnet-b4 | 29.7M  | 97.12% |
+| Model    | Base Model      | Params | acc    | Status |
+|----------|-----------------|--------|--------|--------|
+| V6       | efficientnet-b7 | 65.4M  | 97.12% |   ⚠️ (Not recommended) |
+| V7 light | efficientnet-b4 | 29.7M  | 97.12% |   ✅  |
 
 ## Training Methods
 ### The AI model supports two distinct training approaches:
