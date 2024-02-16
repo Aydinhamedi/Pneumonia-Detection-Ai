@@ -72,7 +72,7 @@ This combined dataset provides a comprehensive set of images for training the mo
 ### Model list:
 | Model    | Base Model      | Params | acc    | Status |
 |----------|-----------------|--------|--------|--------|
-| V6       | efficientnet-b7 | 65.4M  | 97.12% |   ⚠️ (Not recommended) |
+| V6       | efficientnet-b7 | 65.4M  | 97.12% |   ✅  |
 | V7 light | efficientnet-b4 | 29.7M  | 97.12% |   ✅  |
 
 ## Training Methods
