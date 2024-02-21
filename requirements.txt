@@ -28,3 +28,4 @@ tensorflow==2.10.1
 tensorflow-addons==0.22.0
 tensorflow-model-optimization==0.7.5
 tqdm==4.66.1
+numba==0.59.0
