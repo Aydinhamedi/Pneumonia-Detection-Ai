@@ -15,5 +15,5 @@ The last version of CLI is V0.8.9.3 and currently its has entered a minimal main
 | ------- | ------------------ |
 | 0.9.0   | :white_check_mark: |
 | 0.8.9   | :white_check_mark: |
-| 0.8.8   | :white_check_mark: |
+| 0.8.8   | ⚠️                 |
 | < 0.8.7 | :x:                |
