@@ -11,10 +11,11 @@ keras-gradient-noise==0.11
 loguru==0.5.3
 matplotlib==3.7.2
 model-profiler==1.1.8
+numba==0.59.0
 numpy==1.25.1
 opencv-python==4.8.0.74
 pandas==2.0.3
-Pillow
+Pillow==9.4.0
 psutil==5.9.5
 py-cpuinfo==9.0.0
 pydicom==2.4.3
@@ -27,4 +28,4 @@ tabulate==0.9.0
 tensorflow==2.10.1
 tensorflow-addons==0.22.0
 tensorflow-model-optimization==0.7.5
-tqdm==4.66.1
+tqdm==4.66.2

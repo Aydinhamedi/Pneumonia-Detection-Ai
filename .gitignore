@@ -90,3 +90,7 @@ Samples/*
 /SCC_Auto.cmd
 /Microsoft.PowerShell_profile_Nvidia_smi.ps1
 /Data/image_SUB_generator.pkl
+/GPU_Info.txt
+/Build.py
+/env
+/Temp
