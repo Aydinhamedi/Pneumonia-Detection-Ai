@@ -72,7 +72,7 @@ def P_warning(msg):
     Args:
         msg (str): The warning message to print.
     """
-    print_Color_V2(f'<light_red>Warning: <yellow>{msg}')
+    print_Color_V2(f'<light_red>Warning: <yellow>{msg} (⚠️)')
 
 def evaluate_model_full(y_test, model_pred, model=None, x_test=None):
     """Evaluates a machine learning model on a test set.
