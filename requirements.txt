@@ -15,7 +15,7 @@ numba==0.59.0
 numpy==1.25.1
 opencv-python==4.8.0.74
 pandas==2.0.3
-Pillow==9.4.0
+pillow==10.2.0
 psutil==5.9.5
 py-cpuinfo==9.0.0
 pydicom==2.4.3

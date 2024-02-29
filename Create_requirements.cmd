@@ -1,4 +1,5 @@
 @echo off
+echo Generating requirements.txt...
 del requirements.txt >nul  2>&1
 echo Y | pigar -l ERROR generate
 
