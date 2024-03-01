@@ -12,8 +12,8 @@
 
 ### This project uses a deep learning model built with the TensorFlow Library to detect pneumonia in X-ray images. The model architecture is based on the EfficientNetB7 model, which has achieved an accuracy of approximately 97.12% (97.11538%) on our test data. This high accuracy rate is one of the strengths of our AI model.
 > [!IMPORTANT]
-> The code that have achived the highest acc is `backup/V6/Model_T&T.ipynb`.\
-> And the code with the light model is `backup/V7/Model_T&T.ipynb`.
+> The code that had achieved the highest acc is `backup/V6/Model_T&T.ipynb`.\
+> And the codes with the light and super light models are `backup/V7/Model_T&T.ipynb`, `backup/V8/Model_T&T.ipynb`.
 
 ## Usage
 > [!TIP]
@@ -73,13 +73,14 @@ This combined dataset provides a comprehensive set of images for training the mo
 ### Model list:
 | Model    | Base Model      | Params | acc    | Status |
 |----------|-----------------|--------|--------|--------|
-| V6       | efficientnet-b7 | 65.4M  | 97.12% |   ✅  |
+| V6       | efficientnet-b7 | 65.4M  | 97.12% |   ✅   |
 | V7 light | efficientnet-b4 | 29.7M  | 97.12% |   ✅  |
+| V8 Super light | efficientnet-b0 | 4.8M  | 96.47% |   ✅  |
 
 ## Training Methods
 ### The AI model supports two distinct training approaches:
 
-- rev1: A straightforward method using Keras' fit function for basic training.
+- rev1: A straightforward method using Keras fit function for basic training.
 - rev2: An enhanced training strategy incorporating data augmentation and subset training for improved accuracy and generalization.
 ### rev2 Training Simplified:
 - Memory Optimization: Begins with clearing system memory to ensure efficient resource utilization.
@@ -119,7 +120,7 @@ The model provided in this project should not be used for medical diagnosis with
 ## Results
 
 > [!WARNING]
-> Results were achived using Rev2 training method and Rev1.2 model and
+> Results were achieved using Rev2 training method and Rev1.2 model and
 > with `backup/V6/Model_T&T.ipynb` code.
 <!-- #### N/A --> 
 ### Acc:
@@ -129,6 +130,7 @@ The model provided in this project should not be used for medical diagnosis with
 |----------|----------|
 | V6       | ![img_](doc/V6+/D1.png)![img_](doc/V6+/D2.png)![img_](doc/V6+/D3.png)|
 | V7 light | 🚧None🚧|
+| V8 super light | 🚧None🚧|
 ### Other:
 ![img_](doc/V6/D4.png)
 <!--
