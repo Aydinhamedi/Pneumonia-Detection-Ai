@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="e7bb71b4-f9a5-4158-b99a-3702887460c7" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/Pneumonia AI Dev.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Pneumonia AI Dev.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Interface/GUI/Data/GUI_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/Interface/GUI/Data/GUI_main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Model_T&amp;T.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Model_T&amp;T.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,6 +17,20 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "Aydinhamedi"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="selectedUrlAndAccountId">
+      <UrlAndAccount>
+        <option name="accountId" value="8a4455b5-514c-45e4-ad1c-27cb72764fae" />
+        <option name="url" value="https://github.com/Aydinhamedi/Pneumonia-Detection-Ai" />
+      </UrlAndAccount>
+    </option>
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -34,6 +50,11 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "Alpha-b",
+    "ignore.virus.scanning.warn.message": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true"
   }
@@ -56,6 +77,7 @@
       <workItem from="1706187973741" duration="2000" />
       <workItem from="1706381451359" duration="2000" />
       <workItem from="1706810276195" duration="128000" />
+      <workItem from="1709278974223" duration="459000" />
     </task>
     <servers />
   </component>
