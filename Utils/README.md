@@ -10,12 +10,15 @@
 - ### github repo used(Python-color-print): [Python-color-print](https://github.com/Aydinhamedi/Python-color-print)
   - ### doc link: [3_README.md](docs/3_README.md)
 
+## P_Debug (by Me)
+- ### github repo used: [Python-Debug-print](https://github.com/Aydinhamedi/Python-Debug-print)
+
 ## Grad_cam (by GPT-4 😁)
 
 ## Other.py (by Me)
 
 ## FixedDropout.py (by Me)
-For EfficientNet model. Example:
+For EfficientNet model Example:
 ```python
 from Utils.FixedDropout import FixedDropout
 from keras.models import load_model

@@ -74,6 +74,14 @@ def P_warning(msg):
     """
     print_Color_V2(f'<light_red>Warning: <yellow>{msg} (⚠️)')
 
+def P_verbose(msg):
+    """Prints a verbose message to the console.
+
+    Args:
+        msg (str): The verbose message to print.
+    """
+    print_Color_V2(f'<light_cyan>Verbose: <normal>{msg}')
+    
 def evaluate_model_full(y_test, model_pred, model=None, x_test=None):
     """Evaluates a machine learning model on a test set.
 
