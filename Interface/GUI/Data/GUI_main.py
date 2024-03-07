@@ -34,7 +34,6 @@ from keras.models import load_model
 from keras.preprocessing.image import ImageDataGenerator
 from keras.utils import to_categorical
 import numpy as np
-
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 # Utils
 from Utils.one_cycle import OneCycleLr
@@ -44,15 +43,12 @@ from Utils.print_color_V2_NEW import print_Color_V2
 from Utils.print_color_V1_OLD import print_Color
 from Utils.FixedDropout import FixedDropout
 from Utils.Other import *
-
 # global vars>>>
 # CONST SYS
-GUI_Ver = '0.9.0.1'
+GUI_Ver = '0.9.1 Pre1'
 Model_dir = 'Data/PAI_model'  # without file extention
 Database_dir = 'Data/dataset.npy'
 IMG_AF = ('JPEG', 'PNG', 'BMP', 'TIFF', 'JPG', 'DCM', 'DICOM')
-Github_repo_Releases_Model_name = 'PAI_model_T.h5'
-Github_repo_Releases_Model_light_name = 'PAI_model_light_T.h5'
 Github_repo_Releases_Model_info_name = 'model_info.json'
 Github_repo_Releases_URL = 'https://api.github.com/repos/Aydinhamedi/Pneumonia-Detection-Ai/releases/latest'
 Model_FORMAT = 'H5_SF'  # TF_dir/H5_SF
@@ -61,6 +57,7 @@ train_epochs_def = 4
 SHOW_CSAA_OS = False
 Show_GUI_debug = False
 # normal global
+available_models = []
 img_array = None
 label = None
 model = None
@@ -135,7 +132,16 @@ GUI_layout_Tab_Ai_Model = [
         sg.Button('Reload Model', key='-BUTTON_RELOAD_MODEL-')
     ],
     [
-        sg.Checkbox('Download Light Model', key='-CHECKBOX_DOWNLOAD_LIGHT_MODEL-', default=True)
+        sg.Table('',
+                 key='-TABLE_ST_MODEL-',
+                 headings=['Avaialble Models'],
+                 enable_events=True,
+                 enable_click_events=True,
+                 justification='left',
+                 selected_row_colors='gray',
+                 size=(40, 3),
+                 expand_x=True,
+                 num_rows=3)
     ],
     [sg.Text('Ai Model Info:', font=(None, 10, 'bold'))],
     [
@@ -255,7 +261,40 @@ def open_file_GUI() -> str:
         filetypes=[('Image Files', formats)])
     if file_path:
         return file_path
+# get_latest_release_files
+def get_latest_release_files(url):
+    """Fetches information about the latest release assets from the GitHub API.
 
+    Args:
+    url (str): The URL of the GitHub repository API endpoint 
+
+    Returns:
+    None
+
+    Prints the names of the files included in the latest release of the GitHub 
+    repository specified by the URL. Makes a GET request to the URL, checks if 
+    the request was successful, parses the JSON response, extracts the assets 
+    from the latest release, and prints the name of each asset file. If the request 
+    fails, prints an error message with the status code.
+    """
+    assets = []
+    # Make a GET request to the GitHub API
+    response = requests.get(url)
+
+    # Check if the request was successful
+    if response.status_code == 200:
+        # Parse the JSON response
+        data = response.json()
+
+        # Extract the assets from the latest release
+        assets_temp = data['assets']
+        assets = [asset['name'] for asset in assets_temp]
+        # Print the names of the files in the latest release
+        return assets
+    else:
+        print(f'Failed to fetch the latest release. Status code: {response.status_code}')
+        GUI_Queue['-Main_log-'].put(f'Failed to fetch the latest release. Status code: {response.status_code}')
+        return assets        
 # download_file_from_github
 def download_file_from_github(url: str, file_name: str, save_as: str, chunk_size: int) -> None:
     '''Downloads a file from a GitHub release API URL to a local path.
@@ -300,6 +339,7 @@ def download_file_from_github(url: str, file_name: str, save_as: str, chunk_size
                         advanced_mode=True)
             GUI_Queue['-Main_log-'].put('ERROR: Something went wrong while downloading the file.')
             logger.warning('download_file_from_github>>ERROR: Something went wrong while downloading the file.')
+            raise Exception
         else:
             print(f'File "{save_as}" downloaded successfully.')
             logger.debug(f'download_file_from_github>>Debug: File "{save_as}" downloaded successfully.')
@@ -307,6 +347,7 @@ def download_file_from_github(url: str, file_name: str, save_as: str, chunk_size
         print_Color('~*ERROR: ~*Something went wrong while finding the file.', ['red', 'yellow'], advanced_mode=True)
         GUI_Queue['-Main_log-'].put('ERROR: Something went wrong while finding the file.')
         logger.warning('download_file_from_github>>ERROR: Something went wrong while finding the file.')
+        raise Exception
 
 # CF>>>
 # CI_ulmd
@@ -461,29 +502,23 @@ def CI_liid(img_dir, Show_DICOM_INFO: bool = True) -> str:
             return 'Image loaded.'
 
 # CI_uaim
-def CI_uaim(download_light_model: bool = False) -> None:
+def CI_uaim(model_type_id) -> None:
     """Downloads the model from GitHub releases.
     
     Handles logging status messages to the GUI queue and any errors.
-    Supports downloading the full model or a smaller "light" model.
     """
-    if download_light_model:
-        Log_temp_txt = 'Downloading the light model...'
-        Github_repo_Releases_Model_name_temp = Github_repo_Releases_Model_light_name
-    else:
-        Log_temp_txt = 'Downloading the model...'
-        Github_repo_Releases_Model_name_temp = Github_repo_Releases_Model_name
-    GUI_Queue['-Main_log-'].put(Log_temp_txt)
+    GUI_Queue['-Main_log-'].put(f'Downloading model {available_models[model_type_id[0]][0]}...')
     try:
         download_file_from_github(Github_repo_Releases_URL,
-                                  Github_repo_Releases_Model_name_temp,
+                                  available_models[model_type_id[0]][0],
                                   Model_dir,
                                   1024)
         CI_rlmw()
         print('Model downloaded.')
     except Exception:
         GUI_Queue['-Main_log-'].put('ERROR: Failed to download the model.')
-    GUI_Queue['-Main_log-'].put('Model downloaded.')
+    else:
+        GUI_Queue['-Main_log-'].put('Model downloaded.')
 
 # CI_umij
 def CI_umij() -> None:
@@ -499,7 +534,8 @@ def CI_umij() -> None:
                                   256)
     except Exception:
         GUI_Queue['-Main_log-'].put('ERROR: Failed to download the model info.')
-    GUI_Queue['-Main_log-'].put('Model info downloaded.')
+    else:
+        GUI_Queue['-Main_log-'].put('Model info downloaded.')
 
 # CI_gmi
 def CI_gmi() -> str:
@@ -518,7 +554,7 @@ def CI_gmi() -> str:
     model_info_str += f'stored_type: {model_info_dict["stored_type"]}\n'
     model_info_str += f'State: {Model_State}\n'
     model_info_str += f'Ver: {model_info_dict["Ver"]}'
-    return model_info_str
+    return {'model_info_str': model_info_str}
 
 # funcs(INTERNAL)>>>
 # IEH
@@ -572,6 +608,8 @@ def main() -> None:
         sg.show_debugger_window()
     # global
     global GUI_window
+    global available_models
+    global release_files
     # Text print
     print_Color(
         GUI_text_logo,
@@ -581,6 +619,7 @@ def main() -> None:
     # prep var
     IMG_dir = None
     Update_model_info_LXT = None
+    Update_release_files_LXT = None
     # Create the tabs
     GUI_tab_main = sg.Tab('Main', GUI_layout_Tab_main)
     GUI_tab_other = sg.Tab('Ai Model', GUI_layout_Tab_Ai_Model)
@@ -596,6 +635,8 @@ def main() -> None:
         if not event == '-TIMEOUT-':
             logger.debug(f'GUI_window:event: {event}')
             logger.debug(f'GUI_window:values: {values}')
+            print(f'GUI_window:event: {event}')
+            print(f'GUI_window:values: {values}')
 
         # Check if the window has been closed or the 'Close' button has been clicked
         if event == sg.WINDOW_CLOSED or event == 'Close':
@@ -653,14 +694,23 @@ def main() -> None:
             # Start a new thread to download the model without freezing the GUI
             CI_uaim_Thread = threading.Thread(
                 target=CI_uaim,
-                args=(values['-CHECKBOX_DOWNLOAD_LIGHT_MODEL-'],),
+                args=(values['-TABLE_ST_MODEL-'],),
                 daemon=True
             )
             CI_uaim_Thread.start()
-        # Updating the model info
-        if Update_model_info_LXT is None or time.time() - Update_model_info_LXT > 6:
+        # Updating the model info + ...
+        if Update_release_files_LXT is None or time.time() - Update_release_files_LXT > 1 * 60 * 60:
+            Update_release_files_LXT = time.time()
+            release_files = get_latest_release_files(Github_repo_Releases_URL)
+            for model_name in release_files:
+                    if model_name.split('.')[1] == 'h5' and not model_name.__contains__('weights'):
+                        available_models.append([model_name])
+                        
+        if Update_model_info_LXT is None or time.time() - Update_model_info_LXT > 15:
             Update_model_info_LXT = time.time()
-            GUI_window['-OUTPUT_Model_info-'].update(CI_gmi(), text_color='black')
+            Github_repo_Release_info = CI_gmi()
+            GUI_window['-OUTPUT_Model_info-'].update(Github_repo_Release_info['model_info_str'], text_color='black')
+            GUI_window['-TABLE_ST_MODEL-'].update(available_models)
             UWL(Only_finalize=True)
         # Continuously check if there are results in the queue to be processed '-Main_log-'
         if GUI_Queue['-Main_log-'].is_updated:
