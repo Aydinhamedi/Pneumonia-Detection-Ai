@@ -32,6 +32,7 @@ from PIL import Image
 import tensorflow as tf
 from keras.models import load_model
 from keras.preprocessing.image import ImageDataGenerator
+from requests.exceptions import RequestException, ConnectionError
 from keras.utils import to_categorical
 import numpy as np
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
@@ -45,7 +46,7 @@ from Utils.FixedDropout import FixedDropout
 from Utils.Other import *
 # global vars>>>
 # CONST SYS
-GUI_Ver = '0.9.1 Pre1'
+GUI_Ver = '0.9.1 Pre2'
 Model_dir = 'Data/PAI_model'  # without file extention
 Database_dir = 'Data/dataset.npy'
 IMG_AF = ('JPEG', 'PNG', 'BMP', 'TIFF', 'JPG', 'DCM', 'DICOM')
@@ -139,8 +140,7 @@ GUI_layout_Tab_Ai_Model = [
                  enable_click_events=True,
                  justification='left',
                  selected_row_colors='gray',
-                 size=(40, 3),
-                 expand_x=True,
+                 col_widths=[40],
                  num_rows=3)
     ],
     [sg.Text('Ai Model Info:', font=(None, 10, 'bold'))],
@@ -279,7 +279,11 @@ def get_latest_release_files(url):
     """
     assets = []
     # Make a GET request to the GitHub API
-    response = requests.get(url)
+    try:
+        response = requests.get(url)
+    except (ConnectionError, RequestException) as e:
+        print(f'Failed to make a GET request to the GitHub API (Possible Cause: Max requests exceeded)')
+        return assets
 
     # Check if the request was successful
     if response.status_code == 200:
@@ -507,8 +511,8 @@ def CI_uaim(model_type_id) -> None:
     
     Handles logging status messages to the GUI queue and any errors.
     """
-    GUI_Queue['-Main_log-'].put(f'Downloading model {available_models[model_type_id[0]][0]}...')
     try:
+        GUI_Queue['-Main_log-'].put(f'Downloading model {available_models[model_type_id[0]][0]}...')
         download_file_from_github(Github_repo_Releases_URL,
                                   available_models[model_type_id[0]][0],
                                   Model_dir,
@@ -692,12 +696,15 @@ def main() -> None:
         # Handle event for updating the AI model
         if event == '-BUTTON_UPDATE_MODEL-':
             # Start a new thread to download the model without freezing the GUI
-            CI_uaim_Thread = threading.Thread(
-                target=CI_uaim,
-                args=(values['-TABLE_ST_MODEL-'],),
-                daemon=True
-            )
-            CI_uaim_Thread.start()
+            if values['-TABLE_ST_MODEL-'] == []:
+                GUI_Queue['-Main_log-'].put('ERROR: Failed to download the model. Select a available model from the list.')
+            else:
+                CI_uaim_Thread = threading.Thread(
+                    target=CI_uaim,
+                    args=(values['-TABLE_ST_MODEL-'],),
+                    daemon=True
+                )
+                CI_uaim_Thread.start()
         # Updating the model info + ...
         if Update_release_files_LXT is None or time.time() - Update_release_files_LXT > 1 * 60 * 60:
             Update_release_files_LXT = time.time()
@@ -724,7 +731,6 @@ def main() -> None:
                 result_expanded += f'> {block}\n'
             GUI_window['-OUTPUT_ST-'].update(result_expanded, text_color='black')
             UWL()
-
 
 # start>>>
 # clear the 'start L1' prompt
