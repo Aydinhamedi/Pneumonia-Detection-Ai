@@ -95,3 +95,5 @@ Samples/*
 /env
 /Temp
 /Test.md
+/Interface/GUI/Data/model_info.json
+/Load_Backup.py
