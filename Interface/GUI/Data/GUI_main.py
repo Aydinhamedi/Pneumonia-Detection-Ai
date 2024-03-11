@@ -583,6 +583,7 @@ def IEH(id: str = 'Unknown', stop: bool = True, DEV: bool = True) -> None:
         sys.exit('SYS EXIT|ERROR: Internal|by Internal Error Handler')
 
 # _Exit
+@atexit.register
 def _Exit():
     GUI_window_CE = ''
     try:
@@ -593,8 +594,8 @@ def _Exit():
         print('! <Exit handler> Exiting app...')
         print(f'! <Exit handler> GUI close err: [{GUI_window_CE}]')
         print('! <Exit handler> Global var dump:')
-        for var in globals():
-            print(f'! <Exit handler> -<G dump>- {var}')
+        for var in globals().items():
+            print(f'! <Exit handler> -<G dump>- {var[0]} --> {var[1]}')
         print('! <Exit handler> Exited app.')
 # UWL
 def UWL(Only_finalize: bool = False) -> None:
