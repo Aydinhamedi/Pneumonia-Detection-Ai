@@ -12,6 +12,7 @@ import time
 import cv2
 import sys
 import json
+import atexit
 import queue
 import hashlib
 import pydicom
@@ -56,7 +57,7 @@ Model_FORMAT = 'H5_SF'  # TF_dir/H5_SF
 IMG_RES = (224, 224, 3)
 train_epochs_def = 4
 SHOW_CSAA_OS = False
-Show_GUI_debug = False
+Debug_m = False
 # normal global
 available_models = []
 img_array = None
@@ -581,6 +582,21 @@ def IEH(id: str = 'Unknown', stop: bool = True, DEV: bool = True) -> None:
         logger.warning('SYS EXIT|ERROR: Internal|by Internal Error Handler')
         sys.exit('SYS EXIT|ERROR: Internal|by Internal Error Handler')
 
+# _Exit
+@atexit.register
+def _Exit():
+    GUI_window_CE = ''
+    try:
+        GUI_window.close()
+    except Exception as err:
+        GUI_window_CE = err
+    if Debug_m:
+        print('! <Exit handler> Exiting app...')
+        print(f'! <Exit handler> GUI close err: [{GUI_window_CE}]')
+        print('! <Exit handler> Global var dump:')
+        for var in globals().items():
+            print(f'! <Exit handler> -<G dump>- {var[0]} --> {var[1]}')
+        print('! <Exit handler> Exited app.')
 # UWL
 def UWL(Only_finalize: bool = False) -> None:
     """Updates the GUI window.
@@ -607,7 +623,7 @@ def main() -> None:
     """
     # start
     sg.SystemTray.notify(f'Pneumonia-Detection-Ai-GUI', f'Gui started.\nV{GUI_Ver}')
-    if Show_GUI_debug:
+    if Debug_m:
         sg.SystemTray.notify(f'Pneumonia-Detection-Ai-GUI', f'Looks like you are a programmer\nWow.\nV{GUI_Ver}')
         sg.show_debugger_window()
     # global
