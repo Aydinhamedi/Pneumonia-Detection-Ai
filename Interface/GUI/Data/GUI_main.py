@@ -57,7 +57,7 @@ Model_FORMAT = 'H5_SF'  # TF_dir/H5_SF
 IMG_RES = (224, 224, 3)
 train_epochs_def = 4
 SHOW_CSAA_OS = False
-Debug_m = True
+Debug_m = False
 # normal global
 available_models = []
 img_array = None
