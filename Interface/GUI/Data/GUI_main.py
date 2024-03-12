@@ -5,46 +5,66 @@
 
 # start L1
 print('Loading the GUI...', end='\r')
-# pylib
+# Import Sys level  
 import os
-import re
-import time
-import cv2
-import sys
-import json
-import atexit
-import queue
-import hashlib
-import pydicom
-import cpuinfo
-import difflib
-import inspect
 import traceback
-import subprocess
-import threading
-import requests
-from tqdm import tqdm
-from time import sleep
-import PySimpleGUI as sg
-from loguru import logger
-from tkinter import filedialog
-from datetime import datetime
-from PIL import Image
-import tensorflow as tf
-from keras.models import load_model
-from keras.preprocessing.image import ImageDataGenerator
-from requests.exceptions import RequestException, ConnectionError
-from keras.utils import to_categorical
-import numpy as np
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-# Utils
-from Utils.one_cycle import OneCycleLr
-from Utils.lr_find import LrFinder
-from Utils.Grad_cam import make_gradcam_heatmap
-from Utils.print_color_V2_NEW import print_Color_V2
-from Utils.print_color_V1_OLD import print_Color
-from Utils.FixedDropout import FixedDropout
-from Utils.Other import *
+import sys
+import tkinter as tk
+from tkinter import messagebox
+# Try to import main GUI lib
+try:
+    import PySimpleGUI as sg
+except (ImportError, NameError):
+    root = tk.Tk()
+    root.withdraw()
+    messagebox.showinfo('Internal Error | Exiting', 'Failed to import PySimpleGUI, exiting...')
+    sys.exit()
+# prep GUI
+sg.theme('GrayGrayGray')
+# Start 
+sg.popup_auto_close('Loading GUI...', non_blocking=True, auto_close_duration=2, no_titlebar=False)
+# pylib
+try:
+    import re
+    import time
+    import cv2
+    import json
+    import atexit
+    import queue
+    import hashlib
+    import pydicom
+    import cpuinfo
+    import difflib
+    import inspect
+    import traceback
+    import subprocess
+    import threading
+    import requests
+    from tqdm import tqdm
+    from time import sleep
+    from loguru import logger
+    from tkinter import filedialog
+    from datetime import datetime
+    from PIL import Image
+    import tensorflow as tf
+    from keras.models import load_model
+    from requests.exceptions import RequestException, ConnectionError
+    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+    # Utils
+    from Utils.Grad_cam import make_gradcam_heatmap
+    from Utils.print_color_V2_NEW import print_Color_V2
+    from Utils.print_color_V1_OLD import print_Color
+    from Utils.FixedDropout import FixedDropout
+    from Utils.Other import *
+except (ImportError, NameError):
+    print('Failed to load the GUI libs')
+    print('detailed error message:')
+    traceback.print_exc()
+    sg.popup(
+            f'An internal error occurred.\nERROR-INFO:\n\nFailed to load the GUI python libs.\n\nErr-Traceback:\n{traceback.format_exc()}',
+            title=f'Internal Error | Exiting',
+            custom_text=('Exit'))
+    sys.exit()
 # global vars>>>
 # CONST SYS
 GUI_Ver = '0.9.1 Pre2'
@@ -55,8 +75,6 @@ Github_repo_Releases_Model_info_name = 'model_info.json'
 Github_repo_Releases_URL = 'https://api.github.com/repos/Aydinhamedi/Pneumonia-Detection-Ai/releases/latest'
 Model_FORMAT = 'H5_SF'  # TF_dir/H5_SF
 IMG_RES = (224, 224, 3)
-train_epochs_def = 4
-SHOW_CSAA_OS = False
 Debug_m = False
 # normal global
 available_models = []
@@ -103,8 +121,6 @@ physical_devices = tf.config.list_physical_devices('GPU')
 for gpu_instance in physical_devices:
     tf.config.experimental.set_memory_growth(gpu_instance, True)
 # Making the GUI layout >>>
-# prep GUI
-sg.theme('GrayGrayGray')
 # Main
 GUI_layout_Tab_main = [
     [sg.Text('Enter the image dir:', font=(None, 10, 'bold'))],
@@ -624,7 +640,7 @@ def main() -> None:
     # start
     sg.SystemTray.notify(f'Pneumonia-Detection-Ai-GUI', f'Gui started.\nV{GUI_Ver}')
     if Debug_m:
-        sg.SystemTray.notify(f'Pneumonia-Detection-Ai-GUI', f'Looks like you are a programmer\nWow.\nV{GUI_Ver}')
+        sg.SystemTray.notify(f'Pneumonia-Detection-Ai-GUI', f'Looks like you are a programmer\nWow.\nV{GUI_Ver}', icon=sg.SYSTEM_TRAY_MESSAGE_ICON_WARNING)
         sg.show_debugger_window()
     # global
     global GUI_window
@@ -645,7 +661,7 @@ def main() -> None:
     GUI_tab_other = sg.Tab('Ai Model', GUI_layout_Tab_Ai_Model)
     GUI_layout_group = [[sg.TabGroup([[GUI_tab_main, GUI_tab_other]])]]
     # Create the window
-    GUI_window = sg.Window(f'Pneumonia-Detection-Ai-GUI V{GUI_Ver}', GUI_layout_group)
+    GUI_window = sg.Window(f'Pneumonia-Detection-Ai-GUI V{GUI_Ver}', GUI_layout_group, finalize=True)
     # Pre up
     CI_umij()
     # Main loop for the Graphical User Interface (GUI)
