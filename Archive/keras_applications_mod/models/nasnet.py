@@ -50,9 +50,7 @@ from keras.utils import layer_utils
 from tensorflow.python.platform import tf_logging as logging
 from tensorflow.python.util.tf_export import keras_export
 
-BASE_WEIGHTS_PATH = (
-    "https://storage.googleapis.com/tensorflow/keras-applications/nasnet/"
-)
+BASE_WEIGHTS_PATH = "https://storage.googleapis.com/tensorflow/keras-applications/nasnet/"
 NASNET_MOBILE_WEIGHT_PATH = BASE_WEIGHTS_PATH + "NASNet-mobile.h5"
 NASNET_MOBILE_WEIGHT_PATH_NO_TOP = BASE_WEIGHTS_PATH + "NASNet-mobile-no-top.h5"
 NASNET_LARGE_WEIGHT_PATH = BASE_WEIGHTS_PATH + "NASNet-large.h5"
@@ -161,16 +159,9 @@ def NASNet(
         )
 
     if weights == "imagenet" and include_top and classes != 1000:
-        raise ValueError(
-            'If using `weights` as `"imagenet"` with `include_top` '
-            "as true, `classes` should be 1000"
-        )
+        raise ValueError('If using `weights` as `"imagenet"` with `include_top` ' "as true, `classes` should be 1000")
 
-    if (
-        isinstance(input_shape, tuple)
-        and None in input_shape
-        and weights == "imagenet"
-    ):
+    if isinstance(input_shape, tuple) and None in input_shape and weights == "imagenet":
         raise ValueError(
             "When specifying the input shape of a NASNet"
             " and loading `ImageNet` weights, "
@@ -219,8 +210,7 @@ def NASNet(
     if penultimate_filters % (24 * (filter_multiplier**2)) != 0:
         raise ValueError(
             "For NASNet-A models, the `penultimate_filters` must be a multiple "
-            "of 24 * (`filter_multiplier` ** 2). Current value: %d"
-            % penultimate_filters
+            "of 24 * (`filter_multiplier` ** 2). Current value: %d" % penultimate_filters
         )
 
     channel_dim = 1 if backend.image_data_format() == "channels_first" else -1
@@ -236,24 +226,16 @@ def NASNet(
         kernel_initializer="he_normal",
     )(img_input)
 
-    x = layers.BatchNormalization(
-        axis=channel_dim, momentum=0.9997, epsilon=1e-3, name="stem_bn1"
-    )(x)
+    x = layers.BatchNormalization(axis=channel_dim, momentum=0.9997, epsilon=1e-3, name="stem_bn1")(x)
 
     p = None
-    x, p = _reduction_a_cell(
-        x, p, filters // (filter_multiplier**2), block_id="stem_1"
-    )
-    x, p = _reduction_a_cell(
-        x, p, filters // filter_multiplier, block_id="stem_2"
-    )
+    x, p = _reduction_a_cell(x, p, filters // (filter_multiplier**2), block_id="stem_1")
+    x, p = _reduction_a_cell(x, p, filters // filter_multiplier, block_id="stem_2")
 
     for i in range(num_blocks):
         x, p = _normal_a_cell(x, p, filters, block_id="%d" % (i))
 
-    x, p0 = _reduction_a_cell(
-        x, p, filters * filter_multiplier, block_id="reduce_%d" % (num_blocks)
-    )
+    x, p0 = _reduction_a_cell(x, p, filters * filter_multiplier, block_id="reduce_%d" % (num_blocks))
 
     p = p0 if not skip_reduction else p
 
@@ -287,9 +269,7 @@ def NASNet(
     if include_top:
         x = layers.GlobalAveragePooling2D()(x)
         imagenet_utils.validate_activation(classifier_activation, weights)
-        x = layers.Dense(
-            classes, activation=classifier_activation, name="predictions"
-        )(x)
+        x = layers.Dense(classes, activation=classifier_activation, name="predictions")(x)
     else:
         if pooling == "avg":
             x = layers.GlobalAveragePooling2D()(x)
@@ -340,10 +320,7 @@ def NASNet(
                 )
             model.load_weights(weights_path)
         else:
-            raise ValueError(
-                "ImageNet weights can only be loaded with NASNetLarge"
-                " or NASNetMobile"
-            )
+            raise ValueError("ImageNet weights can only be loaded with NASNetLarge" " or NASNetMobile")
     elif weights is not None:
         model.load_weights(weights)
 
@@ -353,9 +330,7 @@ def NASNet(
     return model
 
 
-@keras_export(
-    "keras.applications.nasnet.NASNetMobile", "keras.applications.NASNetMobile"
-)
+@keras_export("keras.applications.nasnet.NASNetMobile", "keras.applications.NASNetMobile")
 def NASNetMobile(
     input_shape=None,
     include_top=True,
@@ -441,9 +416,7 @@ def NASNetMobile(
     )
 
 
-@keras_export(
-    "keras.applications.nasnet.NASNetLarge", "keras.applications.NASNetLarge"
-)
+@keras_export("keras.applications.nasnet.NASNetLarge", "keras.applications.NASNetLarge")
 def NASNetLarge(
     input_shape=None,
     include_top=True,
@@ -529,9 +502,7 @@ def NASNetLarge(
     )
 
 
-def _separable_conv_block(
-    ip, filters, kernel_size=(3, 3), strides=(1, 1), block_id=None
-):
+def _separable_conv_block(ip, filters, kernel_size=(3, 3), strides=(1, 1), block_id=None):
     """Adds 2 blocks of [relu-separable conv-batchnorm].
 
     Args:
@@ -617,9 +588,7 @@ def _adjust_block(p, ip, filters, block_id=None):
 
         elif p_shape[img_dim] != ip_shape[img_dim]:
             with backend.name_scope(f"adjust_reduction_block_{block_id}"):
-                p = layers.Activation("relu", name=f"adjust_relu_1_{block_id}")(
-                    p
-                )
+                p = layers.Activation("relu", name=f"adjust_relu_1_{block_id}")(p)
                 p1 = layers.AveragePooling2D(
                     (1, 1),
                     strides=(2, 2),
@@ -722,18 +691,12 @@ def _normal_a_cell(ip, p, filters, block_id=None):
                 kernel_size=(5, 5),
                 block_id=f"normal_left1_{block_id}",
             )
-            x1_2 = _separable_conv_block(
-                p, filters, block_id=f"normal_right1_{block_id}"
-            )
+            x1_2 = _separable_conv_block(p, filters, block_id=f"normal_right1_{block_id}")
             x1 = layers.add([x1_1, x1_2], name=f"normal_add_1_{block_id}")
 
         with backend.name_scope("block_2"):
-            x2_1 = _separable_conv_block(
-                p, filters, (5, 5), block_id=f"normal_left2_{block_id}"
-            )
-            x2_2 = _separable_conv_block(
-                p, filters, (3, 3), block_id=f"normal_right2_{block_id}"
-            )
+            x2_1 = _separable_conv_block(p, filters, (5, 5), block_id=f"normal_left2_{block_id}")
+            x2_2 = _separable_conv_block(p, filters, (3, 3), block_id=f"normal_right2_{block_id}")
             x2 = layers.add([x2_1, x2_2], name=f"normal_add_2_{block_id}")
 
         with backend.name_scope("block_3"):
@@ -761,9 +724,7 @@ def _normal_a_cell(ip, p, filters, block_id=None):
             x4 = layers.add([x4_1, x4_2], name=f"normal_add_4_{block_id}")
 
         with backend.name_scope("block_5"):
-            x5 = _separable_conv_block(
-                h, filters, block_id=f"normal_left5_{block_id}"
-            )
+            x5 = _separable_conv_block(h, filters, block_id=f"normal_left5_{block_id}")
             x5 = layers.add([x5, h], name=f"normal_add_5_{block_id}")
 
         x = layers.concatenate(
@@ -871,9 +832,7 @@ def _reduction_a_cell(ip, p, filters, block_id=None):
             x4 = layers.add([x2, x4])
 
         with backend.name_scope("block_5"):
-            x5_1 = _separable_conv_block(
-                x1, filters, (3, 3), block_id=f"reduction_left4_{block_id}"
-            )
+            x5_1 = _separable_conv_block(x1, filters, (3, 3), block_id=f"reduction_left4_{block_id}")
             x5_2 = layers.MaxPooling2D(
                 (3, 3),
                 strides=(2, 2),
@@ -892,9 +851,7 @@ def _reduction_a_cell(ip, p, filters, block_id=None):
 
 @keras_export("keras.applications.nasnet.preprocess_input")
 def preprocess_input(x, data_format=None):
-    return imagenet_utils.preprocess_input(
-        x, data_format=data_format, mode="tf"
-    )
+    return imagenet_utils.preprocess_input(x, data_format=data_format, mode="tf")
 
 
 @keras_export("keras.applications.nasnet.decode_predictions")

@@ -27,10 +27,7 @@ from keras.utils import data_utils
 from tensorflow.python.util.tf_export import keras_export
 
 CLASS_INDEX = None
-CLASS_INDEX_PATH = (
-    "https://storage.googleapis.com/download.tensorflow.org/"
-    "data/imagenet_class_index.json"
-)
+CLASS_INDEX_PATH = "https://storage.googleapis.com/download.tensorflow.org/" "data/imagenet_class_index.json"
 
 
 PREPROCESS_INPUT_DOC = """
@@ -105,18 +102,12 @@ PREPROCESS_INPUT_RET_DOC_CAFFE = """
 def preprocess_input(x, data_format=None, mode="caffe"):
     """Preprocesses a tensor or Numpy array encoding a batch of images."""
     if mode not in {"caffe", "tf", "torch"}:
-        raise ValueError(
-            "Expected mode to be one of `caffe`, `tf` or `torch`. "
-            f"Received: mode={mode}"
-        )
+        raise ValueError("Expected mode to be one of `caffe`, `tf` or `torch`. " f"Received: mode={mode}")
 
     if data_format is None:
         data_format = backend.image_data_format()
     elif data_format not in {"channels_first", "channels_last"}:
-        raise ValueError(
-            "Expected data_format to be one of `channels_first` or "
-            f"`channels_last`. Received: data_format={data_format}"
-        )
+        raise ValueError("Expected data_format to be one of `channels_first` or " f"`channels_last`. Received: data_format={data_format}")
 
     if isinstance(x, np.ndarray):
         return _preprocess_numpy_input(x, data_format=data_format, mode=mode)
@@ -341,9 +332,7 @@ def obtain_input_shape(
             if input_shape[0] not in {1, 3}:
                 warnings.warn(
                     "This model usually expects 1 or 3 input channels. "
-                    "However, it was passed an input_shape with "
-                    + str(input_shape[0])
-                    + " input channels.",
+                    "However, it was passed an input_shape with " + str(input_shape[0]) + " input channels.",
                     stacklevel=2,
                 )
             default_shape = (input_shape[0], default_size, default_size)
@@ -351,9 +340,7 @@ def obtain_input_shape(
             if input_shape[-1] not in {1, 3}:
                 warnings.warn(
                     "This model usually expects 1 or 3 input channels. "
-                    "However, it was passed an input_shape with "
-                    + str(input_shape[-1])
-                    + " input channels.",
+                    "However, it was passed an input_shape with " + str(input_shape[-1]) + " input channels.",
                     stacklevel=2,
                 )
             default_shape = (default_size, default_size, input_shape[-1])
@@ -376,41 +363,19 @@ def obtain_input_shape(
         if data_format == "channels_first":
             if input_shape is not None:
                 if len(input_shape) != 3:
-                    raise ValueError(
-                        "`input_shape` must be a tuple of three integers."
-                    )
+                    raise ValueError("`input_shape` must be a tuple of three integers.")
                 if input_shape[0] != 3 and weights == "imagenet":
-                    raise ValueError(
-                        "The input must have 3 channels; Received "
-                        f"`input_shape={input_shape}`"
-                    )
-                if (
-                    input_shape[1] is not None and input_shape[1] < min_size
-                ) or (input_shape[2] is not None and input_shape[2] < min_size):
-                    raise ValueError(
-                        f"Input size must be at least {min_size}"
-                        f"x{min_size}; Received: "
-                        f"input_shape={input_shape}"
-                    )
+                    raise ValueError("The input must have 3 channels; Received " f"`input_shape={input_shape}`")
+                if (input_shape[1] is not None and input_shape[1] < min_size) or (input_shape[2] is not None and input_shape[2] < min_size):
+                    raise ValueError(f"Input size must be at least {min_size}" f"x{min_size}; Received: " f"input_shape={input_shape}")
         else:
             if input_shape is not None:
                 if len(input_shape) != 3:
-                    raise ValueError(
-                        "`input_shape` must be a tuple of three integers."
-                    )
+                    raise ValueError("`input_shape` must be a tuple of three integers.")
                 if input_shape[-1] != 3 and weights == "imagenet":
-                    raise ValueError(
-                        "The input must have 3 channels; Received "
-                        f"`input_shape={input_shape}`"
-                    )
-                if (
-                    input_shape[0] is not None and input_shape[0] < min_size
-                ) or (input_shape[1] is not None and input_shape[1] < min_size):
-                    raise ValueError(
-                        "Input size must be at least "
-                        f"{min_size}x{min_size}; Received: "
-                        f"input_shape={input_shape}"
-                    )
+                    raise ValueError("The input must have 3 channels; Received " f"`input_shape={input_shape}`")
+                if (input_shape[0] is not None and input_shape[0] < min_size) or (input_shape[1] is not None and input_shape[1] < min_size):
+                    raise ValueError("Input size must be at least " f"{min_size}x{min_size}; Received: " f"input_shape={input_shape}")
     else:
         if require_flatten:
             input_shape = default_shape
@@ -422,9 +387,7 @@ def obtain_input_shape(
     if require_flatten:
         if None in input_shape:
             raise ValueError(
-                "If `include_top` is True, "
-                "you should specify a static `input_shape`. "
-                f"Received: input_shape={input_shape}"
+                "If `include_top` is True, " "you should specify a static `input_shape`. " f"Received: input_shape={input_shape}"
             )
     return input_shape
 

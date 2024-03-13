@@ -32,30 +32,13 @@ from keras.utils import layer_utils
 # isort: off
 from tensorflow.python.util.tf_export import keras_export
 
-BASE_WEIGHTS_PATH = (
-    "https://storage.googleapis.com/tensorflow/keras-applications/densenet/"
-)
-DENSENET121_WEIGHT_PATH = (
-    BASE_WEIGHTS_PATH + "densenet121_weights_tf_dim_ordering_tf_kernels.h5"
-)
-DENSENET121_WEIGHT_PATH_NO_TOP = (
-    BASE_WEIGHTS_PATH
-    + "densenet121_weights_tf_dim_ordering_tf_kernels_notop.h5"
-)
-DENSENET169_WEIGHT_PATH = (
-    BASE_WEIGHTS_PATH + "densenet169_weights_tf_dim_ordering_tf_kernels.h5"
-)
-DENSENET169_WEIGHT_PATH_NO_TOP = (
-    BASE_WEIGHTS_PATH
-    + "densenet169_weights_tf_dim_ordering_tf_kernels_notop.h5"
-)
-DENSENET201_WEIGHT_PATH = (
-    BASE_WEIGHTS_PATH + "densenet201_weights_tf_dim_ordering_tf_kernels.h5"
-)
-DENSENET201_WEIGHT_PATH_NO_TOP = (
-    BASE_WEIGHTS_PATH
-    + "densenet201_weights_tf_dim_ordering_tf_kernels_notop.h5"
-)
+BASE_WEIGHTS_PATH = "https://storage.googleapis.com/tensorflow/keras-applications/densenet/"
+DENSENET121_WEIGHT_PATH = BASE_WEIGHTS_PATH + "densenet121_weights_tf_dim_ordering_tf_kernels.h5"
+DENSENET121_WEIGHT_PATH_NO_TOP = BASE_WEIGHTS_PATH + "densenet121_weights_tf_dim_ordering_tf_kernels_notop.h5"
+DENSENET169_WEIGHT_PATH = BASE_WEIGHTS_PATH + "densenet169_weights_tf_dim_ordering_tf_kernels.h5"
+DENSENET169_WEIGHT_PATH_NO_TOP = BASE_WEIGHTS_PATH + "densenet169_weights_tf_dim_ordering_tf_kernels_notop.h5"
+DENSENET201_WEIGHT_PATH = BASE_WEIGHTS_PATH + "densenet201_weights_tf_dim_ordering_tf_kernels.h5"
+DENSENET201_WEIGHT_PATH_NO_TOP = BASE_WEIGHTS_PATH + "densenet201_weights_tf_dim_ordering_tf_kernels_notop.h5"
 
 layers = VersionAwareLayers()
 
@@ -88,9 +71,7 @@ def transition_block(x, reduction, name):
       output tensor for the block.
     """
     bn_axis = 3 if backend.image_data_format() == "channels_last" else 1
-    x = layers.BatchNormalization(
-        axis=bn_axis, epsilon=1.001e-5, name=name + "_bn"
-    )(x)
+    x = layers.BatchNormalization(axis=bn_axis, epsilon=1.001e-5, name=name + "_bn")(x)
     x = layers.Activation("relu", name=name + "_relu")(x)
     x = layers.Conv2D(
         int(backend.int_shape(x)[bn_axis] * reduction),
@@ -114,20 +95,12 @@ def conv_block(x, growth_rate, name):
       Output tensor for the block.
     """
     bn_axis = 3 if backend.image_data_format() == "channels_last" else 1
-    x1 = layers.BatchNormalization(
-        axis=bn_axis, epsilon=1.001e-5, name=name + "_0_bn"
-    )(x)
+    x1 = layers.BatchNormalization(axis=bn_axis, epsilon=1.001e-5, name=name + "_0_bn")(x)
     x1 = layers.Activation("relu", name=name + "_0_relu")(x1)
-    x1 = layers.Conv2D(
-        4 * growth_rate, 1, use_bias=False, name=name + "_1_conv"
-    )(x1)
-    x1 = layers.BatchNormalization(
-        axis=bn_axis, epsilon=1.001e-5, name=name + "_1_bn"
-    )(x1)
+    x1 = layers.Conv2D(4 * growth_rate, 1, use_bias=False, name=name + "_1_conv")(x1)
+    x1 = layers.BatchNormalization(axis=bn_axis, epsilon=1.001e-5, name=name + "_1_bn")(x1)
     x1 = layers.Activation("relu", name=name + "_1_relu")(x1)
-    x1 = layers.Conv2D(
-        growth_rate, 3, padding="same", use_bias=False, name=name + "_2_conv"
-    )(x1)
+    x1 = layers.Conv2D(growth_rate, 3, padding="same", use_bias=False, name=name + "_2_conv")(x1)
     x = layers.Concatenate(axis=bn_axis, name=name + "_concat")([x, x1])
     return x
 
@@ -214,10 +187,7 @@ def DenseNet(
         )
 
     if weights == "imagenet" and include_top and classes != 1000:
-        raise ValueError(
-            'If using `weights` as `"imagenet"` with `include_top`'
-            " as true, `classes` should be 1000"
-        )
+        raise ValueError('If using `weights` as `"imagenet"` with `include_top`' " as true, `classes` should be 1000")
 
     # Determine proper input shape
     input_shape = imagenet_utils.obtain_input_shape(
@@ -241,9 +211,7 @@ def DenseNet(
 
     x = layers.ZeroPadding2D(padding=((3, 3), (3, 3)))(img_input)
     x = layers.Conv2D(64, 7, strides=2, use_bias=False, name="conv1/conv")(x)
-    x = layers.BatchNormalization(
-        axis=bn_axis, epsilon=1.001e-5, name="conv1/bn"
-    )(x)
+    x = layers.BatchNormalization(axis=bn_axis, epsilon=1.001e-5, name="conv1/bn")(x)
     x = layers.Activation("relu", name="conv1/relu")(x)
     x = layers.ZeroPadding2D(padding=((1, 1), (1, 1)))(x)
     x = layers.MaxPooling2D(3, strides=2, name="pool1")(x)
@@ -263,9 +231,7 @@ def DenseNet(
         x = layers.GlobalAveragePooling2D(name="avg_pool")(x)
 
         imagenet_utils.validate_activation(classifier_activation, weights)
-        x = layers.Dense(
-            classes, activation=classifier_activation, name="predictions"
-        )(x)
+        x = layers.Dense(classes, activation=classifier_activation, name="predictions")(x)
     else:
         if pooling == "avg":
             x = layers.GlobalAveragePooling2D(name="avg_pool")(x)
@@ -342,9 +308,7 @@ def DenseNet(
     return model
 
 
-@keras_export(
-    "keras.applications.densenet.DenseNet121", "keras.applications.DenseNet121"
-)
+@keras_export("keras.applications.densenet.DenseNet121", "keras.applications.DenseNet121")
 def DenseNet121(
     include_top=True,
     weights="imagenet",
@@ -367,9 +331,7 @@ def DenseNet121(
     )
 
 
-@keras_export(
-    "keras.applications.densenet.DenseNet169", "keras.applications.DenseNet169"
-)
+@keras_export("keras.applications.densenet.DenseNet169", "keras.applications.DenseNet169")
 def DenseNet169(
     include_top=True,
     weights="imagenet",
@@ -392,9 +354,7 @@ def DenseNet169(
     )
 
 
-@keras_export(
-    "keras.applications.densenet.DenseNet201", "keras.applications.DenseNet201"
-)
+@keras_export("keras.applications.densenet.DenseNet201", "keras.applications.DenseNet201")
 def DenseNet201(
     include_top=True,
     weights="imagenet",
@@ -419,9 +379,7 @@ def DenseNet201(
 
 @keras_export("keras.applications.densenet.preprocess_input")
 def preprocess_input(x, data_format=None):
-    return imagenet_utils.preprocess_input(
-        x, data_format=data_format, mode="torch"
-    )
+    return imagenet_utils.preprocess_input(x, data_format=data_format, mode="torch")
 
 
 @keras_export("keras.applications.densenet.decode_predictions")
