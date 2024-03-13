@@ -411,14 +411,10 @@ if ADBD > 0:
         # get augmented data
         x_train_augmented, y_train_augmented = train_iterator.next()
         print(">   ├───Applying adaptive histogram equalization...")
-        print(
-            f">   ├───Adaptive histogram equalization clip limit = {round(ADB_clip_limit, 2)}"
-        )
+        print(f">   ├───Adaptive histogram equalization clip limit = {round(ADB_clip_limit, 2)}")
         x_train_augmented = np.clip(x_train_augmented, 0, 255)
         # print_Color(f'~*>   |---Grayscale range: ~*Min = {np.min(x_train_augmented)}~* | ~*Max = {np.max(x_train_augmented)}', ['normal', 'blue', 'normal', 'red'], advanced_mode=True)
-        x_train_augmented = apply_clahe_rgb_array(
-            x_train_augmented, clip_limit=ADB_clip_limit
-        )  # compensating the image info loss
+        x_train_augmented = apply_clahe_rgb_array(x_train_augmented, clip_limit=ADB_clip_limit)  # compensating the image info loss
         print(">   └───Adding the Generated ADB...")
         # append augmented data to original data
         x_train = np.concatenate([x_train, x_train_augmented])
@@ -465,16 +461,10 @@ print_Color(
 print_Color("Setting LNTS...", ["yellow"])
 # Get the total number of samples in the arrays
 num_samples = x_train.shape[0]
-print_Color(
-    f"~*Original num_samples: ~*{num_samples}", ["normal", "green"], advanced_mode=True
-)
+print_Color(f"~*Original num_samples: ~*{num_samples}", ["normal", "green"], advanced_mode=True)
 if LNTS != 0:
-    print_Color(
-        f"~*Applying LNTS of: ~*{LNTS}", ["normal", "green"], advanced_mode=True
-    )
-    print_Color(
-        f"~*SNC: ~*{num_samples - LNTS}", ["normal", "green"], advanced_mode=True
-    )
+    print_Color(f"~*Applying LNTS of: ~*{LNTS}", ["normal", "green"], advanced_mode=True)
+    print_Color(f"~*SNC: ~*{num_samples - LNTS}", ["normal", "green"], advanced_mode=True)
     # Generate random indices to select LNTS samples
     indices = np.random.choice(num_samples, size=LNTS, replace=False)
     # Select the samples using the generated indices
@@ -488,9 +478,7 @@ if LNTS != 0:
     del indices
     # Debug
     num_samples = x_train.shape[0]
-    print_Color(
-        f"~*New num_samples: ~*{num_samples}", ["normal", "green"], advanced_mode=True
-    )
+    print_Color(f"~*New num_samples: ~*{num_samples}", ["normal", "green"], advanced_mode=True)
 # Shuffle the training data
 print_Color("shuffling data...", ["yellow"])
 x_train, y_train = shuffle_data(x_train, y_train)
@@ -498,9 +486,7 @@ x_train, y_train = shuffle_data(x_train, y_train)
 if Save_TS:
     print_Color("Saving TS...", ["yellow"])
     SITD = np.random.choice(num_samples, size=400, replace=False)
-    S_dir = "Samples/TSR400_" + datetime.datetime.now().strftime(
-        "y%Y_m%m_d%d-h%H_m%M_s%S"
-    )
+    S_dir = "Samples/TSR400_" + datetime.datetime.now().strftime("y%Y_m%m_d%d-h%H_m%M_s%S")
     print_Color(f"~*Sample dir: ~*{S_dir}", ["normal", "green"], advanced_mode=True)
     if RANGE_NOM:
         if scale_data_NP_M:
@@ -651,9 +637,7 @@ def Eff_B7_NS(freeze_layers):
     # OPT/compile
     opt = SGD(momentum=0.9)
     # opt = Yogi()
-    model_EfficientNetB7_NS.compile(
-        optimizer=opt, loss="categorical_crossentropy", metrics=["accuracy"]
-    )
+    model_EfficientNetB7_NS.compile(optimizer=opt, loss="categorical_crossentropy", metrics=["accuracy"])
 
     return model_EfficientNetB7_NS
 
@@ -722,9 +706,7 @@ def Combo_Model(freeze_layers1, freeze_layers2):
 
     # adding CDL
     base_model_FT = GlobalAveragePooling2D()(combined)
-    Dense_L1 = Dense(2048, activation="relu", kernel_regularizer=l2(0.04))(
-        base_model_FT
-    )
+    Dense_L1 = Dense(2048, activation="relu", kernel_regularizer=l2(0.04))(base_model_FT)
     Dropout_L1 = Dropout(0.4)(Dense_L1)
     BatchNorm_L2 = BatchNormalization()(Dropout_L1)
     Dense_L2 = Dense(512, activation="relu", kernel_regularizer=l2(0.02))(BatchNorm_L2)
@@ -737,9 +719,7 @@ def Combo_Model(freeze_layers1, freeze_layers2):
 
     # OPT/compile
     opt = SGD(momentum=0.9)
-    combo_model.compile(
-        optimizer=opt, loss="categorical_crossentropy", metrics=["accuracy"]
-    )
+    combo_model.compile(optimizer=opt, loss="categorical_crossentropy", metrics=["accuracy"])
 
     return combo_model
 
@@ -832,9 +812,7 @@ def Eff_B7_NS(freeze_layers):
     # OPT/compile
     opt = SGD(momentum=0.9)
     # opt = Yogi()
-    model_EfficientNetB7_NS.compile(
-        optimizer=opt, loss="categorical_crossentropy", metrics=["accuracy"]
-    )
+    model_EfficientNetB7_NS.compile(optimizer=opt, loss="categorical_crossentropy", metrics=["accuracy"])
 
     return model_EfficientNetB7_NS
 
@@ -876,9 +854,7 @@ def Eff_B7_NS(freeze_layers):
     print(f"Percentage of the base model that is frozen: {frozen_percentage:.2f}%")
     # adding CDL
     base_model_FT = GlobalAveragePooling2D()(base_model.output)
-    Dense_L1 = Dense(1024, activation="relu", kernel_regularizer=l2(0.04))(
-        base_model_FT
-    )
+    Dense_L1 = Dense(1024, activation="relu", kernel_regularizer=l2(0.04))(base_model_FT)
     Dropout_L1 = Dropout(0.4)(Dense_L1)
     BatchNorm_L2 = BatchNormalization()(Dropout_L1)
     Dense_L2 = Dense(512, activation="relu", kernel_regularizer=l2(0.02))(BatchNorm_L2)
@@ -891,9 +867,7 @@ def Eff_B7_NS(freeze_layers):
     # OPT/compile
     opt = SGD(momentum=0.9)
     # opt = Yogi()
-    model_EfficientNetB7_NS.compile(
-        optimizer=opt, loss="categorical_crossentropy", metrics=["accuracy"]
-    )
+    model_EfficientNetB7_NS.compile(optimizer=opt, loss="categorical_crossentropy", metrics=["accuracy"])
 
     return model_EfficientNetB7_NS
 
@@ -917,9 +891,7 @@ tf.keras.backend.clear_session()
 # CONF/Other
 LRF_OPT = SGD(momentum=0.9)
 LFR_batch_size = 1  # or any other batch size that fits in your memory
-LRF_dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train)).batch(
-    LFR_batch_size
-)
+LRF_dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train)).batch(LFR_batch_size)
 # Instantiate LrFinder
 lr_find = LrFinder(model, LRF_OPT, tf.keras.losses.categorical_crossentropy)
 
@@ -963,9 +935,7 @@ else:
             layer.trainable = True
 
         # Select random layers to freeze
-        frozen_layer_indices = random.sample(
-            range(len(model.layers)), randomly_frozen_layers
-        )
+        frozen_layer_indices = random.sample(range(len(model.layers)), randomly_frozen_layers)
 
         for i, layer in enumerate(model.layers):
             if i in frozen_layer_indices:
@@ -981,9 +951,7 @@ else:
         for layer in model.layers[-7:]:
             layer.trainable = not freeze_last_seven
 
-        model.compile(
-            optimizer=CEC_opt, loss="categorical_crossentropy", metrics=["accuracy"]
-        )
+        model.compile(optimizer=CEC_opt, loss="categorical_crossentropy", metrics=["accuracy"])
         model.summary(show_trainable=True, expand_nested=True)
         print("done.")
 
@@ -1032,7 +1000,9 @@ Conf_batch_size_REV2 = 8
 OneCycleLr_MAXLR = 0.01
 OneCycleLr_DEC_A = 0.0005
 OneCycleLr_MINLR = 0.0015
-TerminateOnHighTemp_M = True  # can make your training a little bit slower, but it can save your expensive gpu (TURN IT OFF FOR TPU OR CPU TRAINING)
+TerminateOnHighTemp_M = (
+    True  # can make your training a little bit slower, but it can save your expensive gpu (TURN IT OFF FOR TPU OR CPU TRAINING)
+)
 Use_ES_ONSUBT = False
 EarlyStopping_P = 5
 BEST_RSN = "PAI_model_T"
@@ -1244,11 +1214,7 @@ try:
 
         # If the accuracy is higher than the best_acc
         if acc > best_acc:
-            print(
-                "Improved model accuracy from {} to {}. Saving model.".format(
-                    best_acc, acc
-                )
-            )
+            print("Improved model accuracy from {} to {}. Saving model.".format(best_acc, acc))
 
             # Update the best_acc
             best_acc = acc
@@ -1260,19 +1226,11 @@ try:
             else:
                 model.save(f"{BEST_RSN}.h5")
         else:
-            print(
-                "Model accuracy did not improve from {}. Not saving model.".format(
-                    best_acc
-                )
-            )
+            print("Model accuracy did not improve from {}. Not saving model.".format(best_acc))
 
         # If the loss is higher than the best_loss
         if loss < best_loss:
-            print(
-                "Improved model loss from {} to {}. Saving model.".format(
-                    best_loss, loss
-                )
-            )
+            print("Improved model loss from {} to {}. Saving model.".format(best_loss, loss))
 
             # Update the best_acc
             best_loss = loss
@@ -1284,11 +1242,7 @@ try:
             else:
                 model.save(f"{BEST_RSN}_BL.h5")
         else:
-            print(
-                "Model loss did not improve from {}. Not saving model.".format(
-                    best_loss
-                )
-            )
+            print("Model loss did not improve from {}. Not saving model.".format(best_loss))
         # Garbage Collection (memory)
         gc.collect()
         tf.keras.backend.clear_session()
@@ -1333,9 +1287,7 @@ Learning_rate_conf = 3  # 1 and 2 for custom learning_rate_fn and 3 for OneCycle
 # TensorBoard conf
 TensorBoard_UF = 1  # 1 for Slow 2 for fast (very slow tarining)
 # Learning rate configuration
-Learning_rate_conf_SET2C = (
-    3  # 1 for SGD and 2 for Adam and... for lower lr 3 for very high lr
-)
+Learning_rate_conf_SET2C = 3  # 1 for SGD and 2 for Adam and... for lower lr 3 for very high lr
 OneCycleLr_MAXLR = 0.0174
 # First time
 if Learning_rate_conf == 1:
@@ -1396,9 +1348,7 @@ if Learning_rate_conf in [1, 2]:
             elif epoch < lr_rampup_epochs + lr_sustain_epochs:
                 lr = lr_max
             else:
-                lr = (lr_max - lr_min) * lr_exp_decay ** (
-                    epoch - lr_rampup_epochs - lr_sustain_epochs
-                ) + lr_min
+                lr = (lr_max - lr_min) * lr_exp_decay ** (epoch - lr_rampup_epochs - lr_sustain_epochs) + lr_min
             return lr
 
         return learning_rate_fn
@@ -1410,9 +1360,7 @@ if WTD_augmentation:
 
     def TF_add_image_grain(image, intensity=0.01):
         # Generate random noise array in the range [0, 1]
-        noise = tf.random.uniform(
-            shape=tf.shape(image), minval=0, maxval=1, dtype=tf.float32
-        )
+        noise = tf.random.uniform(shape=tf.shape(image), minval=0, maxval=1, dtype=tf.float32)
 
         # Scale the noise array
         scaled_noise = noise * intensity
@@ -1485,9 +1433,7 @@ if Learning_rate_conf in [1, 2]:
     learning_rate_fn = build_learning_rate_fn()
     learning_rate_schedule = LearningRateScheduler(learning_rate_fn, verbose=1)
 else:
-    learning_rate_schedule = OneCycleLr(
-        max_lr=OneCycleLr_MAXLR, steps_per_epoch=steps_per_epoch_train, epochs=20
-    )
+    learning_rate_schedule = OneCycleLr(max_lr=OneCycleLr_MAXLR, steps_per_epoch=steps_per_epoch_train, epochs=20)
 if SAVE_TYPE == "TF":
     checkpoint_BVAC = ModelCheckpoint(
         "models\\Temp\\bestVAC_model",
@@ -1518,9 +1464,7 @@ else:
         save_best_only=True,
         verbose=1,
     )
-early_stopping = EarlyStopping(
-    monitor="val_accuracy", patience=2, verbose=1, restore_best_weights=True
-)
+early_stopping = EarlyStopping(monitor="val_accuracy", patience=2, verbose=1, restore_best_weights=True)
 log_dir = "logs/fit/" + datetime.datetime.now().strftime("y%Y_m%m_d%d-h%H_m%M_s%S")
 TensorBoard_update_freq = "batch" if TensorBoard_UF == 2 else "epoch"
 tensorboard_callback = TensorBoard(
@@ -1617,11 +1561,7 @@ def convert_history(history):
 
 
 try:
-    EPM = (
-        "Epoch(Subset)"
-        if not isinstance(history, tf.keras.callbacks.History)
-        else "Epoch"
-    )
+    EPM = "Epoch(Subset)" if not isinstance(history, tf.keras.callbacks.History) else "Epoch"
     history = convert_history(history)
     # loss
     plt.plot(history["loss"], label="loss")
@@ -1633,9 +1573,7 @@ try:
     plt.ylabel("Loss")
     plt.xlabel(EPM)
     plt.grid(True)
-    plt.ylim(
-        top=(max(history["val_loss"][8:]) + min(history["val_loss"])) / 2, bottom=0
-    )
+    plt.ylim(top=(max(history["val_loss"][8:]) + min(history["val_loss"])) / 2, bottom=0)
     plt.show()
     # acc
     plt.plot(history["accuracy"], label="accuracy")
@@ -1666,9 +1604,7 @@ def compute_heatmap(model, img_array, conv_layer_name, pred_index):
     """
     Helper function to compute the heatmap for a given convolutional layer.
     """
-    grad_model = tf.keras.models.Model(
-        [model.inputs], [model.get_layer(conv_layer_name).output, model.output]
-    )
+    grad_model = tf.keras.models.Model([model.inputs], [model.get_layer(conv_layer_name).output, model.output])
 
     with tf.GradientTape() as tape:
         conv_layer_output, preds = grad_model(img_array)
@@ -1709,9 +1645,7 @@ def make_gradcam_heatmap(
 
     if second_last_conv_layer_name is not None:
         # Compute heatmap for the second last convolutional layer
-        heatmap_second = compute_heatmap(
-            model, img_array, second_last_conv_layer_name, pred_index
-        )
+        heatmap_second = compute_heatmap(model, img_array, second_last_conv_layer_name, pred_index)
 
         # Apply threshold and adjust sensitivity
         heatmap_second = np.where(heatmap_second > threshold, heatmap_second, 0)
@@ -1805,9 +1739,7 @@ plt.figure(figsize=(12, 6))
 for i in range(10):
     plt.subplot(2, 5, i + 1)
     img = x_val[i]
-    heatmap = make_gradcam_heatmap(
-        img[np.newaxis, ...], model, "top_conv", sensitivity_map=2
-    )
+    heatmap = make_gradcam_heatmap(img[np.newaxis, ...], model, "top_conv", sensitivity_map=2)
     heatmap = cv2.resize(heatmap, (img.shape[1], img.shape[0]))
     heatmap = np.uint8(255 * heatmap)
     # Apply Adaptive Histogram Equalization
@@ -1819,9 +1751,7 @@ for i in range(10):
     else:
         superimposed_img = (heatmap / 255) * 0.5 + (img / 255)
     # clip
-    superimposed_img = np.clip(
-        superimposed_img, 0, 1
-    )  # ensure the values are in the range [0, 1]
+    superimposed_img = np.clip(superimposed_img, 0, 1)  # ensure the values are in the range [0, 1]
     plt.imshow(superimposed_img)
     plt.title(f"True: {y_val_original[i]}\nPredicted: {val_predictions[i]}")
     plt.axis("off")
@@ -1839,9 +1769,7 @@ test_cm = confusion_matrix(y_test_original, test_predictions)
 
 # Plot the confusion matrix as a heatmap for validation data
 plt.figure(figsize=(8, 6))
-sns.heatmap(
-    val_cm, annot=True, cmap="Blues", fmt="d", xticklabels=labels, yticklabels=labels
-)
+sns.heatmap(val_cm, annot=True, cmap="Blues", fmt="d", xticklabels=labels, yticklabels=labels)
 plt.title("Confusion Matrix - Validation Data")
 plt.xlabel("Predicted")
 plt.ylabel("True")
@@ -1849,9 +1777,7 @@ plt.show()
 
 # Plot the confusion matrix as a heatmap for test data
 plt.figure(figsize=(8, 6))
-sns.heatmap(
-    test_cm, annot=True, cmap="Blues", fmt="d", xticklabels=labels, yticklabels=labels
-)
+sns.heatmap(test_cm, annot=True, cmap="Blues", fmt="d", xticklabels=labels, yticklabels=labels)
 plt.title("Confusion Matrix - Test Data")
 plt.xlabel("Predicted")
 plt.ylabel("True")

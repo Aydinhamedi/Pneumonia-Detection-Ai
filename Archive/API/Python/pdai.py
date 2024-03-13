@@ -40,9 +40,7 @@ class PneumoniaModel:
 
         return {"status": "success"}
 
-    def predict(
-        self, image: np.ndarray, clahe: bool = False
-    ) -> Dict[str, Union[str, float, None]]:
+    def predict(self, image: np.ndarray, clahe: bool = False) -> Dict[str, Union[str, float, None]]:
         """
         Makes a prediction using the loaded model on the given image.
 

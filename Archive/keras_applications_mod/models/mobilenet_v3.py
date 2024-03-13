@@ -30,9 +30,7 @@ from tensorflow.python.platform import tf_logging as logging
 from tensorflow.python.util.tf_export import keras_export
 
 # TODO(scottzhu): Change this to the GCS path.
-BASE_WEIGHT_PATH = (
-    "https://storage.googleapis.com/tensorflow/keras-applications/mobilenet_v3/"
-)
+BASE_WEIGHT_PATH = "https://storage.googleapis.com/tensorflow/keras-applications/mobilenet_v3/"
 WEIGHTS_HASHES = {
     "large_224_0.75_float": (
         "765b44a33ad4005b3ac83185abf1d0eb",
@@ -196,9 +194,7 @@ def MobileNetV3(
 
     if weights == "imagenet" and include_top and classes != 1000:
         raise ValueError(
-            'If using `weights` as `"imagenet"` with `include_top` '
-            "as true, `classes` should be 1000.  "
-            f"Received classes={classes}"
+            'If using `weights` as `"imagenet"` with `include_top` ' "as true, `classes` should be 1000.  " f"Received classes={classes}"
         )
 
     # Determine proper input shape and default size.
@@ -208,15 +204,12 @@ def MobileNetV3(
             is_input_t_tensor = backend.is_keras_tensor(input_tensor)
         except ValueError:
             try:
-                is_input_t_tensor = backend.is_keras_tensor(
-                    layer_utils.get_source_inputs(input_tensor)
-                )
+                is_input_t_tensor = backend.is_keras_tensor(layer_utils.get_source_inputs(input_tensor))
             except ValueError:
                 raise ValueError(
                     "input_tensor: ",
                     input_tensor,
-                    "is not type input_tensor.  "
-                    f"Received type(input_tensor)={type(input_tensor)}",
+                    "is not type input_tensor.  " f"Received type(input_tensor)={type(input_tensor)}",
                 )
         if is_input_t_tensor:
             if backend.image_data_format() == "channels_first":
@@ -278,17 +271,9 @@ def MobileNetV3(
     rows = input_shape[row_axis]
     cols = input_shape[col_axis]
     if rows and cols and (rows < 32 or cols < 32):
-        raise ValueError(
-            "Input size must be at least 32x32; Received `input_shape="
-            f"{input_shape}`"
-        )
+        raise ValueError("Input size must be at least 32x32; Received `input_shape=" f"{input_shape}`")
     if weights == "imagenet":
-        if (
-            not minimalistic
-            and alpha not in [0.75, 1.0]
-            or minimalistic
-            and alpha != 1.0
-        ):
+        if not minimalistic and alpha not in [0.75, 1.0] or minimalistic and alpha != 1.0:
             raise ValueError(
                 "If imagenet weights are being loaded, "
                 "alpha can be one of `0.75`, `1.0` for non minimalistic "
@@ -333,9 +318,7 @@ def MobileNetV3(
         use_bias=False,
         name="Conv",
     )(x)
-    x = layers.BatchNormalization(
-        axis=channel_axis, epsilon=1e-3, momentum=0.999, name="Conv/BatchNorm"
-    )(x)
+    x = layers.BatchNormalization(axis=channel_axis, epsilon=1e-3, momentum=0.999, name="Conv/BatchNorm")(x)
     x = activation(x)
 
     x = stack_fn(x, kernel, activation, se_ratio)
@@ -353,9 +336,7 @@ def MobileNetV3(
         use_bias=False,
         name="Conv_1",
     )(x)
-    x = layers.BatchNormalization(
-        axis=channel_axis, epsilon=1e-3, momentum=0.999, name="Conv_1/BatchNorm"
-    )(x)
+    x = layers.BatchNormalization(axis=channel_axis, epsilon=1e-3, momentum=0.999, name="Conv_1/BatchNorm")(x)
     x = activation(x)
     if include_top:
         x = layers.GlobalAveragePooling2D(keepdims=True)(x)
@@ -391,9 +372,7 @@ def MobileNetV3(
 
     # Load weights.
     if weights == "imagenet":
-        model_name = "{}{}_224_{}_float".format(
-            model_type, "_minimalistic" if minimalistic else "", str(alpha)
-        )
+        model_name = "{}{}_224_{}_float".format(model_type, "_minimalistic" if minimalistic else "", str(alpha))
         if include_top:
             file_name = "weights_mobilenet_v3_" + model_name + ".h5"
             file_hash = WEIGHTS_HASHES[model_name][0]
@@ -549,9 +528,7 @@ def _depth(v, divisor=8, min_value=None):
 
 
 def _se_block(inputs, filters, se_ratio, prefix):
-    x = layers.GlobalAveragePooling2D(
-        keepdims=True, name=prefix + "squeeze_excite/AvgPool"
-    )(inputs)
+    x = layers.GlobalAveragePooling2D(keepdims=True, name=prefix + "squeeze_excite/AvgPool")(inputs)
     x = layers.Conv2D(
         _depth(filters * se_ratio),
         kernel_size=1,
@@ -570,9 +547,7 @@ def _se_block(inputs, filters, se_ratio, prefix):
     return x
 
 
-def _inverted_res_block(
-    x, expansion, filters, kernel_size, stride, se_ratio, activation, block_id
-):
+def _inverted_res_block(x, expansion, filters, kernel_size, stride, se_ratio, activation, block_id):
     channel_axis = 1 if backend.image_data_format() == "channels_first" else -1
     shortcut = x
     prefix = "expanded_conv/"

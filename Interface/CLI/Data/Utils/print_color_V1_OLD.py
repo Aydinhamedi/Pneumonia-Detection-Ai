@@ -77,9 +77,7 @@ def print_Color(
     else:
         substrings = Input.split("~*")
         if len(substrings) != len(colors) + 1:
-            print(
-                "[print_Color] ERROR: Number of colors and number of '~*' don't match!!!"
-            )
+            print("[print_Color] ERROR: Number of colors and number of '~*' don't match!!!")
         else:
             for sub_str, color in zip(substrings, ["normal"] + colors):
                 if color in color_code:
@@ -88,9 +86,7 @@ def print_Color(
                     else:
                         print(color_code[color] + sub_str + "\x1b[0m", end="")
                 else:
-                    print(
-                        f"\n[print_Color] ERROR: Invalid color!!! The input color: '{color}' input list index: {colors.index(color)}"
-                    )
+                    print(f"\n[print_Color] ERROR: Invalid color!!! The input color: '{color}' input list index: {colors.index(color)}")
             print("", end=print_END)
             if return_str:
                 return return_temp

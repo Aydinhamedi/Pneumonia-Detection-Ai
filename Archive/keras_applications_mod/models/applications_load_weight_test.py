@@ -141,9 +141,7 @@ ARG_TO_MODEL = {
     ),
 }
 
-TEST_IMAGE_PATH = (
-    "https://storage.googleapis.com/tensorflow/" "keras-applications/tests/elephant.jpg"
-)
+TEST_IMAGE_PATH = "https://storage.googleapis.com/tensorflow/" "keras-applications/tests/elephant.jpg"
 _IMAGENET_CLASSES = 1000
 
 # Add a flag to define which application module file is tested.

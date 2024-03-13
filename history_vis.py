@@ -37,9 +37,7 @@ try:
     plt.title("Model Loss")
     plt.ylabel("Loss")
     plt.xlabel(EPM)
-    plt.ylim(
-        top=max(history["val_loss"][10:]), bottom=0
-    )  # (max(history['val_loss'][8:]) + min(history['val_loss'])) / 2
+    plt.ylim(top=max(history["val_loss"][10:]), bottom=0)  # (max(history['val_loss'][8:]) + min(history['val_loss'])) / 2
     plt.grid(True)
 
     # Density plot for loss
@@ -57,9 +55,7 @@ try:
         print("\033[91mfailed to load val_loss (density plot).")
     plt.title("Density Plot for Loss")
     plt.xlabel("Loss")
-    plt.xlim(
-        right=max(history["val_loss"][10:]), left=0
-    )  # (max(history['val_loss'][8:]) + min(history['val_loss'])) / 2
+    plt.xlim(right=max(history["val_loss"][10:]), left=0)  # (max(history['val_loss'][8:]) + min(history['val_loss'])) / 2
     plt.grid(True)
 
     # Accuracy
@@ -76,9 +72,7 @@ try:
 
     # Density plot for accuracy
     plt.subplot(2, 2, 4)
-    plt.hist(
-        history["accuracy"], label="accuracy density", color="blue", alpha=0.5, bins=40
-    )
+    plt.hist(history["accuracy"], label="accuracy density", color="blue", alpha=0.5, bins=40)
     try:
         plt.hist(
             history["val_accuracy"],
@@ -143,9 +137,7 @@ try:
     X = np.arange(len(chunked_accuracy))
     Y = np.arange(chunk_size)
     X, Y = np.meshgrid(X, Y)
-    Z = np.array(
-        chunked_accuracy
-    ).T  # Transpose the array to match the shape of X and Y
+    Z = np.array(chunked_accuracy).T  # Transpose the array to match the shape of X and Y
     ax.plot_surface(X, Y, Z, cmap="viridis")
     ax.set_title("3D Surface Plot of Chunked Accuracy")
     ax.set_xlabel("Chunk Index")
@@ -154,10 +146,7 @@ try:
 
     # Function to calculate the average of chunks
     def chunked_average(values, chunk_size):
-        return [
-            np.mean(values[i : i + chunk_size])
-            for i in range(0, len(values), chunk_size)
-        ]
+        return [np.mean(values[i : i + chunk_size]) for i in range(0, len(values), chunk_size)]
 
     avg_accuracy_chunks = chunked_average(history["val_accuracy"], chunk_size)
     avg_loss_chunks = chunked_average(history["val_loss"], chunk_size)
@@ -203,9 +192,7 @@ try:
         num_chunks = len(values) // chunk_size
         avg_values = []
         for epoch in range(chunk_size):
-            epoch_values = [
-                values[chunk * chunk_size + epoch] for chunk in range(1, num_chunks)
-            ]
+            epoch_values = [values[chunk * chunk_size + epoch] for chunk in range(1, num_chunks)]
             avg_values.append(np.mean(epoch_values))
         return avg_values
 
@@ -240,12 +227,8 @@ try:
     # Add labels and title
     plt.xlabel("Epoch (within chunk)")
     plt.ylabel("Average Value")
-    plt.title(
-        "Average Validation Accuracy and Loss for Each Epoch Across Chunks (Ignoring First Chunk)"
-    )
-    plt.xticks(
-        epoch_indices, [f"Epoch {i + 1}" for i in epoch_indices]
-    )  # Set x-tick labels to epoch numbers
+    plt.title("Average Validation Accuracy and Loss for Each Epoch Across Chunks (Ignoring First Chunk)")
+    plt.xticks(epoch_indices, [f"Epoch {i + 1}" for i in epoch_indices])  # Set x-tick labels to epoch numbers
     plt.legend()
 
     plt.tight_layout()

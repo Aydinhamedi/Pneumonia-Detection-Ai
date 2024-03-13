@@ -36,9 +36,7 @@ from keras.engine import training as training_lib
 # isort: off
 from tensorflow.python.util.tf_export import keras_export
 
-BASE_WEIGHTS_PATH = (
-    "https://storage.googleapis.com/tensorflow/keras-applications/convnext/"
-)
+BASE_WEIGHTS_PATH = "https://storage.googleapis.com/tensorflow/keras-applications/convnext/"
 
 WEIGHTS_HASHES = {
     "convnext_tiny": (
@@ -230,16 +228,16 @@ class LayerScale(layers.Layer):
 
     def get_config(self):
         config = super().get_config()
-        config.update({
-            "init_values": self.init_values,
-            "projection_dim": self.projection_dim,
-        })
+        config.update(
+            {
+                "init_values": self.init_values,
+                "projection_dim": self.projection_dim,
+            }
+        )
         return config
 
 
-def ConvNeXtBlock(
-    projection_dim, drop_path_rate=0.0, layer_scale_init_value=1e-6, name=None
-):
+def ConvNeXtBlock(projection_dim, drop_path_rate=0.0, layer_scale_init_value=1e-6, name=None):
     """ConvNeXt block.
 
     References:
@@ -426,10 +424,7 @@ def ConvNeXt(
         )
 
     if weights == "imagenet" and include_top and classes != 1000:
-        raise ValueError(
-            "If using `weights` as `'imagenet'` with `include_top`"
-            " as true, `classes` should be 1000"
-        )
+        raise ValueError("If using `weights` as `'imagenet'` with `include_top`" " as true, `classes` should be 1000")
 
     # Determine proper input shape.
     input_shape = imagenet_utils.obtain_input_shape(
@@ -470,9 +465,7 @@ def ConvNeXt(
                 strides=4,
                 name=model_name + "_stem_conv",
             ),
-            layers.LayerNormalization(
-                epsilon=1e-6, name=model_name + "_stem_layernorm"
-            ),
+            layers.LayerNormalization(epsilon=1e-6, name=model_name + "_stem_layernorm"),
         ],
         name=model_name + "_stem",
     )

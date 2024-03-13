@@ -265,12 +265,8 @@ def save_images_to_dir(images, labels, dir_path):
 # Debug_img_Save
 def Debug_img_Save(img, id="DEF"):
     SITD = np.random.choice(img.shape[0], size=400, replace=False)
-    S_dir = f"Samples\\Debug\\{id}\\TSR_SUB_400_" + datetime.datetime.now().strftime(
-        "y%Y_m%m_d%d-h%H_m%M_s%S"
-    )
-    print_Color(
-        f"~*[Debug] (DPO) Sample dir: ~*{S_dir}", ["red", "green"], advanced_mode=True
-    )
+    S_dir = f"Samples\\Debug\\{id}\\TSR_SUB_400_" + datetime.datetime.now().strftime("y%Y_m%m_d%d-h%H_m%M_s%S")
+    print_Color(f"~*[Debug] (DPO) Sample dir: ~*{S_dir}", ["red", "green"], advanced_mode=True)
     save_images_to_dir(normalize_TO_RANGE(img[SITD], 0, 1), img[SITD], S_dir)
 
 
@@ -401,9 +397,7 @@ if Use_SMOTE:
 
     # Use SMOTE to oversample the minority class
     smote = SMOTE(random_state=42)
-    x_train_res, y_train_res_label_encoded = smote.fit_resample(
-        x_train.reshape(x_train.shape[0], -1), y_train_label_encoded
-    )
+    x_train_res, y_train_res_label_encoded = smote.fit_resample(x_train.reshape(x_train.shape[0], -1), y_train_label_encoded)
 
     # Print the resampled label distribution
     unique_res, counts_res = np.unique(y_train_res_label_encoded, return_counts=True)
@@ -414,9 +408,7 @@ if Use_SMOTE:
     )
 
     # Reshape x_train_res back to the original x_train shape
-    x_train_res = x_train_res.reshape(
-        -1, x_train.shape[1], x_train.shape[2], x_train.shape[3]
-    )
+    x_train_res = x_train_res.reshape(-1, x_train.shape[1], x_train.shape[2], x_train.shape[3])
 
     # Convert y_train_res from label encoding back to one-hot encoding
     y_train_res = to_categorical(y_train_res_label_encoded)
@@ -467,16 +459,12 @@ if ADBD > 0:
         # get augmented data
         x_train_augmented, y_train_augmented = train_iterator.next()
         print(">   ├───Applying adaptive histogram equalization...")
-        print(
-            f">   ├───Adaptive histogram equalization clip limit = {round(ADB_clip_limit, 2)}"
-        )
+        print(f">   ├───Adaptive histogram equalization clip limit = {round(ADB_clip_limit, 2)}")
         x_train_augmented = np.clip(x_train_augmented, 0, 255)
         if Debug_OUT:
             Debug_img_Save(x_train_augmented, "ST2")  # DEBUG
         # print_Color(f'~*>   |---Grayscale range: ~*Min = {np.min(x_train_augmented)}~* | ~*Max = {np.max(x_train_augmented)}', ['normal', 'blue', 'normal', 'red'], advanced_mode=True)
-        x_train_augmented = apply_clahe_rgb_array(
-            x_train_augmented, clip_limit=ADB_clip_limit
-        )  # compensating the image info loss
+        x_train_augmented = apply_clahe_rgb_array(x_train_augmented, clip_limit=ADB_clip_limit)  # compensating the image info loss
         print(">   └───Adding the Generated ADB...")
         if Debug_OUT:
             Debug_img_Save(x_train_augmented, "ST3")  # DEBUG
@@ -526,16 +514,10 @@ if categorical_IMP:
 print_Color("Setting LNTS...", ["yellow"])
 # Get the total number of samples in the arrays
 num_samples = x_train.shape[0]
-print_Color(
-    f"~*Original num_samples: ~*{num_samples}", ["normal", "green"], advanced_mode=True
-)
+print_Color(f"~*Original num_samples: ~*{num_samples}", ["normal", "green"], advanced_mode=True)
 if LNTS != 0:
-    print_Color(
-        f"~*Applying LNTS of: ~*{LNTS}", ["normal", "green"], advanced_mode=True
-    )
-    print_Color(
-        f"~*SNC: ~*{num_samples - LNTS}", ["normal", "green"], advanced_mode=True
-    )
+    print_Color(f"~*Applying LNTS of: ~*{LNTS}", ["normal", "green"], advanced_mode=True)
+    print_Color(f"~*SNC: ~*{num_samples - LNTS}", ["normal", "green"], advanced_mode=True)
     # Generate random indices to select LNTS samples
     indices = np.random.choice(num_samples, size=LNTS, replace=False)
     # Select the samples using the generated indices
@@ -549,9 +531,7 @@ if LNTS != 0:
     del indices
     # Debug
     num_samples = x_train.shape[0]
-    print_Color(
-        f"~*New num_samples: ~*{num_samples}", ["normal", "green"], advanced_mode=True
-    )
+    print_Color(f"~*New num_samples: ~*{num_samples}", ["normal", "green"], advanced_mode=True)
 # Shuffle the training data
 print_Color("shuffling data...", ["yellow"])
 x_train, y_train = shuffle_data(x_train, y_train)
@@ -559,9 +539,7 @@ x_train, y_train = shuffle_data(x_train, y_train)
 if Save_TS:
     print_Color("Saving TS...", ["yellow"])
     SITD = np.random.choice(num_samples, size=400, replace=False)
-    S_dir = "Samples/TSR400_" + datetime.datetime.now().strftime(
-        "y%Y_m%m_d%d-h%H_m%M_s%S"
-    )
+    S_dir = "Samples/TSR400_" + datetime.datetime.now().strftime("y%Y_m%m_d%d-h%H_m%M_s%S")
     print_Color(f"~*Sample dir: ~*{S_dir}", ["normal", "green"], advanced_mode=True)
     if RANGE_NOM:
         if scale_data_NP_M:
@@ -598,12 +576,8 @@ import numpy as np
 from scipy.stats import zscore
 
 # Select a subset of your data
-subset_size_pixels = (
-    10  # Change this to the size of the subset you want for individual pixels
-)
-subset_size_mean = (
-    200  # Change this to the size of the subset you want for mean RGB values
-)
+subset_size_pixels = 10  # Change this to the size of the subset you want for individual pixels
+subset_size_mean = 200  # Change this to the size of the subset you want for mean RGB values
 indices_pixels = np.random.choice(x_train.shape[0], subset_size_pixels, replace=False)
 indices_mean = np.random.choice(x_train.shape[0], subset_size_mean, replace=False)
 subset_pixels = x_train[indices_pixels]
@@ -618,14 +592,18 @@ mean_intensity_pixels = reshaped_data_pixels.mean(axis=-1)
 mean_intensity_mean = reshaped_data_mean.mean(axis=-1)
 
 # Stack the mean intensity with the reshaped data
-data_with_mean_pixels = np.hstack([
-    reshaped_data_pixels,
-    mean_intensity_pixels.reshape(-1, 1),
-])
-data_with_mean_mean = np.hstack([
-    reshaped_data_mean,
-    mean_intensity_mean.reshape(-1, 1),
-])
+data_with_mean_pixels = np.hstack(
+    [
+        reshaped_data_pixels,
+        mean_intensity_pixels.reshape(-1, 1),
+    ]
+)
+data_with_mean_mean = np.hstack(
+    [
+        reshaped_data_mean,
+        mean_intensity_mean.reshape(-1, 1),
+    ]
+)
 
 # Calculate Z-scores
 z_scores_pixels = np.abs(zscore(data_with_mean_pixels, axis=0))
@@ -640,9 +618,7 @@ fig = plt.figure(figsize=(10, 20))
 
 # Plot for individual pixels
 ax = fig.add_subplot(211, projection="3d")
-ax.scatter(
-    z_scores_pixels[:, 0], z_scores_pixels[:, 1], z_scores_pixels[:, 2], alpha=0.1
-)
+ax.scatter(z_scores_pixels[:, 0], z_scores_pixels[:, 1], z_scores_pixels[:, 2], alpha=0.1)
 ax.scatter(
     z_scores_pixels[outliers_pixels[0], 0],
     z_scores_pixels[outliers_pixels[0], 1],
@@ -789,21 +765,15 @@ def Eff_B7_NS(freeze_layers):
     print(f"Percentage of the base model that is frozen: {frozen_percentage:.2f}%")
     # adding CDL>>>
     # GlobalAveragePooling2D
-    base_model_FT = GlobalAveragePooling2D(name="FC_INPUT_Avg-Pooling")(
-        base_model.output
-    )
+    base_model_FT = GlobalAveragePooling2D(name="FC_INPUT_Avg-Pooling")(base_model.output)
     # Dense
-    Dense_L1 = Dense(
-        512, activation="relu", kernel_regularizer=l2(0.02), name="FC_C_Dense-L1-512"
-    )(base_model_FT)
+    Dense_L1 = Dense(512, activation="relu", kernel_regularizer=l2(0.02), name="FC_C_Dense-L1-512")(base_model_FT)
     # Dropout
     Dropout_L1 = Dropout(0.1, name="FC_C_Dropout-L1-0.1")(Dense_L1)
     # BatchNormalization
     BatchNorm_L2 = BatchNormalization(name="FC_C_Avg-BatchNormalization-L1")(Dropout_L1)
     # Dense
-    Dense_L2 = Dense(
-        512, activation="relu", kernel_regularizer=l2(0.01), name="FC_C_Dense-L2-512"
-    )(BatchNorm_L2)
+    Dense_L2 = Dense(512, activation="relu", kernel_regularizer=l2(0.01), name="FC_C_Dense-L2-512")(BatchNorm_L2)
     # BatchNormalization
     BatchNorm_L3 = BatchNormalization(name="FC_C_Avg-BatchNormalization-L2")(Dense_L2)
     # Dense
@@ -890,14 +860,12 @@ def Combo_Model(freeze_layers1, freeze_layers2):
         layer.trainable = True
 
     # Combine the output of the two base models
-    combined = concatenate([
-        Dense(512, activation="relu", kernel_regularizer=l2(0.02))(
-            GlobalAveragePooling2D()(base_model1_out)
-        ),
-        Dense(512, activation="relu", kernel_regularizer=l2(0.02))(
-            GlobalAveragePooling2D()(base_model2_out)
-        ),
-    ])
+    combined = concatenate(
+        [
+            Dense(512, activation="relu", kernel_regularizer=l2(0.02))(GlobalAveragePooling2D()(base_model1_out)),
+            Dense(512, activation="relu", kernel_regularizer=l2(0.02))(GlobalAveragePooling2D()(base_model2_out)),
+        ]
+    )
 
     # adding CDL
     Dense_L1 = Dense(1024, activation="relu", kernel_regularizer=l2(0.03))(combined)
@@ -913,9 +881,7 @@ def Combo_Model(freeze_layers1, freeze_layers2):
 
     # OPT/compile
     opt = SGD(momentum=0.9)
-    combo_model.compile(
-        optimizer=opt, loss="categorical_crossentropy", metrics=["accuracy"]
-    )
+    combo_model.compile(optimizer=opt, loss="categorical_crossentropy", metrics=["accuracy"])
 
     return combo_model
 
@@ -999,21 +965,15 @@ def Eff_B4_NS(freeze_layers):
     print(f"Percentage of the base model that is frozen: {frozen_percentage:.2f}%")
     # adding CDL>>>
     # GlobalAveragePooling2D
-    base_model_FT = GlobalAveragePooling2D(name="FC_INPUT_Avg-Pooling")(
-        base_model.output
-    )
+    base_model_FT = GlobalAveragePooling2D(name="FC_INPUT_Avg-Pooling")(base_model.output)
     # Dense
-    Dense_L1 = Dense(
-        512, activation="relu", kernel_regularizer=l2(0.02), name="FC_C_Dense-L1-512"
-    )(base_model_FT)
+    Dense_L1 = Dense(512, activation="relu", kernel_regularizer=l2(0.02), name="FC_C_Dense-L1-512")(base_model_FT)
     # Dropout
     Dropout_L1 = Dropout(0.1, name="FC_C_Dropout-L1-0.1")(Dense_L1)
     # BatchNormalization
     BatchNorm_L2 = BatchNormalization(name="FC_C_Avg-BatchNormalization-L1")(Dropout_L1)
     # Dense
-    Dense_L2 = Dense(
-        512, activation="relu", kernel_regularizer=l2(0.01), name="FC_C_Dense-L2-512"
-    )(BatchNorm_L2)
+    Dense_L2 = Dense(512, activation="relu", kernel_regularizer=l2(0.01), name="FC_C_Dense-L2-512")(BatchNorm_L2)
     # BatchNormalization
     BatchNorm_L3 = BatchNormalization(name="FC_C_Avg-BatchNormalization-L2")(Dense_L2)
     # Dense
@@ -1089,9 +1049,7 @@ def Eff_B7_NS(freeze_layers):
     # OPT/compile
     opt = SGD(momentum=0.9)
     # opt = Yogi()
-    model_EfficientNetB7_NS.compile(
-        optimizer=opt, loss="categorical_crossentropy", metrics=["accuracy"]
-    )
+    model_EfficientNetB7_NS.compile(optimizer=opt, loss="categorical_crossentropy", metrics=["accuracy"])
 
     return model_EfficientNetB7_NS
 
@@ -1130,21 +1088,15 @@ def Eff_B7_NS(freeze_layers):
     print(f"Percentage of the base model that is frozen: {frozen_percentage:.2f}%")
     # adding CDL>>>
     # GlobalAveragePooling2D
-    base_model_FT = GlobalAveragePooling2D(name="FC_INPUT_Avg-Pooling")(
-        base_model.output
-    )
+    base_model_FT = GlobalAveragePooling2D(name="FC_INPUT_Avg-Pooling")(base_model.output)
     # Dense
-    Dense_L1 = Dense(
-        512, activation="relu", kernel_regularizer=l2(0.02), name="FC_C_Dense-L1-512"
-    )(base_model_FT)
+    Dense_L1 = Dense(512, activation="relu", kernel_regularizer=l2(0.02), name="FC_C_Dense-L1-512")(base_model_FT)
     # Dropout
     Dropout_L1 = Dropout(0.1, name="FC_C_Dropout-L1-0.1")(Dense_L1)
     # BatchNormalization
     BatchNorm_L2 = BatchNormalization(name="FC_C_Avg-Pooling-L1")(Dropout_L1)
     # Dense
-    Dense_L2 = Dense(
-        512, activation="relu", kernel_regularizer=l2(0.01), name="FC_C_Dense-L2-512"
-    )(BatchNorm_L2)
+    Dense_L2 = Dense(512, activation="relu", kernel_regularizer=l2(0.01), name="FC_C_Dense-L2-512")(BatchNorm_L2)
     # BatchNormalization
     BatchNorm_L3 = BatchNormalization(name="FC_C_Avg-Pooling-L2")(Dense_L2)
     # Dense
@@ -1213,9 +1165,7 @@ def Eff_B7_NS():
     # OPT/compile
     opt = SGD(momentum=0.9)
     # opt = Yogi()
-    model_EfficientNetB7_NS.compile(
-        optimizer=opt, loss="categorical_crossentropy", metrics=["accuracy"]
-    )
+    model_EfficientNetB7_NS.compile(optimizer=opt, loss="categorical_crossentropy", metrics=["accuracy"])
 
     return model_EfficientNetB7_NS
 
@@ -1253,21 +1203,15 @@ def Eff_B4_NS(freeze_layers):
     print(f"Percentage of the base model that is frozen: {frozen_percentage:.2f}%")
     # adding CDL>>>
     # GlobalAveragePooling2D
-    base_model_FT = GlobalAveragePooling2D(name="FC_INPUT_Avg-Pooling")(
-        base_model.output
-    )
+    base_model_FT = GlobalAveragePooling2D(name="FC_INPUT_Avg-Pooling")(base_model.output)
     # Dense
-    Dense_L1 = Dense(
-        512, activation="relu", kernel_regularizer=l2(0.02), name="FC_C_Dense-L1-512"
-    )(base_model_FT)
+    Dense_L1 = Dense(512, activation="relu", kernel_regularizer=l2(0.02), name="FC_C_Dense-L1-512")(base_model_FT)
     # Dropout
     Dropout_L1 = Dropout(0.1, name="FC_C_Dropout-L1-0.1")(Dense_L1)
     # BatchNormalization
     BatchNorm_L2 = BatchNormalization(name="FC_C_Avg-BatchNormalization-L1")(Dropout_L1)
     # Dense
-    Dense_L2 = Dense(
-        512, activation="relu", kernel_regularizer=l2(0.01), name="FC_C_Dense-L2-512"
-    )(BatchNorm_L2)
+    Dense_L2 = Dense(512, activation="relu", kernel_regularizer=l2(0.01), name="FC_C_Dense-L2-512")(BatchNorm_L2)
     # BatchNormalization
     BatchNorm_L3 = BatchNormalization(name="FC_C_Avg-BatchNormalization-L2")(Dense_L2)
     # Dense
@@ -1312,9 +1256,7 @@ tf.keras.backend.clear_session()
 # CONF/Other
 LRF_OPT = SGD(momentum=0.9)
 LFR_batch_size = 1  # or any other batch size that fits in your memory
-LRF_dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train)).batch(
-    LFR_batch_size
-)
+LRF_dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train)).batch(LFR_batch_size)
 # Instantiate LrFinder
 lr_find = LrFinder(model, LRF_OPT, tf.keras.losses.categorical_crossentropy)
 
@@ -1388,9 +1330,7 @@ def load_model(filename):
     optimizer = get_optimizer(model_dict["optimizer"])
 
     # Compile the model with the loaded optimizer
-    model.compile(
-        optimizer=optimizer, loss="categorical_crossentropy", metrics=["accuracy"]
-    )
+    model.compile(optimizer=optimizer, loss="categorical_crossentropy", metrics=["accuracy"])
 
     return model
 
@@ -1433,9 +1373,7 @@ else:
             layer.trainable = True
 
         # Select random layers to freeze
-        frozen_layer_indices = random.sample(
-            range(len(model.layers)), randomly_frozen_layers
-        )
+        frozen_layer_indices = random.sample(range(len(model.layers)), randomly_frozen_layers)
 
         for i, layer in enumerate(model.layers):
             if i in frozen_layer_indices:
@@ -1451,9 +1389,7 @@ else:
         for layer in model.layers[-7:]:
             layer.trainable = not freeze_last_seven
 
-        model.compile(
-            optimizer=CEC_opt, loss="categorical_crossentropy", metrics=["accuracy"]
-        )
+        model.compile(optimizer=CEC_opt, loss="categorical_crossentropy", metrics=["accuracy"])
         model.summary(show_trainable=True, expand_nested=True)
         print("done.")
 
@@ -1475,10 +1411,12 @@ for layer in model.layers[-7:]:
 
         old_weights, old_biases = layer.get_weights()
 
-        layer.set_weights([
-            weight_initializer(shape=old_weights.shape),
-            bias_initializer(shape=len(old_biases)),
-        ])
+        layer.set_weights(
+            [
+                weight_initializer(shape=old_weights.shape),
+                bias_initializer(shape=len(old_biases)),
+            ]
+        )
 
 
 # %% [markdown]
@@ -1520,38 +1458,26 @@ MIN_LR = 0.0005  # MIN_LR: Minimum learning rate.
 RES_LR = 0.006  # RES_LR: Resuming learning rate.
 OneCycleLr_UFTS = False  # OneCycleLr_UFTS: Set the OneCycleLr max epochs to the estimated full training SUB epochs. (DEC_LR and MIN_LR dont have any effect if True)
 Debug_OUTPUT_DPS = True  # Debug_OUTPUT_DPS: Output debug image samples if True.
-Debug_OUTPUT_DPS_freq = (
-    42  # Debug_OUTPUT_DPS_freq: Debug image output frequency(epoch).
-)
+Debug_OUTPUT_DPS_freq = 42  # Debug_OUTPUT_DPS_freq: Debug image output frequency(epoch).
 TerminateOnHighTemp_M = True  # TerminateOnHighTemp_M: Terminate training on high GPU temp to prevent damage.
 SAVE_FULLM = True  # SAVE_FULLM: Save full model if True.
 USE_REV2_DP = False  # USE_REV2_DP: Use Rev2 data preprocessing if True.
-AdvSubsetC = (
-    True  # AdvSubsetC: Use advanced subset sampling to prevent overfitting if True.
-)
+AdvSubsetC = True  # AdvSubsetC: Use advanced subset sampling to prevent overfitting if True.
 AdvSubsetC_SHR = 42  # AdvSubsetC_SHR: Parameter for advanced subset sampling (shuffling data after n epochs).
 load_SUB_BRW = True  # load_SUB_BRW: Load previous subset weights to speed up training if True. May reduce max accuracy.
 load_SUB_BRW_MODE = "val_accuracy"  # load_SUB_BRW_MODE: Previous subset weights loading mode - 'val_accuracy' or 'val_loss'.
 load_SUB_BRW_LMODE = 0  # load_SUB_BRW_LMODE: Previous subset weights loading mode parameter (1 for only on imp and !1 for normal mode (for subset_epoch > 6 normal mode is better)).
-load_SUB_BRW_LMODE_FN = (
-    True  # load_SUB_BRW_LMODE_FN: Set load_SUB_BRW_LMODE=1 during fine-tuning if True.
-)
+load_SUB_BRW_LMODE_FN = True  # load_SUB_BRW_LMODE_FN: Set load_SUB_BRW_LMODE=1 during fine-tuning if True.
 ModelCheckpoint_mode = "auto"  # ModelCheckpoint_mode: 'auto', 'min', or 'max' - how to monitor ModelCheckpoint.
 ModelCheckpoint_Reset_TO = 0.6251  # ModelCheckpoint_Reset_TO: Reset ModelCheckpoint monitor to this value, e.g. 0 or float('inf').
 Auto_clear_cache = True  # Auto_clear_cache: Clear cache during training if True to reduce memory usage.
 Use_ES_ONSUBT = False  # Use_ES_ONSUBT: Early stopping per subset (⚠️deprecated⚠️).
 EarlyStopping_P = 5  # EarlyStopping_P: Early stopping patience (⚠️deprecated⚠️).
-Use_tensorboard_profiler = (
-    False  # Use_tensorboard_profiler: Enable tensorboard profiler.
-)
+Use_tensorboard_profiler = False  # Use_tensorboard_profiler: Enable tensorboard profiler.
 Use_extended_tensorboard = False  # Use_extended_tensorboard: Enable extended tensorboard (Some funcs may not work).
 Use_tensorBoard_img = True  # Use_tensorBoard_img: Enable tensorboard image logging.
-Show_confusion_matrix_tensorBoard = (
-    False  # Show_confusion_matrix_tensorBoard: Show confusion matrix on tensorboard.
-)
-BEST_RSN = (
-    "PAI_model_T"  # Best model save name prefix. (Uses a lot of memory and storage).
-)
+Show_confusion_matrix_tensorBoard = False  # Show_confusion_matrix_tensorBoard: Show confusion matrix on tensorboard.
+BEST_RSN = "PAI_model_T"  # Best model save name prefix. (Uses a lot of memory and storage).
 ALWAYS_REFIT_IDG = 1  # ALWAYS_REFIT_IDG: if 0/False - do not always refit IDG. if 1 - always refit IDG (In Start). if 2 - always refit IDG (After each epoch) (slow).
 IMAGE_GEN_PATH = "Data\\image_SUB_generator.pkl"
 # CONF END <---------------------------------------------------------------------->
@@ -1588,8 +1514,7 @@ def Z_SCORE_normalize(arr):
 def add_image_grain_TRLRev2(image, intensity=0.01):
     # Generate random noise array
     noise = (
-        np.random.randint(-255, 255, size=image.shape, dtype=np.int16)
-        + np.random.randint(-255, 255, size=image.shape, dtype=np.int16)
+        np.random.randint(-255, 255, size=image.shape, dtype=np.int16) + np.random.randint(-255, 255, size=image.shape, dtype=np.int16)
     ) / 2
 
     # Scale the noise array
@@ -1660,25 +1585,17 @@ else:
             if noise_type == "L2" or noise_type == "L3":
                 for i in range(0, image_channel.shape[0], block_size_L2):
                     for j in range(0, image_channel.shape[1], block_size_L2):
-                        block = image_channel[
-                            i : i + block_size_L2, j : j + block_size_L2
-                        ]
+                        block = image_channel[i : i + block_size_L2, j : j + block_size_L2]
                         block = (np.random.rand() * intensityL2 + 1) * block
-                        new_image_channel[
-                            i : i + block_size_L2, j : j + block_size_L2
-                        ] = block
+                        new_image_channel[i : i + block_size_L2, j : j + block_size_L2] = block
                 image_channel = new_image_channel
 
             if noise_type == "L1" or noise_type == "L3":
                 for i in range(0, image_channel.shape[0], block_size_L1):
                     for j in range(0, image_channel.shape[1], block_size_L1):
-                        block = image_channel[
-                            i : i + block_size_L1, j : j + block_size_L1
-                        ]
+                        block = image_channel[i : i + block_size_L1, j : j + block_size_L1]
                         block = (np.random.rand() * intensityL1 + 1) * block
-                        new_image_channel[
-                            i : i + block_size_L1, j : j + block_size_L1
-                        ] = block
+                        new_image_channel[i : i + block_size_L1, j : j + block_size_L1] = block
 
             new_image[:, :, channel] = new_image_channel
 
@@ -1759,9 +1676,7 @@ class DummyCallback(Callback):
 def plot_confusion_matrix_TensorBoard(epoch, logs):
     # Use the model to predict the values from the test dataset.
     test_pred_raw = model.predict(x_test, verbose=0)
-    test_pred = np.argmax(
-        test_pred_raw, axis=1
-    )  # Convert predictions from one-hot encoded to binary
+    test_pred = np.argmax(test_pred_raw, axis=1)  # Convert predictions from one-hot encoded to binary
 
     # Convert true labels from one-hot encoded to binary
     y_true = np.argmax(y_test, axis=1)
@@ -1822,9 +1737,7 @@ TerminateOnHighTemp_CB = TerminateOnHighTemp(
 )
 # confusion_matrix_callback
 confusion_matrix_callback = (
-    LambdaCallback(on_epoch_end=plot_confusion_matrix_TensorBoard)
-    if Show_confusion_matrix_tensorBoard
-    else DummyCallback()
+    LambdaCallback(on_epoch_end=plot_confusion_matrix_TensorBoard) if Show_confusion_matrix_tensorBoard else DummyCallback()
 )
 # TensorBoard
 log_dir = "logs/fit/" + datetime.datetime.now().strftime("y%Y_m%m_d%d-h%H_m%M_s%S")
@@ -1922,36 +1835,24 @@ try:
                 # print('[DEBUG]-[AdvSubset]: Not enough available indices using the indices that were chosen the longest time ago.')
                 # If there are not enough available indices, choose from the indices that were chosen the longest time ago
                 old_indices = chosen_indices[: subset_size - len(available_indices)]
-                subset_indices = old_indices + list(
-                    np.random.choice(
-                        available_indices, len(available_indices), replace=False
-                    )
-                )
+                subset_indices = old_indices + list(np.random.choice(available_indices, len(available_indices), replace=False))
 
                 # Update the list of chosen indices and their sizes
                 chosen_indices = chosen_indices[len(old_indices) :] + subset_indices
-                subset_sizes = subset_sizes[len(old_indices) :] + [subset_size] * len(
-                    subset_indices
-                )
+                subset_sizes = subset_sizes[len(old_indices) :] + [subset_size] * len(subset_indices)
             else:
-                subset_indices = list(
-                    np.random.choice(available_indices, subset_size, replace=False)
-                )
+                subset_indices = list(np.random.choice(available_indices, subset_size, replace=False))
 
                 # Add the chosen indices to the list of already chosen indices
                 chosen_indices += subset_indices
                 subset_sizes += [subset_size] * len(subset_indices)
         else:
-            subset_indices = np.random.choice(
-                x_train.shape[0], subset_size, replace=False
-            )
+            subset_indices = np.random.choice(x_train.shape[0], subset_size, replace=False)
         # Taking the subset
         x_SUB_train = x_train[subset_indices]
         y_SUB_train = y_train[subset_indices]
         x_SUB_train, y_SUB_train = shuffle_data(x_SUB_train, y_SUB_train)
-        assert (
-            len(x_SUB_train) == subset_size
-        ), f"Expected subset size of {subset_size}, but got {len(x_SUB_train)}"
+        assert len(x_SUB_train) == subset_size, f"Expected subset size of {subset_size}, but got {len(x_SUB_train)}"
         print_Color("Preparing train data...", ["yellow"])
         # if epoch == 1: # OLD
         #     print_Color('- ImageDataGenerator fit...', ['yellow'])
@@ -1981,17 +1882,13 @@ try:
         # DEBUG
         if Debug_OUTPUT_DPS and (epoch % Debug_OUTPUT_DPS_freq == 0 or epoch == 1):
             SITD = np.random.choice(subset_size, size=400, replace=False)
-            S_dir = "Samples/TSR_SUB_400_" + datetime.datetime.now().strftime(
-                "y%Y_m%m_d%d-h%H_m%M_s%S"
-            )
+            S_dir = "Samples/TSR_SUB_400_" + datetime.datetime.now().strftime("y%Y_m%m_d%d-h%H_m%M_s%S")
             print_Color(
                 f"~*- Debug DP Sample dir: ~*{S_dir}",
                 ["red", "green"],
                 advanced_mode=True,
             )
-            save_images_to_dir(
-                np.clip(x_SUB_train[SITD], 0, 1), y_SUB_train[SITD], S_dir
-            )
+            save_images_to_dir(np.clip(x_SUB_train[SITD], 0, 1), y_SUB_train[SITD], S_dir)
         # learning_rate_schedule_SUB
         if PL_epoch == 0:
             CU_LR = MIN_LR
@@ -2023,8 +1920,7 @@ try:
         SUB_history = model.fit(
             x_SUB_train,
             y_SUB_train,
-            epochs=C_subset_epoch
-            + Total_SUB_epoch_C,  # TO FIX TensorBoard (Total_SUB_epoch_C)
+            epochs=C_subset_epoch + Total_SUB_epoch_C,  # TO FIX TensorBoard (Total_SUB_epoch_C)
             batch_size=Conf_batch_size_REV2,
             validation_data=(x_test, y_test),
             verbose="auto",
@@ -2056,9 +1952,7 @@ try:
             list_of_files = glob.glob("cache\\*.h5")
             try:
                 best_weights_filename = max(list_of_files, key=os.path.getctime)
-                print_Color(
-                    f"Loading weights from file {best_weights_filename}...", ["yellow"]
-                )
+                print_Color(f"Loading weights from file {best_weights_filename}...", ["yellow"])
                 model.load_weights(best_weights_filename)
             except Exception as Err:
                 print_Color(f"ERROR: Failed to load weights. Error: {Err}", ["red"])
@@ -2077,12 +1971,8 @@ try:
         # Extract the loss and accuracy from the evaluation results
         loss = evaluation[0]
         acc = evaluation[1]
-        print_Color(
-            f"~*Model Test acc: ~*{acc:.4f}", ["yellow", "green"], advanced_mode=True
-        )
-        print_Color(
-            f"~*Model Test loss: ~*{loss:.4f}", ["yellow", "green"], advanced_mode=True
-        )
+        print_Color(f"~*Model Test acc: ~*{acc:.4f}", ["yellow", "green"], advanced_mode=True)
+        print_Color(f"~*Model Test loss: ~*{loss:.4f}", ["yellow", "green"], advanced_mode=True)
         # If the accuracy is higher than the best_acc
         if acc > best_acc:
             print_Color_V2(
@@ -2100,9 +1990,7 @@ try:
                     model.save(f"{BEST_RSN}.h5")
             model.save_weights("PAI_model_weights.h5")
         else:
-            print_Color_V2(
-                f"<light_red>Model accuracy did not improve from {best_acc:.10f}. Not saving model."
-            )
+            print_Color_V2(f"<light_red>Model accuracy did not improve from {best_acc:.10f}. Not saving model.")
 
         # If the loss is higher than the best_loss
         if loss < best_loss:
@@ -2123,26 +2011,18 @@ try:
                     model.save(f"{BEST_RSN}_BL.h5")
             model.save_weights("PAI_model_weights_BL.h5")
         else:
-            print_Color_V2(
-                f"<light_red>Model loss did not improve from {best_loss:.10f}. Not saving model."
-            )
+            print_Color_V2(f"<light_red>Model loss did not improve from {best_loss:.10f}. Not saving model.")
         # Garbage Collection (memory)
         gc.collect()
         tf.keras.backend.clear_session()
         # Epoch end
         end_time = time.time()
         epoch_time = end_time - start_FULL_time
-        print_Color_V2(
-            f"<yellow>Time taken for epoch(FULL): <green>{epoch_time:.2f} <cyan>sec"
-        )
+        print_Color_V2(f"<yellow>Time taken for epoch(FULL): <green>{epoch_time:.2f} <cyan>sec")
         epoch_SUB_time = end_SUBO_time - start_SUBO_time
-        print_Color_V2(
-            f"<yellow>Time taken for epoch(SUBo): <green>{epoch_SUB_time:.2f} <cyan>sec"
-        )
+        print_Color_V2(f"<yellow>Time taken for epoch(SUBo): <green>{epoch_SUB_time:.2f} <cyan>sec")
         epoch_OTHERO_time = epoch_time - epoch_SUB_time
-        print_Color_V2(
-            f"<yellow>Time taken for epoch(OTHERo): <green>{epoch_OTHERO_time:.2f} <cyan>sec"
-        )
+        print_Color_V2(f"<yellow>Time taken for epoch(OTHERo): <green>{epoch_OTHERO_time:.2f} <cyan>sec")
         print_Color(
             f"<---------------------------------------|Epoch [{epoch}] END|--------------------------------------->",
             ["cyan"],
@@ -2189,9 +2069,7 @@ Learning_rate_conf = 3  # 1 and 2 for custom learning_rate_fn and 3 for OneCycle
 # TensorBoard conf
 TensorBoard_UF = 1  # 1 for Slow 2 for fast (very slow tarining)
 # Learning rate configuration
-Learning_rate_conf_SET2C = (
-    3  # 1 for SGD and 2 for Adam and... for lower lr 3 for very high lr
-)
+Learning_rate_conf_SET2C = 3  # 1 for SGD and 2 for Adam and... for lower lr 3 for very high lr
 MAX_LR = 0.0174
 # First time
 if Learning_rate_conf == 1:
@@ -2252,9 +2130,7 @@ if Learning_rate_conf in [1, 2]:
             elif epoch < lr_rampup_epochs + lr_sustain_epochs:
                 lr = lr_max
             else:
-                lr = (lr_max - lr_min) * lr_exp_decay ** (
-                    epoch - lr_rampup_epochs - lr_sustain_epochs
-                ) + lr_min
+                lr = (lr_max - lr_min) * lr_exp_decay ** (epoch - lr_rampup_epochs - lr_sustain_epochs) + lr_min
             return lr
 
         return learning_rate_fn
@@ -2293,9 +2169,7 @@ if Learning_rate_conf in [1, 2]:
     learning_rate_fn = build_learning_rate_fn()
     learning_rate_schedule = LearningRateScheduler(learning_rate_fn, verbose=1)
 else:
-    learning_rate_schedule = OneCycleLr(
-        max_lr=MAX_LR, steps_per_epoch=steps_per_epoch_train, epochs=OneCycleLr_epoch
-    )
+    learning_rate_schedule = OneCycleLr(max_lr=MAX_LR, steps_per_epoch=steps_per_epoch_train, epochs=OneCycleLr_epoch)
 if SAVE_TYPE == "TF":
     checkpoint_BVAC = ModelCheckpoint(
         "models\\Temp\\bestVAC_model",
@@ -2326,9 +2200,7 @@ else:
         save_best_only=True,
         verbose=1,
     )
-early_stopping = EarlyStopping(
-    monitor="val_accuracy", patience=2, verbose=1, restore_best_weights=True
-)
+early_stopping = EarlyStopping(monitor="val_accuracy", patience=2, verbose=1, restore_best_weights=True)
 log_dir = "logs/fit/" + datetime.datetime.now().strftime("y%Y_m%m_d%d-h%H_m%M_s%S")
 TensorBoard_update_freq = "batch" if TensorBoard_UF == 2 else "epoch"
 tensorboard_callback = TensorBoard(
@@ -2426,11 +2298,7 @@ def chunked_data(data, chunk_size):
 
 
 try:
-    EPM = (
-        "Epoch(Subset)"
-        if not isinstance(history, tf.keras.callbacks.History)
-        else "Epoch"
-    )
+    EPM = "Epoch(Subset)" if not isinstance(history, tf.keras.callbacks.History) else "Epoch"
     history = convert_history(history)
 
     # Calculate deltas
@@ -2454,9 +2322,7 @@ try:
     plt.title("Model Loss")
     plt.ylabel("Loss")
     plt.xlabel(EPM)
-    plt.ylim(
-        top=max(history["val_loss"][10:]), bottom=0
-    )  # (max(history['val_loss'][8:]) + min(history['val_loss'])) / 2
+    plt.ylim(top=max(history["val_loss"][10:]), bottom=0)  # (max(history['val_loss'][8:]) + min(history['val_loss'])) / 2
     plt.grid(True)
 
     # Density plot for loss
@@ -2474,9 +2340,7 @@ try:
         print("\033[91mfailed to load val_loss (density plot).")
     plt.title("Density Plot for Loss")
     plt.xlabel("Loss")
-    plt.xlim(
-        right=max(history["val_loss"][10:])
-    )  # (max(history['val_loss'][8:]) + min(history['val_loss'])) / 2
+    plt.xlim(right=max(history["val_loss"][10:]))  # (max(history['val_loss'][8:]) + min(history['val_loss'])) / 2
     plt.grid(True)
 
     # Accuracy
@@ -2493,9 +2357,7 @@ try:
 
     # Density plot for accuracy
     plt.subplot(2, 2, 4)
-    plt.hist(
-        history["accuracy"], label="accuracy density", color="blue", alpha=0.5, bins=40
-    )
+    plt.hist(history["accuracy"], label="accuracy density", color="blue", alpha=0.5, bins=40)
     try:
         plt.hist(
             history["val_accuracy"],
@@ -2560,9 +2422,7 @@ try:
     X = np.arange(len(chunked_accuracy))
     Y = np.arange(chunk_size)
     X, Y = np.meshgrid(X, Y)
-    Z = np.array(
-        chunked_accuracy
-    ).T  # Transpose the array to match the shape of X and Y
+    Z = np.array(chunked_accuracy).T  # Transpose the array to match the shape of X and Y
     ax.plot_surface(X, Y, Z, cmap="viridis")
     ax.set_title("3D Surface Plot of Chunked Accuracy")
     ax.set_xlabel("Chunk Index")
@@ -2571,10 +2431,7 @@ try:
 
     # Function to calculate the average of chunks
     def chunked_average(values, chunk_size):
-        return [
-            np.mean(values[i : i + chunk_size])
-            for i in range(0, len(values), chunk_size)
-        ]
+        return [np.mean(values[i : i + chunk_size]) for i in range(0, len(values), chunk_size)]
 
     avg_accuracy_chunks = chunked_average(history["val_accuracy"], chunk_size)
     avg_loss_chunks = chunked_average(history["val_loss"], chunk_size)
@@ -2585,9 +2442,7 @@ try:
 
     # Create a pile plot for accuracy
     plt.figure(figsize=(10, 6))
-    plt.bar(
-        range(len(avg_accuracy_chunks)), avg_accuracy_chunks, label="Average Accuracy"
-    )
+    plt.bar(range(len(avg_accuracy_chunks)), avg_accuracy_chunks, label="Average Accuracy")
     plt.bar(
         max_acc_chunk_index,
         max_acc_value,
@@ -2617,9 +2472,7 @@ try:
         num_chunks = len(values) // chunk_size
         avg_values = []
         for epoch in range(chunk_size):
-            epoch_values = [
-                values[chunk * chunk_size + epoch] for chunk in range(1, num_chunks)
-            ]
+            epoch_values = [values[chunk * chunk_size + epoch] for chunk in range(1, num_chunks)]
             avg_values.append(np.mean(epoch_values))
         return avg_values
 
@@ -2654,12 +2507,8 @@ try:
     # Add labels and title
     plt.xlabel("Epoch (within chunk)")
     plt.ylabel("Average Value")
-    plt.title(
-        "Average Validation Accuracy and Loss for Each Epoch Across Chunks (Ignoring First Chunk)"
-    )
-    plt.xticks(
-        epoch_indices, [f"Epoch {i + 1}" for i in epoch_indices]
-    )  # Set x-tick labels to epoch numbers
+    plt.title("Average Validation Accuracy and Loss for Each Epoch Across Chunks (Ignoring First Chunk)")
+    plt.xticks(epoch_indices, [f"Epoch {i + 1}" for i in epoch_indices])  # Set x-tick labels to epoch numbers
     plt.legend()
 
     plt.tight_layout()
@@ -2726,15 +2575,9 @@ test_accuracy = accuracy_score(y_test_original, test_predictions)
 
 # Print acc
 if Train_data_test:
-    print(
-        f"The accuracy of the model on Train data is {Train_accuracy:.2%}({Train_accuracy:.5%})"
-    )
-print(
-    f"The accuracy of the model on validation data is {val_accuracy:.2%}({val_accuracy:.5%})"
-)
-print(
-    f"The accuracy of the model on test data is {test_accuracy:.2%}({test_accuracy:.5%})"
-)
+    print(f"The accuracy of the model on Train data is {Train_accuracy:.2%}({Train_accuracy:.5%})")
+print(f"The accuracy of the model on validation data is {val_accuracy:.2%}({val_accuracy:.5%})")
+print(f"The accuracy of the model on test data is {test_accuracy:.2%}({test_accuracy:.5%})")
 
 # Visualize the predictions on validation data as a grid of squares
 plt.figure(figsize=(12, 6))
@@ -2768,9 +2611,7 @@ for i in range(10):
     else:
         superimposed_img = (heatmap / 255) * 0.4 + (img / 255)
     # clip
-    superimposed_img = np.clip(
-        superimposed_img, 0, 1
-    )  # ensure the values are in the range [0, 1]
+    superimposed_img = np.clip(superimposed_img, 0, 1)  # ensure the values are in the range [0, 1]
     plt.imshow(superimposed_img)
     plt.title(f"True: {y_val_original[i]}\nPredicted: {val_predictions[i]}")
     plt.axis("off")
@@ -2788,9 +2629,7 @@ test_cm = confusion_matrix(y_test_original, test_predictions)
 
 # Plot the confusion matrix as a heatmap for validation data
 plt.figure(figsize=(8, 6))
-sns.heatmap(
-    val_cm, annot=True, cmap="Blues", fmt="d", xticklabels=labels, yticklabels=labels
-)
+sns.heatmap(val_cm, annot=True, cmap="Blues", fmt="d", xticklabels=labels, yticklabels=labels)
 plt.title("Confusion Matrix - Validation Data")
 plt.xlabel("Predicted")
 plt.ylabel("True")
@@ -2798,9 +2637,7 @@ plt.show()
 
 # Plot the confusion matrix as a heatmap for test data
 plt.figure(figsize=(8, 6))
-sns.heatmap(
-    test_cm, annot=True, cmap="Blues", fmt="d", xticklabels=labels, yticklabels=labels
-)
+sns.heatmap(test_cm, annot=True, cmap="Blues", fmt="d", xticklabels=labels, yticklabels=labels)
 plt.title("Confusion Matrix - Test Data")
 plt.xlabel("Predicted")
 plt.ylabel("True")

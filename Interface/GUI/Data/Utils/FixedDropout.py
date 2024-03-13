@@ -7,10 +7,7 @@ class FixedDropout(layers.Dropout):
             return self.noise_shape
 
         symbolic_shape = backend.shape(inputs)
-        noise_shape = [
-            symbolic_shape[axis] if shape is None else shape
-            for axis, shape in enumerate(self.noise_shape)
-        ]
+        noise_shape = [symbolic_shape[axis] if shape is None else shape for axis, shape in enumerate(self.noise_shape)]
         return tuple(noise_shape)
 
     def get_config(self):

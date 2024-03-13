@@ -87,9 +87,7 @@ from keras.utils import layer_utils
 from tensorflow.python.platform import tf_logging as logging
 from tensorflow.python.util.tf_export import keras_export
 
-BASE_WEIGHT_PATH = (
-    "https://storage.googleapis.com/tensorflow/keras-applications/mobilenet_v2/"
-)
+BASE_WEIGHT_PATH = "https://storage.googleapis.com/tensorflow/keras-applications/mobilenet_v2/"
 layers = None
 
 
@@ -208,8 +206,7 @@ def MobileNetV2(
 
     if weights == "imagenet" and include_top and classes != 1000:
         raise ValueError(
-            'If using `weights` as `"imagenet"` with `include_top` '
-            f"as true, `classes` should be 1000. Received `classes={classes}`"
+            'If using `weights` as `"imagenet"` with `include_top` ' f"as true, `classes` should be 1000. Received `classes={classes}`"
         )
 
     # Determine proper input shape and default size.
@@ -219,14 +216,10 @@ def MobileNetV2(
             is_input_t_tensor = backend.is_keras_tensor(input_tensor)
         except ValueError:
             try:
-                is_input_t_tensor = backend.is_keras_tensor(
-                    layer_utils.get_source_inputs(input_tensor)
-                )
+                is_input_t_tensor = backend.is_keras_tensor(layer_utils.get_source_inputs(input_tensor))
             except ValueError:
                 raise ValueError(
-                    f"input_tensor: {input_tensor}"
-                    "is not type input_tensor. "
-                    f"Received `type(input_tensor)={type(input_tensor)}`"
+                    f"input_tensor: {input_tensor}" "is not type input_tensor. " f"Received `type(input_tensor)={type(input_tensor)}`"
                 )
         if is_input_t_tensor:
             if backend.image_data_format() == "channels_first":
@@ -247,20 +240,14 @@ def MobileNetV2(
                         f"`input_shape={input_shape}`"
                     )
         else:
-            raise ValueError(
-                "input_tensor is not a Keras tensor; "
-                f"Received `input_tensor={input_tensor}`"
-            )
+            raise ValueError("input_tensor is not a Keras tensor; " f"Received `input_tensor={input_tensor}`")
 
     # If input_shape is None, infer shape from input_tensor.
     if input_shape is None and input_tensor is not None:
         try:
             backend.is_keras_tensor(input_tensor)
         except ValueError:
-            raise ValueError(
-                "input_tensor must be a valid Keras tensor type; "
-                f"Received {input_tensor} of type {type(input_tensor)}"
-            )
+            raise ValueError("input_tensor must be a valid Keras tensor type; " f"Received {input_tensor} of type {type(input_tensor)}")
 
         if input_shape is None and not backend.is_keras_tensor(input_tensor):
             default_size = 224
@@ -348,68 +335,32 @@ def MobileNetV2(
         use_bias=False,
         name="Conv1",
     )(img_input)
-    x = layers.BatchNormalization(
-        axis=channel_axis, epsilon=1e-3, momentum=0.999, name="bn_Conv1"
-    )(x)
+    x = layers.BatchNormalization(axis=channel_axis, epsilon=1e-3, momentum=0.999, name="bn_Conv1")(x)
     x = layers.ReLU(6.0, name="Conv1_relu")(x)
 
-    x = _inverted_res_block(
-        x, filters=16, alpha=alpha, stride=1, expansion=1, block_id=0
-    )
+    x = _inverted_res_block(x, filters=16, alpha=alpha, stride=1, expansion=1, block_id=0)
 
-    x = _inverted_res_block(
-        x, filters=24, alpha=alpha, stride=2, expansion=6, block_id=1
-    )
-    x = _inverted_res_block(
-        x, filters=24, alpha=alpha, stride=1, expansion=6, block_id=2
-    )
+    x = _inverted_res_block(x, filters=24, alpha=alpha, stride=2, expansion=6, block_id=1)
+    x = _inverted_res_block(x, filters=24, alpha=alpha, stride=1, expansion=6, block_id=2)
 
-    x = _inverted_res_block(
-        x, filters=32, alpha=alpha, stride=2, expansion=6, block_id=3
-    )
-    x = _inverted_res_block(
-        x, filters=32, alpha=alpha, stride=1, expansion=6, block_id=4
-    )
-    x = _inverted_res_block(
-        x, filters=32, alpha=alpha, stride=1, expansion=6, block_id=5
-    )
+    x = _inverted_res_block(x, filters=32, alpha=alpha, stride=2, expansion=6, block_id=3)
+    x = _inverted_res_block(x, filters=32, alpha=alpha, stride=1, expansion=6, block_id=4)
+    x = _inverted_res_block(x, filters=32, alpha=alpha, stride=1, expansion=6, block_id=5)
 
-    x = _inverted_res_block(
-        x, filters=64, alpha=alpha, stride=2, expansion=6, block_id=6
-    )
-    x = _inverted_res_block(
-        x, filters=64, alpha=alpha, stride=1, expansion=6, block_id=7
-    )
-    x = _inverted_res_block(
-        x, filters=64, alpha=alpha, stride=1, expansion=6, block_id=8
-    )
-    x = _inverted_res_block(
-        x, filters=64, alpha=alpha, stride=1, expansion=6, block_id=9
-    )
+    x = _inverted_res_block(x, filters=64, alpha=alpha, stride=2, expansion=6, block_id=6)
+    x = _inverted_res_block(x, filters=64, alpha=alpha, stride=1, expansion=6, block_id=7)
+    x = _inverted_res_block(x, filters=64, alpha=alpha, stride=1, expansion=6, block_id=8)
+    x = _inverted_res_block(x, filters=64, alpha=alpha, stride=1, expansion=6, block_id=9)
 
-    x = _inverted_res_block(
-        x, filters=96, alpha=alpha, stride=1, expansion=6, block_id=10
-    )
-    x = _inverted_res_block(
-        x, filters=96, alpha=alpha, stride=1, expansion=6, block_id=11
-    )
-    x = _inverted_res_block(
-        x, filters=96, alpha=alpha, stride=1, expansion=6, block_id=12
-    )
+    x = _inverted_res_block(x, filters=96, alpha=alpha, stride=1, expansion=6, block_id=10)
+    x = _inverted_res_block(x, filters=96, alpha=alpha, stride=1, expansion=6, block_id=11)
+    x = _inverted_res_block(x, filters=96, alpha=alpha, stride=1, expansion=6, block_id=12)
 
-    x = _inverted_res_block(
-        x, filters=160, alpha=alpha, stride=2, expansion=6, block_id=13
-    )
-    x = _inverted_res_block(
-        x, filters=160, alpha=alpha, stride=1, expansion=6, block_id=14
-    )
-    x = _inverted_res_block(
-        x, filters=160, alpha=alpha, stride=1, expansion=6, block_id=15
-    )
+    x = _inverted_res_block(x, filters=160, alpha=alpha, stride=2, expansion=6, block_id=13)
+    x = _inverted_res_block(x, filters=160, alpha=alpha, stride=1, expansion=6, block_id=14)
+    x = _inverted_res_block(x, filters=160, alpha=alpha, stride=1, expansion=6, block_id=15)
 
-    x = _inverted_res_block(
-        x, filters=320, alpha=alpha, stride=1, expansion=6, block_id=16
-    )
+    x = _inverted_res_block(x, filters=320, alpha=alpha, stride=1, expansion=6, block_id=16)
 
     # no alpha applied to last conv as stated in the paper:
     # if the width multiplier is greater than 1 we increase the number of output
@@ -419,20 +370,14 @@ def MobileNetV2(
     else:
         last_block_filters = 1280
 
-    x = layers.Conv2D(last_block_filters, kernel_size=1, use_bias=False, name="Conv_1")(
-        x
-    )
-    x = layers.BatchNormalization(
-        axis=channel_axis, epsilon=1e-3, momentum=0.999, name="Conv_1_bn"
-    )(x)
+    x = layers.Conv2D(last_block_filters, kernel_size=1, use_bias=False, name="Conv_1")(x)
+    x = layers.BatchNormalization(axis=channel_axis, epsilon=1e-3, momentum=0.999, name="Conv_1_bn")(x)
     x = layers.ReLU(6.0, name="out_relu")(x)
 
     if include_top:
         x = layers.GlobalAveragePooling2D()(x)
         imagenet_utils.validate_activation(classifier_activation, weights)
-        x = layers.Dense(classes, activation=classifier_activation, name="predictions")(
-            x
-        )
+        x = layers.Dense(classes, activation=classifier_activation, name="predictions")(x)
 
     else:
         if pooling == "avg":
@@ -453,30 +398,13 @@ def MobileNetV2(
     # Load weights.
     if weights == "imagenet":
         if include_top:
-            model_name = (
-                "mobilenet_v2_weights_tf_dim_ordering_tf_kernels_"
-                + str(float(alpha))
-                + "_"
-                + str(rows)
-                + ".h5"
-            )
+            model_name = "mobilenet_v2_weights_tf_dim_ordering_tf_kernels_" + str(float(alpha)) + "_" + str(rows) + ".h5"
             weight_path = BASE_WEIGHT_PATH + model_name
-            weights_path = data_utils.get_file(
-                model_name, weight_path, cache_subdir="models"
-            )
+            weights_path = data_utils.get_file(model_name, weight_path, cache_subdir="models")
         else:
-            model_name = (
-                "mobilenet_v2_weights_tf_dim_ordering_tf_kernels_"
-                + str(float(alpha))
-                + "_"
-                + str(rows)
-                + "_no_top"
-                + ".h5"
-            )
+            model_name = "mobilenet_v2_weights_tf_dim_ordering_tf_kernels_" + str(float(alpha)) + "_" + str(rows) + "_no_top" + ".h5"
             weight_path = BASE_WEIGHT_PATH + model_name
-            weights_path = data_utils.get_file(
-                model_name, weight_path, cache_subdir="models"
-            )
+            weights_path = data_utils.get_file(model_name, weight_path, cache_subdir="models")
         model.load_weights(weights_path)
     elif weights is not None:
         model.load_weights(weights)
@@ -518,9 +446,7 @@ def _inverted_res_block(inputs, expansion, stride, alpha, filters, block_id):
 
     # Depthwise 3x3 convolution.
     if stride == 2:
-        x = layers.ZeroPadding2D(
-            padding=imagenet_utils.correct_pad(x, 3), name=prefix + "pad"
-        )(x)
+        x = layers.ZeroPadding2D(padding=imagenet_utils.correct_pad(x, 3), name=prefix + "pad")(x)
     x = layers.DepthwiseConv2D(
         kernel_size=3,
         strides=stride,

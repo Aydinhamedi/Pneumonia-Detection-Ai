@@ -21,16 +21,12 @@ except (ImportError, NameError):
         log_file.write("\n<L1> Failed to load PySimpleGUI lib </L1>\n")
     root = tk.Tk()
     root.withdraw()
-    messagebox.showinfo(
-        "Internal Error | Exiting", "Failed to import PySimpleGUI, exiting..."
-    )
+    messagebox.showinfo("Internal Error | Exiting", "Failed to import PySimpleGUI, exiting...")
     sys.exit()
 # prep GUI
 sg.theme("GrayGrayGray")
 # Start
-sg.popup_auto_close(
-    "Loading GUI...", non_blocking=True, auto_close_duration=2, no_titlebar=False
-)
+sg.popup_auto_close("Loading GUI...", non_blocking=True, auto_close_duration=2, no_titlebar=False)
 # pylib
 try:
     import re
@@ -85,9 +81,7 @@ Model_dir = "Data/PAI_model"  # without file extention
 Database_dir = "Data/dataset.npy"
 IMG_AF = ("JPEG", "PNG", "BMP", "TIFF", "JPG", "DCM", "DICOM")
 Github_repo_Releases_Model_info_name = "model_info.json"
-Github_repo_Releases_URL = (
-    "https://api.github.com/repos/Aydinhamedi/Pneumonia-Detection-Ai/releases/latest"
-)
+Github_repo_Releases_URL = "https://api.github.com/repos/Aydinhamedi/Pneumonia-Detection-Ai/releases/latest"
 Model_FORMAT = "H5_SF"  # TF_dir/H5_SF
 IMG_RES = (224, 224, 3)
 Debug_m = False
@@ -129,9 +123,7 @@ class CustomQueue:
 # GUI_Queue
 GUI_Queue = {"-Main_log-": CustomQueue(max_items=128)}
 logger.remove()
-logger.add(
-    "Data\\logs\\SYS_LOG_{time}.log", backtrace=True, diagnose=True, compression="zip"
-)
+logger.add("Data\\logs\\SYS_LOG_{time}.log", backtrace=True, diagnose=True, compression="zip")
 logger.info("GUI Start...\n")
 tf.get_logger().setLevel("ERROR")
 physical_devices = tf.config.list_physical_devices("GPU")
@@ -341,9 +333,7 @@ def get_latest_release_files(url) -> list:
     try:
         response = requests.get(url)
     except (ConnectionError, RequestException):
-        print(
-            "Failed to make a GET request to the GitHub API (Possible Cause: Max requests exceeded)"
-        )
+        print("Failed to make a GET request to the GitHub API (Possible Cause: Max requests exceeded)")
         return assets
 
     # Check if the request was successful
@@ -357,19 +347,13 @@ def get_latest_release_files(url) -> list:
         # Print the names of the files in the latest release
         return assets
     else:
-        print(
-            f"Failed to fetch the latest release. Status code: {response.status_code}"
-        )
-        GUI_Queue["-Main_log-"].put(
-            f"Failed to fetch the latest release. Status code: {response.status_code}"
-        )
+        print(f"Failed to fetch the latest release. Status code: {response.status_code}")
+        GUI_Queue["-Main_log-"].put(f"Failed to fetch the latest release. Status code: {response.status_code}")
         return assets
 
 
 # download_file_from_github
-def download_file_from_github(
-    url: str, file_name: str, save_as: str, chunk_size: int
-) -> None:
+def download_file_from_github(url: str, file_name: str, save_as: str, chunk_size: int) -> None:
     """Downloads a file from a GitHub release API URL to a local path.
 
     Args:
@@ -413,30 +397,20 @@ def download_file_from_github(
                 ["red", "yellow"],
                 advanced_mode=True,
             )
-            GUI_Queue["-Main_log-"].put(
-                "ERROR: Something went wrong while downloading the file."
-            )
-            logger.warning(
-                "download_file_from_github>>ERROR: Something went wrong while downloading the file."
-            )
+            GUI_Queue["-Main_log-"].put("ERROR: Something went wrong while downloading the file.")
+            logger.warning("download_file_from_github>>ERROR: Something went wrong while downloading the file.")
             raise Exception
         else:
             print(f'File "{save_as}" downloaded successfully.')
-            logger.debug(
-                f'download_file_from_github>>Debug: File "{save_as}" downloaded successfully.'
-            )
+            logger.debug(f'download_file_from_github>>Debug: File "{save_as}" downloaded successfully.')
     else:
         print_Color(
             "~*ERROR: ~*Something went wrong while finding the file.",
             ["red", "yellow"],
             advanced_mode=True,
         )
-        GUI_Queue["-Main_log-"].put(
-            "ERROR: Something went wrong while finding the file."
-        )
-        logger.warning(
-            "download_file_from_github>>ERROR: Something went wrong while finding the file."
-        )
+        GUI_Queue["-Main_log-"].put("ERROR: Something went wrong while finding the file.")
+        logger.warning("download_file_from_github>>ERROR: Something went wrong while finding the file.")
         raise Exception
 
 
@@ -444,9 +418,7 @@ def download_file_from_github(
 # CI_ulmd
 def CI_ulmd() -> None:
     """Prints a warning that model data upload is currently unavailable."""
-    print_Color(
-        "Warning: upload model data set (currently not available!!!)", ["yellow"]
-    )
+    print_Color("Warning: upload model data set (currently not available!!!)", ["yellow"])
 
 
 # CI_pwai
@@ -467,9 +439,7 @@ def CI_pwai(show_gradcam: bool = True) -> str:
         try:
             if model is None:
                 print_Color("loading the Ai model...", ["normal"])
-                model = load_model(
-                    Model_dir, custom_objects={"FixedDropout": FixedDropout}
-                )
+                model = load_model(Model_dir, custom_objects={"FixedDropout": FixedDropout})
         except (ImportError, IOError):
             return "ERROR: Failed to load the model."
         else:
@@ -496,9 +466,7 @@ def CI_pwai(show_gradcam: bool = True) -> str:
                     (img_array.shape[1], img_array.shape[2]),
                 )
                 Grad_cam_heatmap = np.uint8(255 * Grad_cam_heatmap)
-                Grad_cam_heatmap = cv2.applyColorMap(
-                    Grad_cam_heatmap, cv2.COLORMAP_VIRIDIS
-                )
+                Grad_cam_heatmap = cv2.applyColorMap(Grad_cam_heatmap, cv2.COLORMAP_VIRIDIS)
                 Grad_cam_heatmap = np.clip(
                     np.uint8((Grad_cam_heatmap * 0.3) + ((img_array * 255) * 0.7)),
                     0,
@@ -572,9 +540,7 @@ def CI_liid(img_dir, Show_DICOM_INFO: bool = True) -> str:
     except TypeError:
         file_extension = "TEMP FILE EXTENSION"
     if file_extension.upper()[1:] not in IMG_AF:
-        logger.warning(
-            "CI_liid>>ERROR: Invalid file format. Please provide an image file."
-        )
+        logger.warning("CI_liid>>ERROR: Invalid file format. Please provide an image file.")
         return "ERROR: Invalid file format. Please provide an image file."
     else:
         try:
@@ -583,9 +549,7 @@ def CI_liid(img_dir, Show_DICOM_INFO: bool = True) -> str:
                 ds = pydicom.dcmread(img_dir)
                 img = Image.fromarray(ds.pixel_array).resize(IMG_RES[:2])
                 if Show_DICOM_INFO:
-                    GUI_layout_DICOM_Info_Window_layout = (
-                        C_GUI_layout_DICOM_Info_Window()
-                    )
+                    GUI_layout_DICOM_Info_Window_layout = C_GUI_layout_DICOM_Info_Window()
                     GUI_layout_DICOM_Info_Window = sg.Window(
                         "DICOM Info - File Metadata",
                         GUI_layout_DICOM_Info_Window_layout,
@@ -597,22 +561,14 @@ def CI_liid(img_dir, Show_DICOM_INFO: bool = True) -> str:
                             tag_info = f"[Tag: {element.tag} | VR: {element.VR}]"
                             name_info = f"(Name: {element.name})"
                             value_info = f">Value: {element.value}"
-                            GUI_layout_DICOM_Info_Window["-OUTPUT_DICOM_Info-"].print(
-                                tag_info, text_color="blue", end=""
-                            )
-                            GUI_layout_DICOM_Info_Window["-OUTPUT_DICOM_Info-"].print(
-                                name_info, text_color="green", end=""
-                            )
-                            GUI_layout_DICOM_Info_Window["-OUTPUT_DICOM_Info-"].print(
-                                value_info, text_color="black", end="\n"
-                            )
+                            GUI_layout_DICOM_Info_Window["-OUTPUT_DICOM_Info-"].print(tag_info, text_color="blue", end="")
+                            GUI_layout_DICOM_Info_Window["-OUTPUT_DICOM_Info-"].print(name_info, text_color="green", end="")
+                            GUI_layout_DICOM_Info_Window["-OUTPUT_DICOM_Info-"].print(value_info, text_color="black", end="\n")
                     GUI_layout_DICOM_Info_Window.finalize()
             else:
                 img = Image.open(img_dir).resize((IMG_RES[1], IMG_RES[0]))
         except NameError:
-            logger.warning(
-                "CI_liid>>ERROR: Invalid file dir. Please provide an image file."
-            )
+            logger.warning("CI_liid>>ERROR: Invalid file dir. Please provide an image file.")
             return "ERROR: Invalid file dir. Please provide an image file."
         else:
             # Check for RGB mode
@@ -637,9 +593,7 @@ def CI_uaim(model_type_id) -> None:
     Handles logging status messages to the GUI queue and any errors.
     """
     try:
-        GUI_Queue["-Main_log-"].put(
-            f"Downloading model {available_models[model_type_id[0]][0]}..."
-        )
+        GUI_Queue["-Main_log-"].put(f"Downloading model {available_models[model_type_id[0]][0]}...")
         download_file_from_github(
             Github_repo_Releases_URL,
             available_models[model_type_id[0]][0],
@@ -676,10 +630,7 @@ def CI_umij() -> None:
 
 # CI_gmi
 def CI_gmi() -> str:
-    if (
-        not os.path.isfile("Data\\model_info.json")
-        or time.time() - os.path.getmtime("Data/model_info.json") > 4 * 60 * 60
-    ):
+    if not os.path.isfile("Data\\model_info.json") or time.time() - os.path.getmtime("Data/model_info.json") > 4 * 60 * 60:
         CI_umij()
     model_info_dict = get_model_info(Model_dir)
     if model_info_dict["Ver"] != "Unknown":
@@ -786,13 +737,9 @@ def main() -> None:
     GUI_tab_main = sg.Tab("Main", GUI_layout_Tab_main)
     GUI_tab_Ai_model = sg.Tab("Ai Model", GUI_layout_Tab_Ai_Model)
     GUI_tab_Sys_info = sg.Tab("System Info", GUI_layout_Tab_Sys_Info)
-    GUI_layout_group = [
-        [sg.TabGroup([[GUI_tab_main, GUI_tab_Ai_model, GUI_tab_Sys_info]])]
-    ]
+    GUI_layout_group = [[sg.TabGroup([[GUI_tab_main, GUI_tab_Ai_model, GUI_tab_Sys_info]])]]
     # Create the window
-    GUI_window = sg.Window(
-        f"Pneumonia-Detection-Ai-GUI V{GUI_Ver}", GUI_layout_group, finalize=True
-    )
+    GUI_window = sg.Window(f"Pneumonia-Detection-Ai-GUI V{GUI_Ver}", GUI_layout_group, finalize=True)
     # Pre up
     CI_umij()
     # Prep GUI sys info
@@ -838,9 +785,7 @@ def main() -> None:
         # Handle event for analyzing the selected image
         if event == "Analyse":
             # Call the function to load the image and update the output status
-            Log_temp_txt = CI_liid(
-                IMG_dir, Show_DICOM_INFO=values["-CHECKBOX_SHOW_DICOM_INFO-"]
-            )
+            Log_temp_txt = CI_liid(IMG_dir, Show_DICOM_INFO=values["-CHECKBOX_SHOW_DICOM_INFO-"])
             GUI_Queue["-Main_log-"].put(Log_temp_txt)
             UWL()
 
@@ -864,33 +809,22 @@ def main() -> None:
         if event == "-BUTTON_UPDATE_MODEL-":
             # Start a new thread to download the model without freezing the GUI
             if values["-TABLE_ST_MODEL-"] == []:
-                GUI_Queue["-Main_log-"].put(
-                    "ERROR: Failed to download the model. Select a available model from the list."
-                )
+                GUI_Queue["-Main_log-"].put("ERROR: Failed to download the model. Select a available model from the list.")
             else:
-                CI_uaim_Thread = threading.Thread(
-                    target=CI_uaim, args=(values["-TABLE_ST_MODEL-"],), daemon=True
-                )
+                CI_uaim_Thread = threading.Thread(target=CI_uaim, args=(values["-TABLE_ST_MODEL-"],), daemon=True)
                 CI_uaim_Thread.start()
         # Updating the model info + ...
-        if (
-            Update_release_files_LXT is None
-            or time.time() - Update_release_files_LXT > 1 * 60 * 60
-        ):
+        if Update_release_files_LXT is None or time.time() - Update_release_files_LXT > 1 * 60 * 60:
             Update_release_files_LXT = time.time()
             release_files = get_latest_release_files(Github_repo_Releases_URL)
             for model_name in release_files:
-                if model_name.split(".")[1] == "h5" and not model_name.__contains__(
-                    "weights"
-                ):
+                if model_name.split(".")[1] == "h5" and not model_name.__contains__("weights"):
                     available_models.append([model_name])
 
         if Update_model_info_LXT is None or time.time() - Update_model_info_LXT > 15:
             Update_model_info_LXT = time.time()
             Github_repo_Release_info = CI_gmi()
-            GUI_window["-OUTPUT_Model_info-"].update(
-                Github_repo_Release_info["model_info_str"], text_color="black"
-            )
+            GUI_window["-OUTPUT_Model_info-"].update(Github_repo_Release_info["model_info_str"], text_color="black")
             GUI_window["-TABLE_ST_MODEL-"].update(available_models)
             UWL(Only_finalize=True)
         # Continuously check if there are results in the queue to be processed '-Main_log-'
@@ -919,13 +853,7 @@ if gpus:
     TF_CUDA_VER = TF_sys_details["cuda_version"]
     TF_CUDNN_VER = TF_sys_details["cudnn_version"]  # NOT USED
     try:
-        gpu_name = (
-            subprocess.check_output(["nvidia-smi", "-L"])
-            .decode("utf-8")
-            .split(":")[1]
-            .split("(")[0]
-            .strip()
-        )
+        gpu_name = subprocess.check_output(["nvidia-smi", "-L"]).decode("utf-8").split(":")[1].split("(")[0].strip()
         # GPU 0: NVIDIA `THE GPU NAME` (UUID: GPU-'xxxxxxxxxxxxxxxxxxxx')
         #     │                       │
         # ┌---┴----------┐        ┌---┴----------┐

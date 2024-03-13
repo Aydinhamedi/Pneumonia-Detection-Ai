@@ -13,9 +13,7 @@ K = keras.backend
 class Scheduler:
     def __init__(self, vals, n_iter: int) -> None:
         'Used to "step" from start,end (`vals`) over `n_iter` s on a schedule defined by `func`'
-        self.start, self.end = (
-            (vals[0], vals[1]) if isinstance(vals, tuple) else (vals, 0)
-        )
+        self.start, self.end = (vals[0], vals[1]) if isinstance(vals, tuple) else (vals, 0)
         self.n_iter = max(1, n_iter)
         self.func = self._aannealing_exp
         self.n = 0
@@ -111,9 +109,7 @@ class LrFinder:
         try:
             self.model.save_weights(self.weightsFile)
         except:
-            print(
-                "Unable to save initial weights, weights of model will change. Re-instantiate model to load previous weights ..."
-            )
+            print("Unable to save initial weights, weights of model will change. Re-instantiate model to load previous weights ...")
         # start scheduler
         sched = Scheduler((start_lr, end_lr), num_iter)
         (
@@ -140,9 +136,7 @@ class LrFinder:
                 best_loss = smoothed_loss
 
             # stop if loss is exploding
-            if sched.is_done or (
-                smoothed_loss > 4 * best_loss or np.isnan(smoothed_loss)
-            ):
+            if sched.is_done or (smoothed_loss > 4 * best_loss or np.isnan(smoothed_loss)):
                 break
 
             # append losses and lrs
@@ -168,9 +162,7 @@ class LrFinder:
         try:
             self.model.load_weights(self.weightsFile)
         except:
-            print(
-                "Unable to load inital weights. Re-instantiate model to load previous weights ..."
-            )
+            print("Unable to load inital weights. Re-instantiate model to load previous weights ...")
         K.set_value(self.optimizer.lr, self.init_lr)
         print("LR Finder is complete, type {LrFinder}.plot_lrs() to see the graph.")
 
@@ -203,9 +195,7 @@ class LrFinder:
             try:
                 mg = (np.gradient(np.array(losses))).argmin()
             except:
-                print(
-                    "Failed to compute the gradients, there might not be enough points."
-                )
+                print("Failed to compute the gradients, there might not be enough points.")
                 return
             print(f"Min numerical gradient: {lrs[mg]:.2E}")
             ax.plot(lrs[mg], losses[mg], markersize=10, marker="o", color="red")

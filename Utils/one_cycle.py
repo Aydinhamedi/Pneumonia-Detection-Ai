@@ -91,28 +91,16 @@ class OneCycleLr(keras.callbacks.Callback):
 
         # validate total steps:
         if total_steps is None and epochs is None and steps_per_epoch is None:
-            raise ValueError(
-                "You must define either total_steps OR (epochs AND steps_per_epoch)"
-            )
+            raise ValueError("You must define either total_steps OR (epochs AND steps_per_epoch)")
         elif total_steps is not None:
             if total_steps <= 0 or not isinstance(total_steps, int):
-                raise ValueError(
-                    "Expected non-negative integer total_steps, but got {}".format(
-                        total_steps
-                    )
-                )
+                raise ValueError("Expected non-negative integer total_steps, but got {}".format(total_steps))
             self.total_steps = total_steps
         else:
             if epochs <= 0 or not isinstance(epochs, int):
-                raise ValueError(
-                    "Expected non-negative integer epochs, but got {}".format(epochs)
-                )
+                raise ValueError("Expected non-negative integer epochs, but got {}".format(epochs))
             if steps_per_epoch <= 0 or not isinstance(steps_per_epoch, int):
-                raise ValueError(
-                    "Expected non-negative integer steps_per_epoch, but got {}".format(
-                        steps_per_epoch
-                    )
-                )
+                raise ValueError("Expected non-negative integer steps_per_epoch, but got {}".format(steps_per_epoch))
             # Compute total steps
             self.total_steps = epochs * steps_per_epoch
 
@@ -122,17 +110,11 @@ class OneCycleLr(keras.callbacks.Callback):
 
         # Validate pct_start
         if pct_start < 0 or pct_start > 1 or not isinstance(pct_start, float):
-            raise ValueError(
-                "Expected float between 0 and 1 pct_start, but got {}".format(pct_start)
-            )
+            raise ValueError("Expected float between 0 and 1 pct_start, but got {}".format(pct_start))
 
         # Validate anneal_strategy
         if anneal_strategy not in ["cos", "linear"]:
-            raise ValueError(
-                "anneal_strategy must by one of 'cos' or 'linear', instead got {}".format(
-                    anneal_strategy
-                )
-            )
+            raise ValueError("anneal_strategy must by one of 'cos' or 'linear', instead got {}".format(anneal_strategy))
         elif anneal_strategy == "cos":
             self.anneal_func = self._annealing_cos
         elif anneal_strategy == "linear":
@@ -167,15 +149,11 @@ class OneCycleLr(keras.callbacks.Callback):
         """Update the learning rate and momentum"""
         if self.step_num <= self.step_size_up:
             # update learining rate
-            computed_lr = self.anneal_func(
-                self.initial_lr, self.max_lr, self.step_num / self.step_size_up
-            )
+            computed_lr = self.anneal_func(self.initial_lr, self.max_lr, self.step_num / self.step_size_up)
             K.set_value(self.model.optimizer.lr, computed_lr)
             # update momentum if cycle_momentum
             if self.cycle_momentum:
-                computed_momentum = self.anneal_func(
-                    self.m_momentum, self.b_momentum, self.step_num / self.step_size_up
-                )
+                computed_momentum = self.anneal_func(self.m_momentum, self.b_momentum, self.step_num / self.step_size_up)
                 try:
                     K.set_value(self.model.optimizer.momentum, computed_momentum)
                 except:
@@ -183,9 +161,7 @@ class OneCycleLr(keras.callbacks.Callback):
         else:
             down_step_num = self.step_num - self.step_size_up
             # update learning rate
-            computed_lr = self.anneal_func(
-                self.max_lr, self.min_lr, down_step_num / self.step_size_down
-            )
+            computed_lr = self.anneal_func(self.max_lr, self.min_lr, down_step_num / self.step_size_down)
             K.set_value(self.model.optimizer.lr, computed_lr)
             # update momentum if cycle_momentum
             if self.cycle_momentum:

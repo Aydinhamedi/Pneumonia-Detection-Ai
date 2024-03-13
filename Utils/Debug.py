@@ -25,11 +25,7 @@ def P_Debug(ID, DEBUG_IF, SFL: bool = True, Force: bool = False, SFCS: bool = Tr
         stack_trace_formated = ""
         for line in stack_trace[:-1]:
             stack_trace_formated += "--> [!>>>" + line
-        location = (
-            f"{inspect.stack()[1].filename}:{frame_info.f_back.f_lineno}"
-            if SFL
-            else f"L:{frame_info.f_back.f_lineno}"
-        )
+        location = f"{inspect.stack()[1].filename}:{frame_info.f_back.f_lineno}" if SFL else f"L:{frame_info.f_back.f_lineno}"
         Debug_data = (
             f'\n~*--> ~*DEBUG INFO id: ~*[{str(ID)}]~*, '
             f'Location: ~*[{location}]~*, '
@@ -39,9 +35,7 @@ def P_Debug(ID, DEBUG_IF, SFL: bool = True, Force: bool = False, SFCS: bool = Tr
             f'Memory Address: ~*DEC>>>~*{id(DEBUG_IF)}~* | HEX>>>~*{hex(id(DEBUG_IF))}~* | BIN>>>~*{bin(id(DEBUG_IF))}\n'
         )
         if SFCS:
-            Debug_data += (
-                f"~*--> ~*Function Call Stack: ~*↓\n~*{stack_trace_formated}\n"
-            )
+            Debug_data += f"~*--> ~*Function Call Stack: ~*↓\n~*{stack_trace_formated}\n"
         print_Color(
             Debug_data,
             [

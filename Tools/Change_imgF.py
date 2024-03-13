@@ -21,9 +21,7 @@ def convert_images_in_dir(input_dir, output_dir, output_format):
     filenames = os.listdir(input_dir)
 
     # Create a progress bar
-    with tqdm(
-        total=len(filenames), desc="Converting images", ncols=75, unit="img"
-    ) as pbar:
+    with tqdm(total=len(filenames), desc="Converting images", ncols=75, unit="img") as pbar:
         # Iterate over all files in the input directory
         for filename in filenames:
             # Create the full input path

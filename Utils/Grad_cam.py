@@ -14,9 +14,7 @@ def _compute_heatmap(model, img_array, conv_layer_name, pred_index):
     """
     Helper function to compute the heatmap for a given convolutional layer.
     """
-    grad_model = tf.keras.models.Model(
-        [model.inputs], [model.get_layer(conv_layer_name).output, model.output]
-    )
+    grad_model = tf.keras.models.Model([model.inputs], [model.get_layer(conv_layer_name).output, model.output])
 
     with tf.GradientTape() as tape:
         conv_layer_output, preds = grad_model(img_array)
@@ -53,9 +51,7 @@ def make_gradcam_heatmap(
 
     if second_last_conv_layer_name is not None:
         # Compute heatmap for the second last convolutional layer
-        heatmap_second = _compute_heatmap(
-            model, img_array, second_last_conv_layer_name, pred_index
-        )
+        heatmap_second = _compute_heatmap(model, img_array, second_last_conv_layer_name, pred_index)
         heatmap_second = heatmap_second**sensitivity_map
 
         # Average the two heatmaps

@@ -39,9 +39,7 @@ from keras.utils import layer_utils
 # isort: off
 from tensorflow.python.util.tf_export import keras_export
 
-BASE_WEIGHTS_URL = (
-    "https://storage.googleapis.com/tensorflow/keras-applications/resnet_rs/"
-)
+BASE_WEIGHTS_URL = "https://storage.googleapis.com/tensorflow/keras-applications/resnet_rs/"
 
 WEIGHT_HASHES = {
     "resnet-rs-101-i160.h5": "544b3434d00efc199d66e9058c7f3379",
@@ -243,9 +241,7 @@ def STEM(
         bn_axis = 3 if backend.image_data_format() == "channels_last" else 1
 
         # First stem block
-        x = Conv2DFixedPadding(
-            filters=32, kernel_size=3, strides=2, name=name + "_stem_conv_1"
-        )(inputs)
+        x = Conv2DFixedPadding(filters=32, kernel_size=3, strides=2, name=name + "_stem_conv_1")(inputs)
         x = layers.BatchNormalization(
             axis=bn_axis,
             momentum=bn_momentum,
@@ -255,9 +251,7 @@ def STEM(
         x = layers.Activation(activation, name=name + "_stem_act_1")(x)
 
         # Second stem block
-        x = Conv2DFixedPadding(
-            filters=32, kernel_size=3, strides=1, name=name + "_stem_conv_2"
-        )(x)
+        x = Conv2DFixedPadding(filters=32, kernel_size=3, strides=1, name=name + "_stem_conv_2")(x)
         x = layers.BatchNormalization(
             axis=bn_axis,
             momentum=bn_momentum,
@@ -267,9 +261,7 @@ def STEM(
         x = layers.Activation(activation, name=name + "_stem_act_2")(x)
 
         # Final Stem block:
-        x = Conv2DFixedPadding(
-            filters=64, kernel_size=3, strides=1, name=name + "_stem_conv_3"
-        )(x)
+        x = Conv2DFixedPadding(filters=64, kernel_size=3, strides=1, name=name + "_stem_conv_3")(x)
         x = layers.BatchNormalization(
             axis=bn_axis,
             momentum=bn_momentum,
@@ -279,9 +271,7 @@ def STEM(
         x = layers.Activation(activation, name=name + "_stem_act_3")(x)
 
         # Replace stem max pool:
-        x = Conv2DFixedPadding(
-            filters=64, kernel_size=3, strides=2, name=name + "_stem_conv_4"
-        )(x)
+        x = Conv2DFixedPadding(filters=64, kernel_size=3, strides=2, name=name + "_stem_conv_4")(x)
         x = layers.BatchNormalization(
             axis=bn_axis,
             momentum=bn_momentum,
@@ -390,9 +380,7 @@ def BottleneckBlock(
             )(shortcut)
 
         # First conv layer:
-        x = Conv2DFixedPadding(
-            filters=filters, kernel_size=1, strides=1, name=name + "_conv_1"
-        )(inputs)
+        x = Conv2DFixedPadding(filters=filters, kernel_size=1, strides=1, name=name + "_conv_1")(inputs)
         x = layers.BatchNormalization(
             axis=bn_axis,
             momentum=bn_momentum,
@@ -417,9 +405,7 @@ def BottleneckBlock(
         x = layers.Activation(activation, name=name + "_act_2")(x)
 
         # Third conv layer:
-        x = Conv2DFixedPadding(
-            filters=filters * 4, kernel_size=1, strides=1, name=name + "_conv_3"
-        )(x)
+        x = Conv2DFixedPadding(filters=filters * 4, kernel_size=1, strides=1, name=name + "_conv_3")(x)
         x = layers.BatchNormalization(
             axis=bn_axis,
             momentum=bn_momentum,
@@ -513,9 +499,7 @@ def fixed_padding(inputs, kernel_size):
     pad_end = pad_total - pad_beg
 
     # Use ZeroPadding as to avoid TFOpLambda layer
-    padded_inputs = layers.ZeroPadding2D(
-        padding=((pad_beg, pad_end), (pad_beg, pad_end))
-    )(inputs)
+    padded_inputs = layers.ZeroPadding2D(padding=((pad_beg, pad_end), (pad_beg, pad_end)))(inputs)
 
     return padded_inputs
 
@@ -685,9 +669,7 @@ def ResNetRS(
             x = layers.Dropout(dropout_rate, name="top_dropout")(x)
 
         imagenet_utils.validate_activation(classifier_activation, weights)
-        x = layers.Dense(classes, activation=classifier_activation, name="predictions")(
-            x
-        )
+        x = layers.Dense(classes, activation=classifier_activation, name="predictions")(x)
     else:
         if pooling == "avg":
             x = layers.GlobalAveragePooling2D(name="avg_pool")(x)
@@ -727,9 +709,7 @@ def ResNetRS(
     return model
 
 
-@keras_export(
-    "keras.applications.resnet_rs.ResNetRS50", "keras.applications.ResNetRS50"
-)
+@keras_export("keras.applications.resnet_rs.ResNetRS50", "keras.applications.ResNetRS50")
 def ResNetRS50(
     include_top=True,
     weights="imagenet",
@@ -757,9 +737,7 @@ def ResNetRS50(
     )
 
 
-@keras_export(
-    "keras.applications.resnet_rs.ResNetRS101", "keras.applications.ResNetRS101"
-)
+@keras_export("keras.applications.resnet_rs.ResNetRS101", "keras.applications.ResNetRS101")
 def ResNetRS101(
     include_top=True,
     weights="imagenet",
@@ -787,9 +765,7 @@ def ResNetRS101(
     )
 
 
-@keras_export(
-    "keras.applications.resnet_rs.ResNetRS152", "keras.applications.ResNetRS152"
-)
+@keras_export("keras.applications.resnet_rs.ResNetRS152", "keras.applications.ResNetRS152")
 def ResNetRS152(
     include_top=True,
     weights="imagenet",
@@ -817,9 +793,7 @@ def ResNetRS152(
     )
 
 
-@keras_export(
-    "keras.applications.resnet_rs.ResNetRS200", "keras.applications.ResNetRS200"
-)
+@keras_export("keras.applications.resnet_rs.ResNetRS200", "keras.applications.ResNetRS200")
 def ResNetRS200(
     include_top=True,
     weights="imagenet",
@@ -847,9 +821,7 @@ def ResNetRS200(
     )
 
 
-@keras_export(
-    "keras.applications.resnet_rs.ResNetRS270", "keras.applications.ResNetRS270"
-)
+@keras_export("keras.applications.resnet_rs.ResNetRS270", "keras.applications.ResNetRS270")
 def ResNetRS270(
     include_top=True,
     weights="imagenet",
@@ -878,9 +850,7 @@ def ResNetRS270(
     )
 
 
-@keras_export(
-    "keras.applications.resnet_rs.ResNetRS350", "keras.applications.ResNetRS350"
-)
+@keras_export("keras.applications.resnet_rs.ResNetRS350", "keras.applications.ResNetRS350")
 def ResNetRS350(
     include_top=True,
     weights="imagenet",
@@ -909,9 +879,7 @@ def ResNetRS350(
     )
 
 
-@keras_export(
-    "keras.applications.resnet_rs.ResNetRS420", "keras.applications.ResNetRS420"
-)
+@keras_export("keras.applications.resnet_rs.ResNetRS420", "keras.applications.ResNetRS420")
 def ResNetRS420(
     include_top=True,
     weights="imagenet",

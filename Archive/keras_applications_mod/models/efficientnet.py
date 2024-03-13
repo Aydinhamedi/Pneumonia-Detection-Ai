@@ -312,10 +312,7 @@ def EfficientNet(
         )
 
     if weights == "imagenet" and include_top and classes != 1000:
-        raise ValueError(
-            'If using `weights` as `"imagenet"` with `include_top`'
-            " as true, `classes` should be 1000"
-        )
+        raise ValueError('If using `weights` as `"imagenet"` with `include_top`' " as true, `classes` should be 1000")
 
     # Determine proper input shape
     input_shape = imagenet_utils.obtain_input_shape(
@@ -362,13 +359,9 @@ def EfficientNet(
         # original implementation.
         # See https://github.com/tensorflow/tensorflow/issues/49930 for more
         # details
-        x = layers.Rescaling([
-            1.0 / math.sqrt(stddev) for stddev in IMAGENET_STDDEV_RGB
-        ])(x)
+        x = layers.Rescaling([1.0 / math.sqrt(stddev) for stddev in IMAGENET_STDDEV_RGB])(x)
 
-    x = layers.ZeroPadding2D(
-        padding=imagenet_utils.correct_pad(x, 3), name="stem_conv_pad"
-    )(x)
+    x = layers.ZeroPadding2D(padding=imagenet_utils.correct_pad(x, 3), name="stem_conv_pad")(x)
     x = layers.Conv2D(
         round_filters(32),
         3,
@@ -574,9 +567,7 @@ def block(
     x = layers.BatchNormalization(axis=bn_axis, name=name + "project_bn")(x)
     if id_skip and strides == 1 and filters_in == filters_out:
         if drop_rate > 0:
-            x = layers.Dropout(
-                drop_rate, noise_shape=(None, 1, 1, 1), name=name + "drop"
-            )(x)
+            x = layers.Dropout(drop_rate, noise_shape=(None, 1, 1, 1), name=name + "drop")(x)
         x = layers.add([x, inputs], name=name + "add")
     return x
 

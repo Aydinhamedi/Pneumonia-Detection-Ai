@@ -175,19 +175,13 @@ class ApplicationsTest(tf.test.TestCase, parameterized.TestCase):
 
     @parameterized.parameters(*MODEL_LIST)
     def test_application_notop_custom_input_shape(self, app, last_dim):
-        output_shape = _get_output_shape(
-            lambda: app(
-                weights="imagenet", include_top=False, input_shape=(224, 224, 3)
-            )
-        )
+        output_shape = _get_output_shape(lambda: app(weights="imagenet", include_top=False, input_shape=(224, 224, 3)))
 
         self.assertEqual(output_shape[-1], last_dim)
 
     @parameterized.parameters(MODEL_LIST)
     def test_application_pooling(self, app, last_dim):
-        output_shape = _get_output_shape(
-            lambda: app(weights=None, include_top=False, pooling="avg")
-        )
+        output_shape = _get_output_shape(lambda: app(weights=None, include_top=False, pooling="avg"))
         self.assertShapeEqual(output_shape, (None, last_dim))
 
     @parameterized.parameters(MODEL_LIST)
@@ -204,9 +198,7 @@ class ApplicationsTest(tf.test.TestCase, parameterized.TestCase):
             input_shape = (1, None, None)
         else:
             input_shape = (None, None, 1)
-        output_shape = _get_output_shape(
-            lambda: app(weights=None, include_top=False, input_shape=input_shape)
-        )
+        output_shape = _get_output_shape(lambda: app(weights=None, include_top=False, input_shape=input_shape))
         self.assertShapeEqual(output_shape, (None, None, None, last_dim))
         backend.clear_session()
 
@@ -214,16 +206,12 @@ class ApplicationsTest(tf.test.TestCase, parameterized.TestCase):
             input_shape = (4, None, None)
         else:
             input_shape = (None, None, 4)
-        output_shape = _get_output_shape(
-            lambda: app(weights=None, include_top=False, input_shape=input_shape)
-        )
+        output_shape = _get_output_shape(lambda: app(weights=None, include_top=False, input_shape=input_shape))
         self.assertShapeEqual(output_shape, (None, None, None, last_dim))
         backend.clear_session()
 
     @parameterized.parameters(*MOBILENET_V3_FOR_WEIGHTS)
-    def test_mobilenet_v3_load_weights(
-        self, mobilenet_class, alpha, minimalistic, include_top
-    ):
+    def test_mobilenet_v3_load_weights(self, mobilenet_class, alpha, minimalistic, include_top):
         mobilenet_class(
             input_shape=(224, 224, 3),
             weights="imagenet",

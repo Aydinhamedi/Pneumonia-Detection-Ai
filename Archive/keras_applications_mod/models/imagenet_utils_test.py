@@ -40,9 +40,7 @@ class TestImageNetUtils(test_combinations.TestCase):
         out1 = utils.preprocess_input(x, "channels_last")
         out1int = utils.preprocess_input(xint, "channels_last")
         out2 = utils.preprocess_input(np.transpose(x, (0, 3, 1, 2)), "channels_first")
-        out2int = utils.preprocess_input(
-            np.transpose(xint, (0, 3, 1, 2)), "channels_first"
-        )
+        out2int = utils.preprocess_input(np.transpose(xint, (0, 3, 1, 2)), "channels_first")
         self.assertAllClose(out1, out2.transpose(0, 2, 3, 1))
         self.assertAllClose(out1int, out2int.transpose(0, 2, 3, 1))
 
@@ -55,9 +53,7 @@ class TestImageNetUtils(test_combinations.TestCase):
         out1 = utils.preprocess_input(x, "channels_last")
         out1int = utils.preprocess_input(xint, "channels_last")
         out2 = utils.preprocess_input(np.transpose(x, (2, 0, 1)), "channels_first")
-        out2int = utils.preprocess_input(
-            np.transpose(xint, (2, 0, 1)), "channels_first"
-        )
+        out2int = utils.preprocess_input(np.transpose(xint, (2, 0, 1)), "channels_first")
         self.assertAllClose(out1, out2.transpose(1, 2, 0))
         self.assertAllClose(out1int, out2int.transpose(1, 2, 0))
 
@@ -78,11 +74,13 @@ class TestImageNetUtils(test_combinations.TestCase):
         self.assertAllClose(x, x2[..., ::-1])
         self.assertNotEqual(xint.astype("float").max(), xint2.max())
 
-    @parameterized.named_parameters([
-        {"testcase_name": "mode_torch", "mode": "torch"},
-        {"testcase_name": "mode_tf", "mode": "tf"},
-        {"testcase_name": "mode_caffe", "mode": "caffe"},
-    ])
+    @parameterized.named_parameters(
+        [
+            {"testcase_name": "mode_torch", "mode": "torch"},
+            {"testcase_name": "mode_tf", "mode": "tf"},
+            {"testcase_name": "mode_caffe", "mode": "caffe"},
+        ]
+    )
     def test_preprocess_input_symbolic(self, mode):
         # Test image batch
         x = np.random.uniform(0, 255, (2, 10, 10, 3))
@@ -113,9 +111,7 @@ class TestImageNetUtils(test_combinations.TestCase):
         # Test single image
         x = np.random.uniform(0, 255, (10, 10, 3))
         inputs = keras.layers.Input(shape=x.shape)
-        outputs = keras.layers.Lambda(
-            lambda x: utils.preprocess_input(x, mode=mode), output_shape=x.shape
-        )(inputs)
+        outputs = keras.layers.Lambda(lambda x: utils.preprocess_input(x, mode=mode), output_shape=x.shape)(inputs)
         model = keras.Model(inputs, outputs)
         self.assertEqual(model.predict(x[np.newaxis])[0].shape, x.shape)
 
@@ -135,11 +131,13 @@ class TestImageNetUtils(test_combinations.TestCase):
         out2 = model2.predict(x2[np.newaxis])[0]
         self.assertAllClose(out1, out2.transpose(1, 2, 0))
 
-    @parameterized.named_parameters([
-        {"testcase_name": "mode_torch", "mode": "torch"},
-        {"testcase_name": "mode_tf", "mode": "tf"},
-        {"testcase_name": "mode_caffe", "mode": "caffe"},
-    ])
+    @parameterized.named_parameters(
+        [
+            {"testcase_name": "mode_torch", "mode": "torch"},
+            {"testcase_name": "mode_tf", "mode": "tf"},
+            {"testcase_name": "mode_caffe", "mode": "caffe"},
+        ]
+    )
     def test_preprocess_input_symbolic_mixed_precision(self, mode):
         if not tf.__internal__.tf2.enabled():
             self.skipTest("The global policy can only be tested in TensorFlow 2")
@@ -154,16 +152,18 @@ class TestImageNetUtils(test_combinations.TestCase):
         finally:
             set_global_policy("float32")
 
-    @parameterized.named_parameters([
-        {
-            "testcase_name": "channels_last_format",
-            "data_format": "channels_last",
-        },
-        {
-            "testcase_name": "channels_first_format",
-            "data_format": "channels_first",
-        },
-    ])
+    @parameterized.named_parameters(
+        [
+            {
+                "testcase_name": "channels_last_format",
+                "data_format": "channels_last",
+            },
+            {
+                "testcase_name": "channels_first_format",
+                "data_format": "channels_first",
+            },
+        ]
+    )
     def test_obtain_input_shape(self, data_format):
         # input_shape and default_size are not identical.
         with self.assertRaises(ValueError):

@@ -36,9 +36,7 @@ from keras.utils import layer_utils
 # isort: off
 from tensorflow.python.util.tf_export import keras_export
 
-BASE_WEIGHTS_PATH = (
-    "https://storage.googleapis.com/tensorflow/keras-applications/efficientnet_v2/"  # noqa: E501
-)
+BASE_WEIGHTS_PATH = "https://storage.googleapis.com/tensorflow/keras-applications/efficientnet_v2/"  # noqa: E501
 
 WEIGHTS_HASHES = {
     "b0": (
@@ -681,9 +679,7 @@ def MBConvBlock(
             use_bias=False,
             name=name + "dwconv2",
         )(x)
-        x = layers.BatchNormalization(
-            axis=bn_axis, momentum=bn_momentum, name=name + "bn"
-        )(x)
+        x = layers.BatchNormalization(axis=bn_axis, momentum=bn_momentum, name=name + "bn")(x)
         x = layers.Activation(activation, name=name + "activation")(x)
 
         # Squeeze and excite
@@ -726,9 +722,7 @@ def MBConvBlock(
             use_bias=False,
             name=name + "project_conv",
         )(x)
-        x = layers.BatchNormalization(
-            axis=bn_axis, momentum=bn_momentum, name=name + "project_bn"
-        )(x)
+        x = layers.BatchNormalization(axis=bn_axis, momentum=bn_momentum, name=name + "project_bn")(x)
 
         if strides == 1 and input_filters == output_filters:
             if survival_probability:
@@ -776,12 +770,8 @@ def FusedMBConvBlock(
                 use_bias=False,
                 name=name + "expand_conv",
             )(inputs)
-            x = layers.BatchNormalization(
-                axis=bn_axis, momentum=bn_momentum, name=name + "expand_bn"
-            )(x)
-            x = layers.Activation(
-                activation=activation, name=name + "expand_activation"
-            )(x)
+            x = layers.BatchNormalization(axis=bn_axis, momentum=bn_momentum, name=name + "expand_bn")(x)
+            x = layers.Activation(activation=activation, name=name + "expand_activation")(x)
         else:
             x = inputs
 
@@ -825,13 +815,9 @@ def FusedMBConvBlock(
             use_bias=False,
             name=name + "project_conv",
         )(x)
-        x = layers.BatchNormalization(
-            axis=bn_axis, momentum=bn_momentum, name=name + "project_bn"
-        )(x)
+        x = layers.BatchNormalization(axis=bn_axis, momentum=bn_momentum, name=name + "project_bn")(x)
         if expand_ratio == 1:
-            x = layers.Activation(
-                activation=activation, name=name + "project_activation"
-            )(x)
+            x = layers.Activation(activation=activation, name=name + "project_activation")(x)
 
         # Residual:
         if strides == 1 and input_filters == output_filters:
@@ -932,9 +918,7 @@ def EfficientNetV2(
 
     if weights == "imagenet" and include_top and classes != 1000:
         raise ValueError(
-            "If using `weights` as `'imagenet'` with `include_top`"
-            " as true, `classes` should be 1000"
-            f"Received: classes={classes}"
+            "If using `weights` as `'imagenet'` with `include_top`" " as true, `classes` should be 1000" f"Received: classes={classes}"
         )
 
     # Determine proper input shape
@@ -1020,9 +1004,7 @@ def EfficientNetV2(
 
         # Determine which conv type to use:
         block = {0: MBConvBlock, 1: FusedMBConvBlock}[args.pop("conv_type")]
-        repeats = round_repeats(
-            repeats=args.pop("num_repeat"), depth_coefficient=depth_coefficient
-        )
+        repeats = round_repeats(repeats=args.pop("num_repeat"), depth_coefficient=depth_coefficient)
         for j in range(repeats):
             # The first block needs to take care of stride and filter size
             # increase.

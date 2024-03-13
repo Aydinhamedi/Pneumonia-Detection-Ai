@@ -39,9 +39,7 @@ Database_dir = "Data/dataset.npy"
 IMG_AF = ("JPEG", "PNG", "BMP", "TIFF", "JPG")
 Github_repo_Releases_Model_name = "PAI_model_T.h5"
 Github_repo_Releases_Model_light_name = "PAI_model_light_T.h5"
-Github_repo_Releases_URL = (
-    "https://api.github.com/repos/Aydinhamedi/Pneumonia-Detection-Ai/releases/latest"
-)
+Github_repo_Releases_URL = "https://api.github.com/repos/Aydinhamedi/Pneumonia-Detection-Ai/releases/latest"
 Model_FORMAT = "H5_SF"  # TF_dir/H5_SF
 IMG_RES = (224, 224, 3)
 train_epochs_def = 4
@@ -53,9 +51,7 @@ label = None
 model = None
 # Other
 logger.remove()
-logger.add(
-    "Data\\logs\\SYS_LOG_{time}.log", backtrace=True, diagnose=True, compression="zip"
-)
+logger.add("Data\\logs\\SYS_LOG_{time}.log", backtrace=True, diagnose=True, compression="zip")
 logger.info("CLI Start...\n")
 tf.get_logger().setLevel("ERROR")
 physical_devices = tf.config.list_physical_devices("GPU")
@@ -165,11 +161,7 @@ def Debug(ID, DEBUG_IF, SFL: bool = True, Force: bool = False, SFCS: bool = True
             stack_trace_formated = ""
             for line in stack_trace[:-1]:
                 stack_trace_formated += "--> [!>>>" + line
-            location = (
-                f"{inspect.stack()[1].filename}:{frame_info.f_back.f_lineno}"
-                if SFL
-                else f"L:{frame_info.f_back.f_lineno}"
-            )
+            location = f"{inspect.stack()[1].filename}:{frame_info.f_back.f_lineno}" if SFL else f"L:{frame_info.f_back.f_lineno}"
             Debug_data = (
                 f'\n~*--> ~*DEBUG INFO id: ~*[{str(ID)}]~*, '
                 f'Location: ~*[{location}]~*, '
@@ -179,9 +171,7 @@ def Debug(ID, DEBUG_IF, SFL: bool = True, Force: bool = False, SFCS: bool = True
                 f'Memory Address: ~*DEC>>>~*{id(DEBUG_IF)}~* | HEX>>>~*{hex(id(DEBUG_IF))}~* | BIN>>>~*{bin(id(DEBUG_IF))}\n'
             )
             if SFCS:
-                Debug_data += (
-                    f"~*--> ~*Function Call Stack: ~*↓\n~*{stack_trace_formated}\n"
-                )
+                Debug_data += f"~*--> ~*Function Call Stack: ~*↓\n~*{stack_trace_formated}\n"
             print_Color(
                 Debug_data,
                 [
@@ -289,23 +279,17 @@ def download_file_from_github(url: str, file_name: str, save_as: str, chunk_size
                 ["red", "yellow"],
                 advanced_mode=True,
             )
-            logger.warning(
-                "download_file_from_github>>ERROR: Something went wrong while downloading the file."
-            )
+            logger.warning("download_file_from_github>>ERROR: Something went wrong while downloading the file.")
         else:
             print(f"File '{save_as}' downloaded successfully.")
-            logger.debug(
-                f"download_file_from_github>>Debug: File '{save_as}' downloaded successfully."
-            )
+            logger.debug(f"download_file_from_github>>Debug: File '{save_as}' downloaded successfully.")
     else:
         print_Color(
             "~*ERROR: ~*Something went wrong while finding the file.",
             ["red", "yellow"],
             advanced_mode=True,
         )
-        logger.warning(
-            "download_file_from_github>>ERROR: Something went wrong while finding the file."
-        )
+        logger.warning("download_file_from_github>>ERROR: Something went wrong while finding the file.")
 
 
 # CF>>>
@@ -347,12 +331,8 @@ def CI_help(SSUH: bool = True, show_lines: bool = True):
                     advanced_mode=True,
                 )
         # other
-        print_Color(
-            f'{("└─ " if show_lines else "")}~*Other:', ["cyan"], advanced_mode=True
-        )
-        for i, (cmd_other, desc_other) in enumerate(
-            cmd_descriptions_other.items(), start=1
-        ):
+        print_Color(f'{("└─ " if show_lines else "")}~*Other:', ["cyan"], advanced_mode=True)
+        for i, (cmd_other, desc_other) in enumerate(cmd_descriptions_other.items(), start=1):
             if i == len(cmd_descriptions_other):
                 print_Color(
                     f'{("   └─ " if show_lines else "")}~*{cmd_other}: ~*{desc_other}',
@@ -382,9 +362,7 @@ def CI_help(SSUH: bool = True, show_lines: bool = True):
                     advanced_mode=True,
                 )
         # others
-        for i, (cmd_other, desc_other) in enumerate(
-            cmd_descriptions_other.items(), start=1
-        ):
+        for i, (cmd_other, desc_other) in enumerate(cmd_descriptions_other.items(), start=1):
             if i == len(cmd_descriptions_other):
                 print_Color(
                     f'{("└─ " if show_lines else "")}~*{cmd_other}: ~*{desc_other}',
@@ -427,9 +405,7 @@ def CI_atmd():
         # Display the length of the dataset
         print(f"Dataset length: {len(dataset['images'])}")
         logger.debug(f'CI_atmd>>Debug: Dataset length: {len(dataset["images"])}')
-        print_Color(
-            f"Saved label: ~*{label_class}", [label_class_color], advanced_mode=True
-        )
+        print_Color(f"Saved label: ~*{label_class}", [label_class_color], advanced_mode=True)
         print_Color("The image and its label are saved.", ["green"])
         label = None
     else:
@@ -469,9 +445,7 @@ def CI_tmwd(argv_Split: list = ["none"]):
         # Load the dataset file
         dataset = np.load(Database_dir, allow_pickle=True).item()
         # ARG IL (ignore limits)
-        if len(dataset["images"]) > 15 or check_arg(
-            argv_Split, "i", bool_OUTPUT_ONLY=True
-        ):
+        if len(dataset["images"]) > 15 or check_arg(argv_Split, "i", bool_OUTPUT_ONLY=True):
             # Convert 'dataset['images']' and 'dataset['labels']' to NumPy arrays
             images = np.array(dataset["images"])
             labels = np.array(dataset["labels"])
@@ -489,9 +463,7 @@ def CI_tmwd(argv_Split: list = ["none"]):
             else:
                 print("Training the model...\n")
                 # training
-                history = model.fit(
-                    images, labels, epochs=train_epochs, batch_size=1, verbose="auto"
-                )  # history not used
+                history = model.fit(images, labels, epochs=train_epochs, batch_size=1, verbose="auto")  # history not used
                 print("Training done.\n")
         else:
             print_Color(
@@ -509,9 +481,7 @@ def CI_tmwd(argv_Split: list = ["none"]):
 
 # CI_ulmd
 def CI_ulmd():
-    print_Color(
-        "Warning: upload model data set (currently not available!!!)", ["yellow"]
-    )
+    print_Color("Warning: upload model data set (currently not available!!!)", ["yellow"])
 
 
 # CI_pwai
@@ -574,9 +544,7 @@ def CI_pwai(Auto: bool = False):
                         (img_array.shape[1], img_array.shape[2]),
                     )
                     Grad_cam_heatmap = np.uint8(255 * Grad_cam_heatmap)
-                    Grad_cam_heatmap = cv2.applyColorMap(
-                        Grad_cam_heatmap, cv2.COLORMAP_VIRIDIS
-                    )
+                    Grad_cam_heatmap = cv2.applyColorMap(Grad_cam_heatmap, cv2.COLORMAP_VIRIDIS)
                     Grad_cam_heatmap = np.clip(
                         np.uint8((Grad_cam_heatmap * 0.3) + ((img_array * 255) * 0.7)),
                         0,
@@ -588,9 +556,7 @@ def CI_pwai(Auto: bool = False):
                         600,
                     )  # Change this to your desired display size
                     Grad_cam_heatmap = cv2.resize(Grad_cam_heatmap[0], display_size)
-                    reference_image = np.uint8(
-                        cv2.resize(img_array[0] * 255, display_size)
-                    )
+                    reference_image = np.uint8(cv2.resize(img_array[0] * 255, display_size))
                     # Apply the CLAHE algorithm to the reference image
                     reference_image_CLAHE = np.clip(
                         clahe.apply(cv2.cvtColor(reference_image, cv2.COLOR_BGR2GRAY)),
@@ -600,15 +566,11 @@ def CI_pwai(Auto: bool = False):
                     # Display the heatmap in a new window
                     cv2.imshow("Grad-CAM Heatmap", Grad_cam_heatmap)
                     cv2.imshow("Reference Original Image", reference_image)
-                    cv2.imshow(
-                        "Reference Original Image (CLAHE)", reference_image_CLAHE
-                    )
+                    cv2.imshow("Reference Original Image (CLAHE)", reference_image_CLAHE)
                     cv2.waitKey(0)  # Wait for any key to be pressed
                     cv2.destroyAllWindows()  # Close the window
     else:
-        print_Color(
-            "~*ERROR: ~*image data doesnt exist.", ["red", "yellow"], advanced_mode=True
-        )
+        print_Color("~*ERROR: ~*image data doesnt exist.", ["red", "yellow"], advanced_mode=True)
 
 
 # CI_rlmw
@@ -666,9 +628,7 @@ def CI_liid(Auto: bool = False):
                 ["red", "yellow"],
                 advanced_mode=True,
             )
-            logger.warning(
-                "CI_liid>>ERROR: Invalid file format. Please provide an image file."
-            )
+            logger.warning("CI_liid>>ERROR: Invalid file format. Please provide an image file.")
         else:
             try:
                 # Load and resize the image
@@ -679,9 +639,7 @@ def CI_liid(Auto: bool = False):
                     ["red", "yellow"],
                     advanced_mode=True,
                 )
-                logger.warning(
-                    "CI_liid>>ERROR: Invalid file dir. Please provide an image file."
-                )
+                logger.warning("CI_liid>>ERROR: Invalid file dir. Please provide an image file.")
             else:
                 # Check for RGB mode
                 if img.mode != "RGB":
@@ -922,13 +880,7 @@ if gpus:
     TF_CUDA_VER = TF_sys_details["cuda_version"]
     TF_CUDNN_VER = TF_sys_details["cudnn_version"]  # NOT USED
     try:
-        gpu_name = (
-            subprocess.check_output(["nvidia-smi", "-L"])
-            .decode("utf-8")
-            .split(":")[1]
-            .split("(")[0]
-            .strip()
-        )
+        gpu_name = subprocess.check_output(["nvidia-smi", "-L"]).decode("utf-8").split(":")[1].split("(")[0].strip()
         # GPU 0: NVIDIA `THE GPU NAME` (UUID: GPU-'xxxxxxxxxxxxxxxxxxxx')
         #     │                       │
         # ┌---┴----------┐        ┌---┴----------┐

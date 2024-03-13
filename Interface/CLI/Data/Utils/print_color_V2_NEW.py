@@ -1,9 +1,7 @@
 import re
 
 
-def print_Color_V2(
-    Input: str, print_END: str = "\n", start_char: str = "<", end_char: str = ">"
-):
+def print_Color_V2(Input: str, print_END: str = "\n", start_char: str = "<", end_char: str = ">"):
     """
     Prints colored text to the console using advanced terminal colors.
 
@@ -63,13 +61,7 @@ def print_Color_V2(
         "bg_light_cyan": "\x1b[0;106m",
         "bg_light_white": "\x1b[0;107m",
     }
-    pattern = (
-        re.escape(start_char)
-        + r"([^"
-        + re.escape(end_char)
-        + r"]*)"
-        + re.escape(end_char)
-    )
+    pattern = re.escape(start_char) + r"([^" + re.escape(end_char) + r"]*)" + re.escape(end_char)
     substrings = re.split(pattern, Input)
     current_color = "normal"
     for i, sub_str in enumerate(substrings):
@@ -81,7 +73,5 @@ def print_Color_V2(
             if color in color_code:
                 current_color = color
             else:
-                print(
-                    f"\n[print_Color] ERROR: Invalid color!!! The input color: '{color}'"
-                )
+                print(f"\n[print_Color] ERROR: Invalid color!!! The input color: '{color}'")
     print("", end=print_END)
