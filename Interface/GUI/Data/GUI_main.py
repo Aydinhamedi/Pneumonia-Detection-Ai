@@ -1,9 +1,9 @@
-# Copyright (c) 2023 Aydin Hamedi
+# Copyright (c) 2024 Aydin Hamedi
 #
 # This software is released under the MIT License.
 # https://opensource.org/licenses/MIT
 
-# start L1
+# start L1>>>
 print('Loading the GUI...', end='\r')
 # Import Sys level  
 import os
@@ -15,6 +15,9 @@ from tkinter import messagebox
 try:
     import PySimpleGUI as sg
 except (ImportError, NameError):
+    print('Failed to load PySimpleGUI lib | Exiting')
+    with open('Data\\logs\\SYS_FAILED_START_LOG.log', 'a') as log_file:
+        log_file.write('\n<L1> Failed to load PySimpleGUI lib </L1>\n')
     root = tk.Tk()
     root.withdraw()
     messagebox.showinfo('Internal Error | Exiting', 'Failed to import PySimpleGUI, exiting...')
@@ -60,6 +63,9 @@ except (ImportError, NameError):
     print('Failed to load the GUI libs')
     print('detailed error message:')
     traceback.print_exc()
+    with open('Data\\logs\\SYS_FAILED_START_LOG.log', 'a') as log_file:
+        log_file.write('\n<L2> Failed to load the GUI libs </L2>\n')
+        log_file.write(f'<L2> Traceback:\n{traceback.format_exc()}</L2>\n')
     sg.popup(
             f'An internal error occurred.\nERROR-INFO:\n\nFailed to load the GUI python libs.\n\nErr-Traceback:\n{traceback.format_exc()}',
             title=f'Internal Error | Exiting',
@@ -67,7 +73,7 @@ except (ImportError, NameError):
     sys.exit()
 # global vars>>>
 # CONST SYS
-GUI_Ver = '0.9.1 Pre3'
+GUI_Ver = '0.9.3'
 Model_dir = 'Data/PAI_model'  # without file extention
 Database_dir = 'Data/dataset.npy'
 IMG_AF = ('JPEG', 'PNG', 'BMP', 'TIFF', 'JPG', 'DCM', 'DICOM')
