@@ -392,9 +392,7 @@ def PreStem(name=None):
         name = "prestem" + str(backend.get_uid("prestem"))
 
     def apply(x):
-        x = layers.Rescaling(
-            scale=1.0 / 255.0, name=name + "_prestem_rescaling"
-        )(x)
+        x = layers.Rescaling(scale=1.0 / 255.0, name=name + "_prestem_rescaling")(x)
         return x
 
     return apply
@@ -1013,9 +1011,7 @@ def RegNet(
 ## Instantiating variants ##
 
 
-@keras_export(
-    "keras.applications.regnet.RegNetX002", "keras.applications.RegNetX002"
-)
+@keras_export("keras.applications.regnet.RegNetX002", "keras.applications.RegNetX002")
 def RegNetX002(
     model_name="regnetx002",
     include_top=True,
@@ -1045,9 +1041,7 @@ def RegNetX002(
     )
 
 
-@keras_export(
-    "keras.applications.regnet.RegNetX004", "keras.applications.RegNetX004"
-)
+@keras_export("keras.applications.regnet.RegNetX004", "keras.applications.RegNetX004")
 def RegNetX004(
     model_name="regnetx004",
     include_top=True,
@@ -1077,9 +1071,7 @@ def RegNetX004(
     )
 
 
-@keras_export(
-    "keras.applications.regnet.RegNetX006", "keras.applications.RegNetX006"
-)
+@keras_export("keras.applications.regnet.RegNetX006", "keras.applications.RegNetX006")
 def RegNetX006(
     model_name="regnetx006",
     include_top=True,
@@ -1109,9 +1101,7 @@ def RegNetX006(
     )
 
 
-@keras_export(
-    "keras.applications.regnet.RegNetX008", "keras.applications.RegNetX008"
-)
+@keras_export("keras.applications.regnet.RegNetX008", "keras.applications.RegNetX008")
 def RegNetX008(
     model_name="regnetx008",
     include_top=True,
@@ -1141,9 +1131,7 @@ def RegNetX008(
     )
 
 
-@keras_export(
-    "keras.applications.regnet.RegNetX016", "keras.applications.RegNetX016"
-)
+@keras_export("keras.applications.regnet.RegNetX016", "keras.applications.RegNetX016")
 def RegNetX016(
     model_name="regnetx016",
     include_top=True,
@@ -1173,9 +1161,7 @@ def RegNetX016(
     )
 
 
-@keras_export(
-    "keras.applications.regnet.RegNetX032", "keras.applications.RegNetX032"
-)
+@keras_export("keras.applications.regnet.RegNetX032", "keras.applications.RegNetX032")
 def RegNetX032(
     model_name="regnetx032",
     include_top=True,
@@ -1205,9 +1191,7 @@ def RegNetX032(
     )
 
 
-@keras_export(
-    "keras.applications.regnet.RegNetX040", "keras.applications.RegNetX040"
-)
+@keras_export("keras.applications.regnet.RegNetX040", "keras.applications.RegNetX040")
 def RegNetX040(
     model_name="regnetx040",
     include_top=True,
@@ -1237,9 +1221,7 @@ def RegNetX040(
     )
 
 
-@keras_export(
-    "keras.applications.regnet.RegNetX064", "keras.applications.RegNetX064"
-)
+@keras_export("keras.applications.regnet.RegNetX064", "keras.applications.RegNetX064")
 def RegNetX064(
     model_name="regnetx064",
     include_top=True,
@@ -1269,9 +1251,7 @@ def RegNetX064(
     )
 
 
-@keras_export(
-    "keras.applications.regnet.RegNetX080", "keras.applications.RegNetX080"
-)
+@keras_export("keras.applications.regnet.RegNetX080", "keras.applications.RegNetX080")
 def RegNetX080(
     model_name="regnetx080",
     include_top=True,
@@ -1301,9 +1281,7 @@ def RegNetX080(
     )
 
 
-@keras_export(
-    "keras.applications.regnet.RegNetX120", "keras.applications.RegNetX120"
-)
+@keras_export("keras.applications.regnet.RegNetX120", "keras.applications.RegNetX120")
 def RegNetX120(
     model_name="regnetx120",
     include_top=True,
@@ -1333,9 +1311,7 @@ def RegNetX120(
     )
 
 
-@keras_export(
-    "keras.applications.regnet.RegNetX160", "keras.applications.RegNetX160"
-)
+@keras_export("keras.applications.regnet.RegNetX160", "keras.applications.RegNetX160")
 def RegNetX160(
     model_name="regnetx160",
     include_top=True,
@@ -1365,9 +1341,7 @@ def RegNetX160(
     )
 
 
-@keras_export(
-    "keras.applications.regnet.RegNetX320", "keras.applications.RegNetX320"
-)
+@keras_export("keras.applications.regnet.RegNetX320", "keras.applications.RegNetX320")
 def RegNetX320(
     model_name="regnetx320",
     include_top=True,
@@ -1397,9 +1371,7 @@ def RegNetX320(
     )
 
 
-@keras_export(
-    "keras.applications.regnet.RegNetY002", "keras.applications.RegNetY002"
-)
+@keras_export("keras.applications.regnet.RegNetY002", "keras.applications.RegNetY002")
 def RegNetY002(
     model_name="regnety002",
     include_top=True,
@@ -1429,9 +1401,7 @@ def RegNetY002(
     )
 
 
-@keras_export(
-    "keras.applications.regnet.RegNetY004", "keras.applications.RegNetY004"
-)
+@keras_export("keras.applications.regnet.RegNetY004", "keras.applications.RegNetY004")
 def RegNetY004(
     model_name="regnety004",
     include_top=True,
@@ -1461,9 +1431,7 @@ def RegNetY004(
     )
 
 
-@keras_export(
-    "keras.applications.regnet.RegNetY006", "keras.applications.RegNetY006"
-)
+@keras_export("keras.applications.regnet.RegNetY006", "keras.applications.RegNetY006")
 def RegNetY006(
     model_name="regnety006",
     include_top=True,
@@ -1493,9 +1461,7 @@ def RegNetY006(
     )
 
 
-@keras_export(
-    "keras.applications.regnet.RegNetY008", "keras.applications.RegNetY008"
-)
+@keras_export("keras.applications.regnet.RegNetY008", "keras.applications.RegNetY008")
 def RegNetY008(
     model_name="regnety008",
     include_top=True,
@@ -1525,9 +1491,7 @@ def RegNetY008(
     )
 
 
-@keras_export(
-    "keras.applications.regnet.RegNetY016", "keras.applications.RegNetY016"
-)
+@keras_export("keras.applications.regnet.RegNetY016", "keras.applications.RegNetY016")
 def RegNetY016(
     model_name="regnety016",
     include_top=True,
@@ -1557,9 +1521,7 @@ def RegNetY016(
     )
 
 
-@keras_export(
-    "keras.applications.regnet.RegNetY032", "keras.applications.RegNetY032"
-)
+@keras_export("keras.applications.regnet.RegNetY032", "keras.applications.RegNetY032")
 def RegNetY032(
     model_name="regnety032",
     include_top=True,
@@ -1589,9 +1551,7 @@ def RegNetY032(
     )
 
 
-@keras_export(
-    "keras.applications.regnet.RegNetY040", "keras.applications.RegNetY040"
-)
+@keras_export("keras.applications.regnet.RegNetY040", "keras.applications.RegNetY040")
 def RegNetY040(
     model_name="regnety040",
     include_top=True,
@@ -1621,9 +1581,7 @@ def RegNetY040(
     )
 
 
-@keras_export(
-    "keras.applications.regnet.RegNetY064", "keras.applications.RegNetY064"
-)
+@keras_export("keras.applications.regnet.RegNetY064", "keras.applications.RegNetY064")
 def RegNetY064(
     model_name="regnety064",
     include_top=True,
@@ -1653,9 +1611,7 @@ def RegNetY064(
     )
 
 
-@keras_export(
-    "keras.applications.regnet.RegNetY080", "keras.applications.RegNetY080"
-)
+@keras_export("keras.applications.regnet.RegNetY080", "keras.applications.RegNetY080")
 def RegNetY080(
     model_name="regnety080",
     include_top=True,
@@ -1685,9 +1641,7 @@ def RegNetY080(
     )
 
 
-@keras_export(
-    "keras.applications.regnet.RegNetY120", "keras.applications.RegNetY120"
-)
+@keras_export("keras.applications.regnet.RegNetY120", "keras.applications.RegNetY120")
 def RegNetY120(
     model_name="regnety120",
     include_top=True,
@@ -1717,9 +1671,7 @@ def RegNetY120(
     )
 
 
-@keras_export(
-    "keras.applications.regnet.RegNetY160", "keras.applications.RegNetY160"
-)
+@keras_export("keras.applications.regnet.RegNetY160", "keras.applications.RegNetY160")
 def RegNetY160(
     model_name="regnety160",
     include_top=True,
@@ -1749,9 +1701,7 @@ def RegNetY160(
     )
 
 
-@keras_export(
-    "keras.applications.regnet.RegNetY320", "keras.applications.RegNetY320"
-)
+@keras_export("keras.applications.regnet.RegNetY320", "keras.applications.RegNetY320")
 def RegNetY320(
     model_name="regnety320",
     include_top=True,

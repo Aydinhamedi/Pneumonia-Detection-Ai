@@ -254,7 +254,6 @@ def MobileNetV2(
 
     # If input_shape is None, infer shape from input_tensor.
     if input_shape is None and input_tensor is not None:
-
         try:
             backend.is_keras_tensor(input_tensor)
         except ValueError:
@@ -420,9 +419,9 @@ def MobileNetV2(
     else:
         last_block_filters = 1280
 
-    x = layers.Conv2D(
-        last_block_filters, kernel_size=1, use_bias=False, name="Conv_1"
-    )(x)
+    x = layers.Conv2D(last_block_filters, kernel_size=1, use_bias=False, name="Conv_1")(
+        x
+    )
     x = layers.BatchNormalization(
         axis=channel_axis, epsilon=1e-3, momentum=0.999, name="Conv_1_bn"
     )(x)
@@ -431,9 +430,9 @@ def MobileNetV2(
     if include_top:
         x = layers.GlobalAveragePooling2D()(x)
         imagenet_utils.validate_activation(classifier_activation, weights)
-        x = layers.Dense(
-            classes, activation=classifier_activation, name="predictions"
-        )(x)
+        x = layers.Dense(classes, activation=classifier_activation, name="predictions")(
+            x
+        )
 
     else:
         if pooling == "avg":
@@ -572,9 +571,7 @@ def _make_divisible(v, divisor, min_value=None):
 
 @keras_export("keras.applications.mobilenet_v2.preprocess_input")
 def preprocess_input(x, data_format=None):
-    return imagenet_utils.preprocess_input(
-        x, data_format=data_format, mode="tf"
-    )
+    return imagenet_utils.preprocess_input(x, data_format=data_format, mode="tf")
 
 
 @keras_export("keras.applications.mobilenet_v2.decode_predictions")

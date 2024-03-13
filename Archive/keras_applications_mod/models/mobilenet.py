@@ -79,9 +79,7 @@ BASE_WEIGHT_PATH = (
 layers = None
 
 
-@keras_export(
-    "keras.applications.mobilenet.MobileNet", "keras.applications.MobileNet"
-)
+@keras_export("keras.applications.mobilenet.MobileNet", "keras.applications.MobileNet")
 def MobileNet(
     input_shape=None,
     alpha=1.0,
@@ -286,9 +284,7 @@ def MobileNet(
         x = layers.Conv2D(classes, (1, 1), padding="same", name="conv_preds")(x)
         x = layers.Reshape((classes,), name="reshape_2")(x)
         imagenet_utils.validate_activation(classifier_activation, weights)
-        x = layers.Activation(
-            activation=classifier_activation, name="predictions"
-        )(x)
+        x = layers.Activation(activation=classifier_activation, name="predictions")(x)
     else:
         if pooling == "avg":
             x = layers.GlobalAveragePooling2D()(x)
@@ -439,9 +435,9 @@ def _depthwise_conv_block(
     if strides == (1, 1):
         x = inputs
     else:
-        x = layers.ZeroPadding2D(
-            ((0, 1), (0, 1)), name="conv_pad_%d" % block_id
-        )(inputs)
+        x = layers.ZeroPadding2D(((0, 1), (0, 1)), name="conv_pad_%d" % block_id)(
+            inputs
+        )
     x = layers.DepthwiseConv2D(
         (3, 3),
         padding="same" if strides == (1, 1) else "valid",
@@ -450,9 +446,7 @@ def _depthwise_conv_block(
         use_bias=False,
         name="conv_dw_%d" % block_id,
     )(x)
-    x = layers.BatchNormalization(
-        axis=channel_axis, name="conv_dw_%d_bn" % block_id
-    )(x)
+    x = layers.BatchNormalization(axis=channel_axis, name="conv_dw_%d_bn" % block_id)(x)
     x = layers.ReLU(6.0, name="conv_dw_%d_relu" % block_id)(x)
 
     x = layers.Conv2D(
@@ -463,17 +457,13 @@ def _depthwise_conv_block(
         strides=(1, 1),
         name="conv_pw_%d" % block_id,
     )(x)
-    x = layers.BatchNormalization(
-        axis=channel_axis, name="conv_pw_%d_bn" % block_id
-    )(x)
+    x = layers.BatchNormalization(axis=channel_axis, name="conv_pw_%d_bn" % block_id)(x)
     return layers.ReLU(6.0, name="conv_pw_%d_relu" % block_id)(x)
 
 
 @keras_export("keras.applications.mobilenet.preprocess_input")
 def preprocess_input(x, data_format=None):
-    return imagenet_utils.preprocess_input(
-        x, data_format=data_format, mode="tf"
-    )
+    return imagenet_utils.preprocess_input(x, data_format=data_format, mode="tf")
 
 
 @keras_export("keras.applications.mobilenet.decode_predictions")

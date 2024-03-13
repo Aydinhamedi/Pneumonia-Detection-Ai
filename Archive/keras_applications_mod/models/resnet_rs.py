@@ -20,6 +20,7 @@ Reference:
 - [Revisiting ResNets: Improved Training and Scaling Strategies](
     https://arxiv.org/pdf/2103.07579.pdf)
 """
+
 import sys
 from typing import Callable
 from typing import Dict
@@ -293,9 +294,7 @@ def STEM(
     return apply
 
 
-def SE(
-    in_filters: int, se_ratio: float = 0.25, expand_ratio: int = 1, name=None
-):
+def SE(in_filters: int, se_ratio: float = 0.25, expand_ratio: int = 1, name=None):
     """Squeeze and Excitation block."""
     bn_axis = 3 if backend.image_data_format() == "channels_last" else 1
     if name is None:
@@ -324,9 +323,7 @@ def SE(
         )(x)
 
         x = layers.Conv2D(
-            filters=4
-            * in_filters
-            * expand_ratio,  # Expand ratio is 1 by default
+            filters=4 * in_filters * expand_ratio,  # Expand ratio is 1 by default
             kernel_size=[1, 1],
             strides=[1, 1],
             kernel_initializer=CONV_KERNEL_INITIALIZER,
@@ -605,9 +602,7 @@ def ResNetRS(
         weights = f"{weights}-i{max_input_shape}"
 
     weights_allow_list = [f"imagenet-i{x}" for x in available_weight_variants]
-    if not (
-        weights in {*weights_allow_list, None} or tf.io.gfile.exists(weights)
-    ):
+    if not (weights in {*weights_allow_list, None} or tf.io.gfile.exists(weights)):
         raise ValueError(
             "The `weights` argument should be either "
             "`None` (random initialization), `'imagenet'` "
@@ -658,9 +653,7 @@ def ResNetRS(
             )(x)
 
     # Build stem
-    x = STEM(
-        bn_momentum=bn_momentum, bn_epsilon=bn_epsilon, activation=activation
-    )(x)
+    x = STEM(bn_momentum=bn_momentum, bn_epsilon=bn_epsilon, activation=activation)(x)
 
     # Build blocks
     if block_args is None:
@@ -692,9 +685,9 @@ def ResNetRS(
             x = layers.Dropout(dropout_rate, name="top_dropout")(x)
 
         imagenet_utils.validate_activation(classifier_activation, weights)
-        x = layers.Dense(
-            classes, activation=classifier_activation, name="predictions"
-        )(x)
+        x = layers.Dense(classes, activation=classifier_activation, name="predictions")(
+            x
+        )
     else:
         if pooling == "avg":
             x = layers.GlobalAveragePooling2D(name="avg_pool")(x)

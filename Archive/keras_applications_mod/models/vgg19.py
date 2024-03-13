@@ -219,9 +219,9 @@ def VGG19(
         x = layers.Dense(4096, activation="relu", name="fc1")(x)
         x = layers.Dense(4096, activation="relu", name="fc2")(x)
         imagenet_utils.validate_activation(classifier_activation, weights)
-        x = layers.Dense(
-            classes, activation=classifier_activation, name="predictions"
-        )(x)
+        x = layers.Dense(classes, activation=classifier_activation, name="predictions")(
+            x
+        )
     else:
         if pooling == "avg":
             x = layers.GlobalAveragePooling2D()(x)
@@ -262,9 +262,7 @@ def VGG19(
 
 @keras_export("keras.applications.vgg19.preprocess_input")
 def preprocess_input(x, data_format=None):
-    return imagenet_utils.preprocess_input(
-        x, data_format=data_format, mode="caffe"
-    )
+    return imagenet_utils.preprocess_input(x, data_format=data_format, mode="caffe")
 
 
 @keras_export("keras.applications.vgg19.decode_predictions")

@@ -140,9 +140,7 @@ MOBILENET_V3_FOR_WEIGHTS = [
 class ApplicationsTest(tf.test.TestCase, parameterized.TestCase):
     def assertShapeEqual(self, shape1, shape2):
         if len(shape1) != len(shape2):
-            raise AssertionError(
-                f"Shapes are different rank: {shape1} vs {shape2}"
-            )
+            raise AssertionError(f"Shapes are different rank: {shape1} vs {shape2}")
         for v1, v2 in zip(shape1, shape2):
             if v1 != v2:
                 raise AssertionError(f"Shapes differ: {shape1} vs {shape2}")
@@ -168,9 +166,7 @@ class ApplicationsTest(tf.test.TestCase, parameterized.TestCase):
             only_check_last_dim = True
         else:
             only_check_last_dim = False
-        output_shape = _get_output_shape(
-            lambda: app(weights=None, include_top=False)
-        )
+        output_shape = _get_output_shape(lambda: app(weights=None, include_top=False))
         if only_check_last_dim:
             self.assertEqual(output_shape[-1], last_dim)
         else:
@@ -198,9 +194,7 @@ class ApplicationsTest(tf.test.TestCase, parameterized.TestCase):
     def test_application_classifier_activation(self, app, _):
         if "RegNet" in app.__name__:
             self.skipTest("RegNet models do not support classifier activation")
-        model = app(
-            weights=None, include_top=True, classifier_activation="softmax"
-        )
+        model = app(weights=None, include_top=True, classifier_activation="softmax")
         last_layer_act = model.layers[-1].activation.__name__
         self.assertEqual(last_layer_act, "softmax")
 
@@ -211,9 +205,7 @@ class ApplicationsTest(tf.test.TestCase, parameterized.TestCase):
         else:
             input_shape = (None, None, 1)
         output_shape = _get_output_shape(
-            lambda: app(
-                weights=None, include_top=False, input_shape=input_shape
-            )
+            lambda: app(weights=None, include_top=False, input_shape=input_shape)
         )
         self.assertShapeEqual(output_shape, (None, None, None, last_dim))
         backend.clear_session()
@@ -223,9 +215,7 @@ class ApplicationsTest(tf.test.TestCase, parameterized.TestCase):
         else:
             input_shape = (None, None, 4)
         output_shape = _get_output_shape(
-            lambda: app(
-                weights=None, include_top=False, input_shape=input_shape
-            )
+            lambda: app(weights=None, include_top=False, input_shape=input_shape)
         )
         self.assertShapeEqual(output_shape, (None, None, None, last_dim))
         backend.clear_session()

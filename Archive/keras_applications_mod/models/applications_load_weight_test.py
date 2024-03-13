@@ -142,8 +142,7 @@ ARG_TO_MODEL = {
 }
 
 TEST_IMAGE_PATH = (
-    "https://storage.googleapis.com/tensorflow/"
-    "keras-applications/tests/elephant.jpg"
+    "https://storage.googleapis.com/tensorflow/" "keras-applications/tests/elephant.jpg"
 )
 _IMAGENET_CLASSES = 1000
 
@@ -171,9 +170,7 @@ def _get_elephant(target_size):
 class ApplicationsLoadWeightTest(tf.test.TestCase, parameterized.TestCase):
     def assertShapeEqual(self, shape1, shape2):
         if len(shape1) != len(shape2):
-            raise AssertionError(
-                f"Shapes are different rank: {shape1} vs {shape2}"
-            )
+            raise AssertionError(f"Shapes are different rank: {shape1} vs {shape2}")
         if shape1 != shape2:
             raise AssertionError(f"Shapes differ: {shape1} vs {shape2}")
 

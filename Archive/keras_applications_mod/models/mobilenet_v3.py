@@ -247,7 +247,6 @@ def MobileNetV3(
 
     # If input_shape is None, infer shape from input_tensor
     if input_shape is None and input_tensor is not None:
-
         try:
             backend.is_keras_tensor(input_tensor)
         except ValueError:
@@ -371,14 +370,10 @@ def MobileNetV3(
 
         if dropout_rate > 0:
             x = layers.Dropout(dropout_rate)(x)
-        x = layers.Conv2D(
-            classes, kernel_size=1, padding="same", name="Logits"
-        )(x)
+        x = layers.Conv2D(classes, kernel_size=1, padding="same", name="Logits")(x)
         x = layers.Flatten()(x)
         imagenet_utils.validate_activation(classifier_activation, weights)
-        x = layers.Activation(
-            activation=classifier_activation, name="Predictions"
-        )(x)
+        x = layers.Activation(activation=classifier_activation, name="Predictions")(x)
     else:
         if pooling == "avg":
             x = layers.GlobalAveragePooling2D(name="avg_pool")(x)
@@ -439,30 +434,14 @@ def MobileNetV3Small(
         x = _inverted_res_block(x, 1, depth(16), 3, 2, se_ratio, relu, 0)
         x = _inverted_res_block(x, 72.0 / 16, depth(24), 3, 2, None, relu, 1)
         x = _inverted_res_block(x, 88.0 / 24, depth(24), 3, 1, None, relu, 2)
-        x = _inverted_res_block(
-            x, 4, depth(40), kernel, 2, se_ratio, activation, 3
-        )
-        x = _inverted_res_block(
-            x, 6, depth(40), kernel, 1, se_ratio, activation, 4
-        )
-        x = _inverted_res_block(
-            x, 6, depth(40), kernel, 1, se_ratio, activation, 5
-        )
-        x = _inverted_res_block(
-            x, 3, depth(48), kernel, 1, se_ratio, activation, 6
-        )
-        x = _inverted_res_block(
-            x, 3, depth(48), kernel, 1, se_ratio, activation, 7
-        )
-        x = _inverted_res_block(
-            x, 6, depth(96), kernel, 2, se_ratio, activation, 8
-        )
-        x = _inverted_res_block(
-            x, 6, depth(96), kernel, 1, se_ratio, activation, 9
-        )
-        x = _inverted_res_block(
-            x, 6, depth(96), kernel, 1, se_ratio, activation, 10
-        )
+        x = _inverted_res_block(x, 4, depth(40), kernel, 2, se_ratio, activation, 3)
+        x = _inverted_res_block(x, 6, depth(40), kernel, 1, se_ratio, activation, 4)
+        x = _inverted_res_block(x, 6, depth(40), kernel, 1, se_ratio, activation, 5)
+        x = _inverted_res_block(x, 3, depth(48), kernel, 1, se_ratio, activation, 6)
+        x = _inverted_res_block(x, 3, depth(48), kernel, 1, se_ratio, activation, 7)
+        x = _inverted_res_block(x, 6, depth(96), kernel, 2, se_ratio, activation, 8)
+        x = _inverted_res_block(x, 6, depth(96), kernel, 1, se_ratio, activation, 9)
+        x = _inverted_res_block(x, 6, depth(96), kernel, 1, se_ratio, activation, 10)
         return x
 
     return MobileNetV3(
@@ -511,21 +490,11 @@ def MobileNetV3Large(
         x = _inverted_res_block(x, 2.5, depth(80), 3, 1, None, activation, 7)
         x = _inverted_res_block(x, 2.3, depth(80), 3, 1, None, activation, 8)
         x = _inverted_res_block(x, 2.3, depth(80), 3, 1, None, activation, 9)
-        x = _inverted_res_block(
-            x, 6, depth(112), 3, 1, se_ratio, activation, 10
-        )
-        x = _inverted_res_block(
-            x, 6, depth(112), 3, 1, se_ratio, activation, 11
-        )
-        x = _inverted_res_block(
-            x, 6, depth(160), kernel, 2, se_ratio, activation, 12
-        )
-        x = _inverted_res_block(
-            x, 6, depth(160), kernel, 1, se_ratio, activation, 13
-        )
-        x = _inverted_res_block(
-            x, 6, depth(160), kernel, 1, se_ratio, activation, 14
-        )
+        x = _inverted_res_block(x, 6, depth(112), 3, 1, se_ratio, activation, 10)
+        x = _inverted_res_block(x, 6, depth(112), 3, 1, se_ratio, activation, 11)
+        x = _inverted_res_block(x, 6, depth(160), kernel, 2, se_ratio, activation, 12)
+        x = _inverted_res_block(x, 6, depth(160), kernel, 1, se_ratio, activation, 13)
+        x = _inverted_res_block(x, 6, depth(160), kernel, 1, se_ratio, activation, 14)
         return x
 
     return MobileNetV3(

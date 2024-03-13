@@ -340,9 +340,7 @@ def EfficientNet(
     def round_filters(filters, divisor=depth_divisor):
         """Round number of filters based on depth multiplier."""
         filters *= width_coefficient
-        new_filters = max(
-            divisor, int(filters + divisor / 2) // divisor * divisor
-        )
+        new_filters = max(divisor, int(filters + divisor / 2) // divisor * divisor)
         # Make sure that round down does not go down by more than 10%.
         if new_filters < 0.9 * filters:
             new_filters += divisor
@@ -829,6 +827,7 @@ def EfficientNetB7(
         classifier_activation=classifier_activation,
         **kwargs,
     )
+
 
 def EfficientNet_CXL(
     include_top=True,

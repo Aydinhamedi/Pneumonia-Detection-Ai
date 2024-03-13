@@ -39,9 +39,7 @@ class TestImageNetUtils(test_combinations.TestCase):
 
         out1 = utils.preprocess_input(x, "channels_last")
         out1int = utils.preprocess_input(xint, "channels_last")
-        out2 = utils.preprocess_input(
-            np.transpose(x, (0, 3, 1, 2)), "channels_first"
-        )
+        out2 = utils.preprocess_input(np.transpose(x, (0, 3, 1, 2)), "channels_first")
         out2int = utils.preprocess_input(
             np.transpose(xint, (0, 3, 1, 2)), "channels_first"
         )
@@ -56,9 +54,7 @@ class TestImageNetUtils(test_combinations.TestCase):
 
         out1 = utils.preprocess_input(x, "channels_last")
         out1int = utils.preprocess_input(xint, "channels_last")
-        out2 = utils.preprocess_input(
-            np.transpose(x, (2, 0, 1)), "channels_first"
-        )
+        out2 = utils.preprocess_input(np.transpose(x, (2, 0, 1)), "channels_first")
         out2int = utils.preprocess_input(
             np.transpose(xint, (2, 0, 1)), "channels_first"
         )
@@ -77,9 +73,7 @@ class TestImageNetUtils(test_combinations.TestCase):
         # Caffe mode works differently from the others
         x = np.random.uniform(0, 255, (2, 10, 10, 3))
         xint = x.astype("int")
-        x2 = utils.preprocess_input(
-            x, data_format="channels_last", mode="caffe"
-        )
+        x2 = utils.preprocess_input(x, data_format="channels_last", mode="caffe")
         xint2 = utils.preprocess_input(xint)
         self.assertAllClose(x, x2[..., ::-1])
         self.assertNotEqual(xint.astype("float").max(), xint2.max())
@@ -152,9 +146,7 @@ class TestImageNetUtils(test_combinations.TestCase):
     )
     def test_preprocess_input_symbolic_mixed_precision(self, mode):
         if not tf.__internal__.tf2.enabled():
-            self.skipTest(
-                "The global policy can only be tested in TensorFlow 2"
-            )
+            self.skipTest("The global policy can only be tested in TensorFlow 2")
         set_global_policy("mixed_float16")
         shape = (20, 20, 3)
         inputs = keras.layers.Input(shape=shape)

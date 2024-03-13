@@ -376,17 +376,15 @@ def obtain_input_shape(
         if data_format == "channels_first":
             if input_shape is not None:
                 if len(input_shape) != 3:
-                    raise ValueError(
-                        "`input_shape` must be a tuple of three integers."
-                    )
+                    raise ValueError("`input_shape` must be a tuple of three integers.")
                 if input_shape[0] != 3 and weights == "imagenet":
                     raise ValueError(
                         "The input must have 3 channels; Received "
                         f"`input_shape={input_shape}`"
                     )
-                if (
-                    input_shape[1] is not None and input_shape[1] < min_size
-                ) or (input_shape[2] is not None and input_shape[2] < min_size):
+                if (input_shape[1] is not None and input_shape[1] < min_size) or (
+                    input_shape[2] is not None and input_shape[2] < min_size
+                ):
                     raise ValueError(
                         f"Input size must be at least {min_size}"
                         f"x{min_size}; Received: "
@@ -395,17 +393,15 @@ def obtain_input_shape(
         else:
             if input_shape is not None:
                 if len(input_shape) != 3:
-                    raise ValueError(
-                        "`input_shape` must be a tuple of three integers."
-                    )
+                    raise ValueError("`input_shape` must be a tuple of three integers.")
                 if input_shape[-1] != 3 and weights == "imagenet":
                     raise ValueError(
                         "The input must have 3 channels; Received "
                         f"`input_shape={input_shape}`"
                     )
-                if (
-                    input_shape[0] is not None and input_shape[0] < min_size
-                ) or (input_shape[1] is not None and input_shape[1] < min_size):
+                if (input_shape[0] is not None and input_shape[0] < min_size) or (
+                    input_shape[1] is not None and input_shape[1] < min_size
+                ):
                     raise ValueError(
                         "Input size must be at least "
                         f"{min_size}x{min_size}; Received: "

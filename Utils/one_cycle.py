@@ -73,20 +73,20 @@ class OneCycleLr(keras.callbacks.Callback):
             Default: 1e4
     """
 
-    def __init__(self,
-                 max_lr: float,
-                 total_steps: int = None,
-                 epochs: int = None,
-                 steps_per_epoch: int = None,
-                 pct_start: float = 0.3,
-                 anneal_strategy: str = "cos",
-                 cycle_momentum: bool = True,
-                 base_momentum: float = 0.85,
-                 max_momentum: float = 0.95,
-                 div_factor: float = 25.0,
-                 final_div_factor: float = 1e4,
-                 ) -> None:
-
+    def __init__(
+        self,
+        max_lr: float,
+        total_steps: int = None,
+        epochs: int = None,
+        steps_per_epoch: int = None,
+        pct_start: float = 0.3,
+        anneal_strategy: str = "cos",
+        cycle_momentum: bool = True,
+        base_momentum: float = 0.85,
+        max_momentum: float = 0.95,
+        div_factor: float = 25.0,
+        final_div_factor: float = 1e4,
+    ) -> None:
         super(OneCycleLr, self).__init__()
 
         # validate total steps:
@@ -105,8 +105,7 @@ class OneCycleLr(keras.callbacks.Callback):
         else:
             if epochs <= 0 or not isinstance(epochs, int):
                 raise ValueError(
-                    "Expected non-negative integer epochs, but got {}".format(
-                        epochs)
+                    "Expected non-negative integer epochs, but got {}".format(epochs)
                 )
             if steps_per_epoch <= 0 or not isinstance(steps_per_epoch, int):
                 raise ValueError(
@@ -124,8 +123,7 @@ class OneCycleLr(keras.callbacks.Callback):
         # Validate pct_start
         if pct_start < 0 or pct_start > 1 or not isinstance(pct_start, float):
             raise ValueError(
-                "Expected float between 0 and 1 pct_start, but got {}".format(
-                    pct_start)
+                "Expected float between 0 and 1 pct_start, but got {}".format(pct_start)
             )
 
         # Validate anneal_strategy
@@ -179,8 +177,7 @@ class OneCycleLr(keras.callbacks.Callback):
                     self.m_momentum, self.b_momentum, self.step_num / self.step_size_up
                 )
                 try:
-                    K.set_value(self.model.optimizer.momentum,
-                                computed_momentum)
+                    K.set_value(self.model.optimizer.momentum, computed_momentum)
                 except:
                     K.set_value(self.model.optimizer.beta_1, computed_momentum)
         else:
@@ -198,8 +195,7 @@ class OneCycleLr(keras.callbacks.Callback):
                     down_step_num / self.step_size_down,
                 )
                 try:
-                    K.set_value(self.model.optimizer.momentum,
-                                computed_momentum)
+                    K.set_value(self.model.optimizer.momentum, computed_momentum)
                 except:
                     K.set_value(self.model.optimizer.beta_1, computed_momentum)
 

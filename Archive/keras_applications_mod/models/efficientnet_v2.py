@@ -36,7 +36,9 @@ from keras.utils import layer_utils
 # isort: off
 from tensorflow.python.util.tf_export import keras_export
 
-BASE_WEIGHTS_PATH = "https://storage.googleapis.com/tensorflow/keras-applications/efficientnet_v2/"  # noqa: E501
+BASE_WEIGHTS_PATH = (
+    "https://storage.googleapis.com/tensorflow/keras-applications/efficientnet_v2/"  # noqa: E501
+)
 
 WEIGHTS_HASHES = {
     "b0": (
@@ -665,9 +667,7 @@ def MBConvBlock(
                 momentum=bn_momentum,
                 name=name + "expand_bn",
             )(x)
-            x = layers.Activation(activation, name=name + "expand_activation")(
-                x
-            )
+            x = layers.Activation(activation, name=name + "expand_activation")(x)
         else:
             x = inputs
 

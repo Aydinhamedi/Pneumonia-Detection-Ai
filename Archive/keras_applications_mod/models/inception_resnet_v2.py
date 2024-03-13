@@ -228,9 +228,9 @@ def InceptionResNetV2(
         # Classification block
         x = layers.GlobalAveragePooling2D(name="avg_pool")(x)
         imagenet_utils.validate_activation(classifier_activation, weights)
-        x = layers.Dense(
-            classes, activation=classifier_activation, name="predictions"
-        )(x)
+        x = layers.Dense(classes, activation=classifier_activation, name="predictions")(
+            x
+        )
     else:
         if pooling == "avg":
             x = layers.GlobalAveragePooling2D()(x)
@@ -258,10 +258,7 @@ def InceptionResNetV2(
                 file_hash="e693bd0210a403b3192acc6073ad2e96",
             )
         else:
-            fname = (
-                "inception_resnet_v2_weights_"
-                "tf_dim_ordering_tf_kernels_notop.h5"
-            )
+            fname = "inception_resnet_v2_weights_" "tf_dim_ordering_tf_kernels_notop.h5"
             weights_path = data_utils.get_file(
                 fname,
                 BASE_WEIGHT_URL + fname,
@@ -312,9 +309,7 @@ def conv2d_bn(
     if not use_bias:
         bn_axis = 1 if backend.image_data_format() == "channels_first" else 3
         bn_name = None if name is None else name + "_bn"
-        x = layers.BatchNormalization(axis=bn_axis, scale=False, name=bn_name)(
-            x
-        )
+        x = layers.BatchNormalization(axis=bn_axis, scale=False, name=bn_name)(x)
     if activation is not None:
         ac_name = None if name is None else name + "_ac"
         x = layers.Activation(activation, name=ac_name)(x)
@@ -400,9 +395,7 @@ def inception_resnet_block(x, scale, block_type, block_idx, activation="relu"):
 
     block_name = block_type + "_" + str(block_idx)
     channel_axis = 1 if backend.image_data_format() == "channels_first" else 3
-    mixed = layers.Concatenate(axis=channel_axis, name=block_name + "_mixed")(
-        branches
-    )
+    mixed = layers.Concatenate(axis=channel_axis, name=block_name + "_mixed")(branches)
     up = conv2d_bn(
         mixed,
         backend.int_shape(x)[channel_axis],
@@ -420,9 +413,7 @@ def inception_resnet_block(x, scale, block_type, block_idx, activation="relu"):
 
 @keras_export("keras.applications.inception_resnet_v2.preprocess_input")
 def preprocess_input(x, data_format=None):
-    return imagenet_utils.preprocess_input(
-        x, data_format=data_format, mode="tf"
-    )
+    return imagenet_utils.preprocess_input(x, data_format=data_format, mode="tf")
 
 
 @keras_export("keras.applications.inception_resnet_v2.decode_predictions")
