@@ -1,8 +1,6 @@
 from tensorflow import keras
-import tensorflow as tf
 import math
 import matplotlib.pyplot as plt
-import numpy as np
 
 K = keras.backend
 

@@ -1,6 +1,4 @@
 import os
-import glob
-import numpy as np
 import tensorflow as tf
 # Other
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'

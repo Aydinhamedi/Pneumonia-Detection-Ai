@@ -12,37 +12,23 @@ import os
 import time
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import cv2
-import glob
-import pprint
 import random
 import datetime
 import gpu_control
 import numpy as np
-import pandas as pd
 from tqdm import tqdm
-from hyperas import optim
-from keras.losses import categorical_crossentropy
 import tensorflow as tf
 from keras.models import Model
-from scipy.ndimage import zoom
 import matplotlib.pyplot as plt
-from model_profiler import model_profiler
-from keras.optimizers import SGD, Adam, Adagrad, Adadelta, Nadam
-from tensorflow_addons.optimizers import Yogi
-from adabelief_tf import AdaBeliefOptimizer
+from keras.optimizers import SGD
 from keras.regularizers import l2
 from keras.models import load_model
-from matplotlib import pyplot as plt
-from PIL import Image, ImageDraw, ImageFont
-from keras import Sequential
-from random import randint, choice, shuffle
 from keras.callbacks import EarlyStopping
 from keras.callbacks import TensorBoard
 from keras.utils import to_categorical
-from keras.callbacks import ModelCheckpoint, Callback, LearningRateScheduler
-from sklearn.model_selection import train_test_split
+from keras.callbacks import ModelCheckpoint, LearningRateScheduler
 from keras.preprocessing.image import ImageDataGenerator
-from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout, BatchNormalization, SeparableConv2D, Input, Concatenate, GlobalAveragePooling2D, CuDNNLSTM, concatenate, Reshape
+from keras.layers import Dense, Dropout, BatchNormalization, Input, GlobalAveragePooling2D, CuDNNLSTM, concatenate, Reshape
 # Utils
 from Utils.one_cycle import OneCycleLr
 from Utils.lr_find import LrFinder
@@ -389,12 +375,12 @@ if ADBD > 0:
 
         # get augmented data
         x_train_augmented, y_train_augmented = train_iterator.next()
-        print(f'>   ├───Applying adaptive histogram equalization...')
+        print('>   ├───Applying adaptive histogram equalization...')
         print(f'>   ├───Adaptive histogram equalization clip limit = {round(ADB_clip_limit, 2)}')
         x_train_augmented = np.clip(x_train_augmented, 0, 255) 
         #print_Color(f'~*>   |---Grayscale range: ~*Min = {np.min(x_train_augmented)}~* | ~*Max = {np.max(x_train_augmented)}', ['normal', 'blue', 'normal', 'red'], advanced_mode=True)
         x_train_augmented = apply_clahe_rgb_array(x_train_augmented, clip_limit=ADB_clip_limit) # compensating the image info loss
-        print(f'>   └───Adding the Generated ADB...')
+        print('>   └───Adding the Generated ADB...')
         # append augmented data to original data
         x_train = np.concatenate([x_train, x_train_augmented])
         y_train = np.concatenate([y_train, y_train_augmented])
@@ -607,7 +593,6 @@ print('done.')
 # ```
 
 # %%
-from efficientnet.keras import EfficientNetB7 as KENB7
 from keras.applications.xception import Xception
 
 #FUNC
@@ -701,7 +686,6 @@ print('done.')
 # ### V(T) Beta
 
 # %%
-from efficientnet.keras import EfficientNetB7 as KENB7
 
 #FUNC
 def Eff_B7_NS(freeze_layers):
@@ -826,7 +810,6 @@ lr_find.plot_lrs(skip_end=0, suggestion=True, show_grid=True)
 # ### Loading the full model
 
 # %%
-import efficientnet.tfkeras
 # Configuration
 PRMC = False
 freeze_from_opposite = True
@@ -1463,9 +1446,6 @@ def make_gradcam_heatmap(img_array, model, last_conv_layer_name, second_last_con
 import seaborn as sns
 from sklearn.metrics import confusion_matrix, accuracy_score
 from scipy.stats import binom
-from tqdm import tqdm
-import efficientnet.tfkeras
-import cv2
 import gc
 # Garbage Collection (memory)
 gc.collect()

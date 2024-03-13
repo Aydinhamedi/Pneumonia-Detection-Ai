@@ -23,7 +23,6 @@ CPU_only = False # True to Force TF to use the cpu
 
 # %%
 import os
-import sys
 import time
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 if CPU_only:
@@ -31,58 +30,35 @@ if CPU_only:
 import cv2
 import glob 
 import keras
-import pprint
 import random
 import shutil
-import gzip
-import glob
 import pickle
 import datetime
 import subprocess
 import gpu_control
 import numpy as np
-import pandas as pd
 from tqdm import tqdm
 import seaborn as sns
-from hyperas import optim
 # import tensorflow_addons as tfa
-from keras_adabound import AdaBound
-from importlib import reload
-from keras.losses import categorical_crossentropy
 import tensorflow as tf
 from keras.models import Model
-from scipy.ndimage import zoom
 import matplotlib.pyplot as plt
-from model_profiler import model_profiler
-from keras_gradient_noise import add_gradient_noise
-from keras.optimizers import SGD, Adam, Adagrad, Adadelta, Nadam, RMSprop, Adamax
+from keras.optimizers import SGD
 # from tensorflow_addons.optimizers import Yogi
 from adabelief_tf import AdaBeliefOptimizer
-from sklearn.preprocessing import LabelEncoder
 from imblearn.over_sampling import SMOTE
 from keras.regularizers import l2
 from keras.models import load_model
-from matplotlib import pyplot as plt
-from PIL import Image, ImageDraw, ImageFont
-from keras import Sequential
-from random import randint, choice, shuffle
 from keras.callbacks import EarlyStopping
 from keras.callbacks import TensorBoard
 from keras.utils import to_categorical
 from keras.callbacks import ModelCheckpoint, Callback, LearningRateScheduler
-from sklearn.model_selection import train_test_split
 from keras.preprocessing.image import ImageDataGenerator
-from keras.layers import Conv2D,\
-    MaxPooling2D,\
-        Flatten,\
-            Dense,\
+from keras.layers import Dense,\
                 Dropout,\
                     BatchNormalization,\
-                        SeparableConv2D,\
-                            Input, Concatenate,\
-                                GlobalAveragePooling2D,\
-                                    CuDNNLSTM, concatenate,\
-                                        Reshape, Multiply
+                        Input, GlobalAveragePooling2D,\
+                                    concatenate
 # Utils
 from Utils.one_cycle import OneCycleLr
 from Utils.lr_find import LrFinder
@@ -442,13 +418,13 @@ if ADBD > 0:
 
         # get augmented data
         x_train_augmented, y_train_augmented = train_iterator.next()
-        print(f'>   ├───Applying adaptive histogram equalization...')
+        print('>   ├───Applying adaptive histogram equalization...')
         print(f'>   ├───Adaptive histogram equalization clip limit = {round(ADB_clip_limit, 2)}')
         x_train_augmented = np.clip(x_train_augmented, 0, 255) 
         if Debug_OUT: Debug_img_Save(x_train_augmented, 'ST2') # DEBUG
         #print_Color(f'~*>   |---Grayscale range: ~*Min = {np.min(x_train_augmented)}~* | ~*Max = {np.max(x_train_augmented)}', ['normal', 'blue', 'normal', 'red'], advanced_mode=True)
         x_train_augmented = apply_clahe_rgb_array(x_train_augmented, clip_limit=ADB_clip_limit) # compensating the image info loss
-        print(f'>   └───Adding the Generated ADB...')
+        print('>   └───Adding the Generated ADB...')
         if Debug_OUT: Debug_img_Save(x_train_augmented, 'ST3') # DEBUG
         # append augmented data to original data
         x_train = np.concatenate([x_train, x_train_augmented])
@@ -546,9 +522,6 @@ y_test = np.load(f'Database\\Test\\Data\\y_test{SL_EX}.npy')
 
 # %%
 import numpy as np
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-import seaborn as sns
 from scipy.stats import zscore
 
 # Select a subset of your data
@@ -750,7 +723,6 @@ print('done.')
 # ```
 
 # %%
-from efficientnet.keras import EfficientNetB7 as KENB7
 from keras.applications.xception import Xception
 
 #FUNC
@@ -981,7 +953,6 @@ keras.utils.plot_model(model, to_file=dot_img_file, show_shapes=True)
 # ### Loading the full model
 
 # %%
-import efficientnet.tfkeras
 # Configuration
 PRMC = False
 freeze_from_opposite = False
@@ -1495,10 +1466,10 @@ try:
             if SAVE_FULLM:
                 # Save the model
                 if SAVE_TYPE == 'TF':
-                    print_Color_V2(f'<cyan>Saving full model tf format...')
+                    print_Color_V2('<cyan>Saving full model tf format...')
                     model.save(BEST_RSN, save_format='tf')
                 else:
-                    print_Color_V2(f'<cyan>Saving full model H5 format...')
+                    print_Color_V2('<cyan>Saving full model H5 format...')
                     model.save(f'{BEST_RSN}.h5')
             model.save_weights('PAI_model_weights.h5')
         else:
@@ -1514,10 +1485,10 @@ try:
             if SAVE_FULLM:
                 # Save the model
                 if SAVE_TYPE == 'TF':
-                    print_Color_V2(f'<cyan>Saving full model tf format...')
+                    print_Color_V2('<cyan>Saving full model tf format...')
                     model.save(BEST_RSN + '_BL', save_format='tf')
                 else:
-                    print_Color_V2(f'<cyan>Saving full model H5 format...')
+                    print_Color_V2('<cyan>Saving full model H5 format...')
                     model.save(f'{BEST_RSN}_BL.h5')
             model.save_weights('PAI_model_weights_BL.h5')
         else:
@@ -1740,7 +1711,6 @@ history = load_list('history\\model_history.pkl.gz', compressed=True)
 
 # %%
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 import seaborn as sns
 
 # Chunk size for 3D plot
@@ -2011,9 +1981,6 @@ def make_gradcam_heatmap(img_array, model, last_conv_layer_name, second_last_con
 import seaborn as sns
 from sklearn.metrics import confusion_matrix, accuracy_score
 from scipy.stats import binom
-from tqdm import tqdm
-import efficientnet.tfkeras
-import cv2
 import gc
 # Garbage Collection (memory)
 gc.collect()

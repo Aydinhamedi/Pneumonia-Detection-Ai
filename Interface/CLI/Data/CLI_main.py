@@ -7,7 +7,6 @@
 print('Loading the CLI...', end='\r')
 # pylib
 import os
-import re
 import cv2
 import sys
 import difflib
@@ -18,21 +17,16 @@ import requests
 from tqdm import tqdm
 import cpuinfo
 from loguru import logger
-import efficientnet.tfkeras
 from tkinter import filedialog
 from datetime import datetime
 from PIL import Image
 import tensorflow as tf
 from keras.models import load_model
-from keras.preprocessing.image import ImageDataGenerator
 from keras.utils import to_categorical
 import numpy as np
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 # Utils
-from Utils.one_cycle import OneCycleLr
-from Utils.lr_find import LrFinder
 from Utils.Grad_cam import make_gradcam_heatmap
-from Utils.print_color_V2_NEW import print_Color_V2
 from Utils.print_color_V1_OLD import print_Color
 from Utils.Other import *
 # global vars>>>
@@ -269,7 +263,7 @@ def CI_help(SSUH: bool = True, show_lines: bool = True):
                 print_Color(f'{("   ├─ " if show_lines else "")}~*{cmd_other}: ~*{desc_other}', [
                     'yellow', 'normal'], advanced_mode=True)
     else:
-        print_Color(f'~*commands:', ['cyan'], advanced_mode=True)
+        print_Color('~*commands:', ['cyan'], advanced_mode=True)
         # main
         for i, (cmd, desc) in enumerate(cmd_descriptions.items(), start=1):
             if i == len(cmd_descriptions):
@@ -298,7 +292,7 @@ def CI_atmd():
         if os.path.exists(Database_dir):
             # Load the dataset file
             print_Color('loading the existing dataset...', ['normal'])
-            logger.debug(f'CI_atmd>>Debug: loading the existing dataset...')
+            logger.debug('CI_atmd>>Debug: loading the existing dataset...')
             dataset = np.load(Database_dir, allow_pickle=True).item()
         else:
             # Create a new dataset file if it doesn't exist
@@ -612,7 +606,7 @@ def CLI_IM(CLII: bool = True):
                     f'~*ERROR: ~*Invalid input. you can use \'~*help~*\', did you mean \'~*{closest_match[0]}~*\'.',
                     ['red', 'yellow', 'green', 'yellow', 'green', 'yellow'], advanced_mode=True)
             else:
-                print_Color(f'~*ERROR: ~*Invalid input. you can use \'~*help~*\'.',
+                print_Color('~*ERROR: ~*Invalid input. you can use \'~*help~*\'.',
                             ['red', 'yellow', 'green', 'yellow'], advanced_mode=True)
             return ['IIE']
     except IndexError:
@@ -721,7 +715,7 @@ print(CLI_Info)
 # FP
 if Model_FORMAT not in ['TF_dir', 'H5_SF']:
     logger.info(f'Model file format [{Model_FORMAT}]')
-    IEH(id=f'F[SYS],P[FP],Error[Invalid Model_FORMAT]', DEV=False)
+    IEH(id='F[SYS],P[FP],Error[Invalid Model_FORMAT]', DEV=False)
 elif Model_FORMAT == 'H5_SF':
     Model_dir += '.h5'
 # start main

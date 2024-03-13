@@ -68,12 +68,12 @@ except (ImportError, NameError):
         log_file.write(f'<L2> Traceback:\n{traceback.format_exc()}</L2>\n')
     sg.popup(
             f'An internal error occurred.\nERROR-INFO:\n\nFailed to load the GUI python libs.\n\nErr-Traceback:\n{traceback.format_exc()}',
-            title=f'Internal Error | Exiting',
+            title='Internal Error | Exiting',
             custom_text=('Exit'))
     sys.exit()
 # global vars>>>
 # CONST SYS
-GUI_Ver = '0.9.3'
+GUI_Ver = '0.9.3 Pre1'
 Model_dir = 'Data/PAI_model'  # without file extention
 Database_dir = 'Data/dataset.npy'
 IMG_AF = ('JPEG', 'PNG', 'BMP', 'TIFF', 'JPG', 'DCM', 'DICOM')
@@ -171,7 +171,11 @@ GUI_layout_Tab_Ai_Model = [
         sg.Text(key='-OUTPUT_Model_info-', size=(40, 7), pad=(4, 0))
     ]
 ]
-
+# Sys info
+GUI_layout_Tab_Sys_Info = [
+    [sg.Text('System Info:', font=(None, 10, 'bold'))],
+    [sg.Multiline('N/A', key='-OUTPUT_ST_SYS_INFO-', size=(54, 8), autoscroll=True, expand_y=True)]
+]
 # DICOM Info
 def C_GUI_layout_DICOM_Info_Window() -> list:
     """Returns the layout for the DICOM Info tab.
@@ -187,18 +191,18 @@ def C_GUI_layout_DICOM_Info_Window() -> list:
 GUI_text_logo = '''
 ~*
   _______  __    __   __     .___  ___.   ______    _______   _______ 
- /  _____||  |  |  | |  |    |   \/   |  /  __  \  |       \ |   ____|
-|  |  __  |  |  |  | |  |    |  \  /  | |  |  |  | |  .--.  ||  |__   
-|  | |_ | |  |  |  | |  |    |  |\/|  | |  |  |  | |  |  |  ||   __|  
+ /  _____||  |  |  | |  |    |   \\/   |  /  __  \\  |       \\ |   ____|
+|  |  __  |  |  |  | |  |    |  \\  /  | |  |  |  | |  .--.  ||  |__   
+|  | |_ | |  |  |  | |  |    |  |\\/|  | |  |  |  | |  |  |  ||   __|  
 |  |__| | |  `--'  | |  |    |  |  |  | |  `--'  | |  '--'  ||  |____ 
- \______|  \______/  |__|    |__|  |__|  \______/  |_______/ |_______|
+ \\______|  \\______/  |__|    |__|  |__|  \\______/  |_______/ |_______|
 ~*                                                                      
   ______   .__   __.                                                  
- /  __  \  |  \ |  |                                                  
-|  |  |  | |   \|  |                                                  
+ /  __  \\  |  \\ |  |                                                  
+|  |  |  | |   \\|  |                                                  
 |  |  |  | |  . `  |                                                  
-|  `--'  | |  |\   |                                                  
- \______/  |__| \__|                                                  
+|  `--'  | |  |\\   |                                                  
+ \\______/  |__| \\__|                                                  
                           
 '''
 
@@ -285,7 +289,7 @@ def open_file_GUI() -> str:
     if file_path:
         return file_path
 # get_latest_release_files
-def get_latest_release_files(url):
+def get_latest_release_files(url) -> list:
     """Fetches information about the latest release assets from the GitHub API.
 
     Args:
@@ -304,8 +308,8 @@ def get_latest_release_files(url):
     # Make a GET request to the GitHub API
     try:
         response = requests.get(url)
-    except (ConnectionError, RequestException) as e:
-        print(f'Failed to make a GET request to the GitHub API (Possible Cause: Max requests exceeded)')
+    except (ConnectionError, RequestException):
+        print('Failed to make a GET request to the GitHub API (Possible Cause: Max requests exceeded)')
         return assets
 
     # Check if the request was successful
@@ -644,9 +648,9 @@ def main() -> None:
     """Main function for the GUI.
     """
     # start
-    sg.SystemTray.notify(f'Pneumonia-Detection-Ai-GUI', f'Gui started.\nV{GUI_Ver}')
+    sg.SystemTray.notify('Pneumonia-Detection-Ai-GUI', f'Gui started.\nV{GUI_Ver}')
     if Debug_m:
-        sg.SystemTray.notify(f'Pneumonia-Detection-Ai-GUI', f'Looks like you are a programmer\nWow.\nV{GUI_Ver}', icon=sg.SYSTEM_TRAY_MESSAGE_ICON_WARNING)
+        sg.SystemTray.notify('Pneumonia-Detection-Ai-GUI', f'Looks like you are a programmer\nWow.\nV{GUI_Ver}', icon=sg.SYSTEM_TRAY_MESSAGE_ICON_WARNING)
         sg.show_debugger_window()
     # global
     global GUI_window
@@ -664,12 +668,15 @@ def main() -> None:
     Update_release_files_LXT = None
     # Create the tabs
     GUI_tab_main = sg.Tab('Main', GUI_layout_Tab_main)
-    GUI_tab_other = sg.Tab('Ai Model', GUI_layout_Tab_Ai_Model)
-    GUI_layout_group = [[sg.TabGroup([[GUI_tab_main, GUI_tab_other]])]]
+    GUI_tab_Ai_model = sg.Tab('Ai Model', GUI_layout_Tab_Ai_Model)
+    GUI_tab_Sys_info = sg.Tab('System Info', GUI_layout_Tab_Sys_Info)
+    GUI_layout_group = [[sg.TabGroup([[GUI_tab_main, GUI_tab_Ai_model, GUI_tab_Sys_info]])]]
     # Create the window
     GUI_window = sg.Window(f'Pneumonia-Detection-Ai-GUI V{GUI_Ver}', GUI_layout_group, finalize=True)
     # Pre up
     CI_umij()
+    # Prep GUI sys info
+    GUI_window['-OUTPUT_ST_SYS_INFO-'].update(GUI_Info)
     # Main loop for the Graphical User Interface (GUI)
     while True:
         # Read events and values from the GUI window
@@ -806,7 +813,7 @@ print(GUI_Info)
 # FP
 if Model_FORMAT not in ['TF_dir', 'H5_SF']:
     logger.info(f'Model file format [{Model_FORMAT}]')
-    IEH(id=f'F[SYS],P[FP],Error[Invalid Model_FORMAT]', DEV=False)
+    IEH(id='F[SYS],P[FP],Error[Invalid Model_FORMAT]', DEV=False)
 elif Model_FORMAT == 'H5_SF':
     Model_dir += '.h5'
 # start main

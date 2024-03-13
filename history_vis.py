@@ -1,8 +1,5 @@
-from turtle import left
 from Utils.Other import *
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-import seaborn as sns
 import numpy as np
 
 # load history
