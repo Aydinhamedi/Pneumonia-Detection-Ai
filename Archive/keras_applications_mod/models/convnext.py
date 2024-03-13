@@ -36,9 +36,7 @@ from keras.engine import training as training_lib
 # isort: off
 from tensorflow.python.util.tf_export import keras_export
 
-BASE_WEIGHTS_PATH = (
-    "https://storage.googleapis.com/tensorflow/keras-applications/convnext/"
-)
+BASE_WEIGHTS_PATH = "https://storage.googleapis.com/tensorflow/keras-applications/convnext/"
 
 WEIGHTS_HASHES = {
     "convnext_tiny": (
@@ -239,9 +237,7 @@ class LayerScale(layers.Layer):
         return config
 
 
-def ConvNeXtBlock(
-    projection_dim, drop_path_rate=0.0, layer_scale_init_value=1e-6, name=None
-):
+def ConvNeXtBlock(projection_dim, drop_path_rate=0.0, layer_scale_init_value=1e-6, name=None):
     """ConvNeXt block.
 
     References:
@@ -290,9 +286,7 @@ def ConvNeXtBlock(
                 name=name + "_layer_scale",
             )(x)
         if drop_path_rate:
-            layer = StochasticDepth(
-                drop_path_rate, name=name + "_stochastic_depth"
-            )
+            layer = StochasticDepth(drop_path_rate, name=name + "_stochastic_depth")
         else:
             layer = layers.Activation("linear", name=name + "_identity")
 
@@ -344,9 +338,7 @@ def Head(num_classes=1000, classifier_activation=None, name=None):
 
     def apply(x):
         x = layers.GlobalAveragePooling2D(name=name + "_head_gap")(x)
-        x = layers.LayerNormalization(
-            epsilon=1e-6, name=name + "_head_layernorm"
-        )(x)
+        x = layers.LayerNormalization(epsilon=1e-6, name=name + "_head_layernorm")(x)
         x = layers.Dense(
             num_classes,
             activation=classifier_activation,
@@ -432,10 +424,7 @@ def ConvNeXt(
         )
 
     if weights == "imagenet" and include_top and classes != 1000:
-        raise ValueError(
-            "If using `weights` as `'imagenet'` with `include_top`"
-            " as true, `classes` should be 1000"
-        )
+        raise ValueError("If using `weights` as `'imagenet'` with `include_top`" " as true, `classes` should be 1000")
 
     # Determine proper input shape.
     input_shape = imagenet_utils.obtain_input_shape(
@@ -462,9 +451,7 @@ def ConvNeXt(
 
     x = inputs
     if include_preprocessing:
-        channel_axis = (
-            3 if backend.image_data_format() == "channels_last" else 1
-        )
+        channel_axis = 3 if backend.image_data_format() == "channels_last" else 1
         num_channels = input_shape[channel_axis - 1]
         if num_channels == 3:
             x = PreStem(name=model_name)(x)
@@ -478,9 +465,7 @@ def ConvNeXt(
                 strides=4,
                 name=model_name + "_stem_conv",
             ),
-            layers.LayerNormalization(
-                epsilon=1e-6, name=model_name + "_stem_layernorm"
-            ),
+            layers.LayerNormalization(epsilon=1e-6, name=model_name + "_stem_layernorm"),
         ],
         name=model_name + "_stem",
     )
@@ -511,9 +496,7 @@ def ConvNeXt(
     # Stochastic depth schedule.
     # This is referred from the original ConvNeXt codebase:
     # https://github.com/facebookresearch/ConvNeXt/blob/main/models/convnext.py#L86
-    depth_drop_rates = [
-        float(x) for x in np.linspace(0.0, drop_path_rate, sum(depths))
-    ]
+    depth_drop_rates = [float(x) for x in np.linspace(0.0, drop_path_rate, sum(depths))]
 
     # First apply downsampling blocks and then apply ConvNeXt stages.
     cur = 0

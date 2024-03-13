@@ -73,15 +73,11 @@ from keras.utils import layer_utils
 from tensorflow.python.platform import tf_logging as logging
 from tensorflow.python.util.tf_export import keras_export
 
-BASE_WEIGHT_PATH = (
-    "https://storage.googleapis.com/tensorflow/keras-applications/mobilenet/"
-)
+BASE_WEIGHT_PATH = "https://storage.googleapis.com/tensorflow/keras-applications/mobilenet/"
 layers = None
 
 
-@keras_export(
-    "keras.applications.mobilenet.MobileNet", "keras.applications.MobileNet"
-)
+@keras_export("keras.applications.mobilenet.MobileNet", "keras.applications.MobileNet")
 def MobileNet(
     input_shape=None,
     alpha=1.0,
@@ -183,9 +179,7 @@ def MobileNet(
 
     if weights == "imagenet" and include_top and classes != 1000:
         raise ValueError(
-            'If using `weights` as `"imagenet"` with `include_top` '
-            "as true, `classes` should be 1000.  "
-            f"Received classes={classes}"
+            'If using `weights` as `"imagenet"` with `include_top` ' "as true, `classes` should be 1000.  " f"Received classes={classes}"
         )
 
     # Determine proper input shape and default size.
@@ -223,9 +217,7 @@ def MobileNet(
     if weights == "imagenet":
         if depth_multiplier != 1:
             raise ValueError(
-                "If imagenet weights are being loaded, "
-                "depth multiplier must be 1.  "
-                f"Received depth_multiplier={depth_multiplier}"
+                "If imagenet weights are being loaded, " "depth multiplier must be 1.  " f"Received depth_multiplier={depth_multiplier}"
             )
 
         if alpha not in [0.25, 0.50, 0.75, 1.0]:
@@ -256,28 +248,20 @@ def MobileNet(
     x = _conv_block(img_input, 32, alpha, strides=(2, 2))
     x = _depthwise_conv_block(x, 64, alpha, depth_multiplier, block_id=1)
 
-    x = _depthwise_conv_block(
-        x, 128, alpha, depth_multiplier, strides=(2, 2), block_id=2
-    )
+    x = _depthwise_conv_block(x, 128, alpha, depth_multiplier, strides=(2, 2), block_id=2)
     x = _depthwise_conv_block(x, 128, alpha, depth_multiplier, block_id=3)
 
-    x = _depthwise_conv_block(
-        x, 256, alpha, depth_multiplier, strides=(2, 2), block_id=4
-    )
+    x = _depthwise_conv_block(x, 256, alpha, depth_multiplier, strides=(2, 2), block_id=4)
     x = _depthwise_conv_block(x, 256, alpha, depth_multiplier, block_id=5)
 
-    x = _depthwise_conv_block(
-        x, 512, alpha, depth_multiplier, strides=(2, 2), block_id=6
-    )
+    x = _depthwise_conv_block(x, 512, alpha, depth_multiplier, strides=(2, 2), block_id=6)
     x = _depthwise_conv_block(x, 512, alpha, depth_multiplier, block_id=7)
     x = _depthwise_conv_block(x, 512, alpha, depth_multiplier, block_id=8)
     x = _depthwise_conv_block(x, 512, alpha, depth_multiplier, block_id=9)
     x = _depthwise_conv_block(x, 512, alpha, depth_multiplier, block_id=10)
     x = _depthwise_conv_block(x, 512, alpha, depth_multiplier, block_id=11)
 
-    x = _depthwise_conv_block(
-        x, 1024, alpha, depth_multiplier, strides=(2, 2), block_id=12
-    )
+    x = _depthwise_conv_block(x, 1024, alpha, depth_multiplier, strides=(2, 2), block_id=12)
     x = _depthwise_conv_block(x, 1024, alpha, depth_multiplier, block_id=13)
 
     if include_top:
@@ -286,9 +270,7 @@ def MobileNet(
         x = layers.Conv2D(classes, (1, 1), padding="same", name="conv_preds")(x)
         x = layers.Reshape((classes,), name="reshape_2")(x)
         imagenet_utils.validate_activation(classifier_activation, weights)
-        x = layers.Activation(
-            activation=classifier_activation, name="predictions"
-        )(x)
+        x = layers.Activation(activation=classifier_activation, name="predictions")(x)
     else:
         if pooling == "avg":
             x = layers.GlobalAveragePooling2D()(x)
@@ -319,15 +301,11 @@ def MobileNet(
         if include_top:
             model_name = "mobilenet_%s_%d_tf.h5" % (alpha_text, rows)
             weight_path = BASE_WEIGHT_PATH + model_name
-            weights_path = data_utils.get_file(
-                model_name, weight_path, cache_subdir="models"
-            )
+            weights_path = data_utils.get_file(model_name, weight_path, cache_subdir="models")
         else:
             model_name = "mobilenet_%s_%d_tf_no_top.h5" % (alpha_text, rows)
             weight_path = BASE_WEIGHT_PATH + model_name
-            weights_path = data_utils.get_file(
-                model_name, weight_path, cache_subdir="models"
-            )
+            weights_path = data_utils.get_file(model_name, weight_path, cache_subdir="models")
         model.load_weights(weights_path)
     elif weights is not None:
         model.load_weights(weights)
@@ -439,9 +417,7 @@ def _depthwise_conv_block(
     if strides == (1, 1):
         x = inputs
     else:
-        x = layers.ZeroPadding2D(
-            ((0, 1), (0, 1)), name="conv_pad_%d" % block_id
-        )(inputs)
+        x = layers.ZeroPadding2D(((0, 1), (0, 1)), name="conv_pad_%d" % block_id)(inputs)
     x = layers.DepthwiseConv2D(
         (3, 3),
         padding="same" if strides == (1, 1) else "valid",
@@ -450,9 +426,7 @@ def _depthwise_conv_block(
         use_bias=False,
         name="conv_dw_%d" % block_id,
     )(x)
-    x = layers.BatchNormalization(
-        axis=channel_axis, name="conv_dw_%d_bn" % block_id
-    )(x)
+    x = layers.BatchNormalization(axis=channel_axis, name="conv_dw_%d_bn" % block_id)(x)
     x = layers.ReLU(6.0, name="conv_dw_%d_relu" % block_id)(x)
 
     x = layers.Conv2D(
@@ -463,17 +437,13 @@ def _depthwise_conv_block(
         strides=(1, 1),
         name="conv_pw_%d" % block_id,
     )(x)
-    x = layers.BatchNormalization(
-        axis=channel_axis, name="conv_pw_%d_bn" % block_id
-    )(x)
+    x = layers.BatchNormalization(axis=channel_axis, name="conv_pw_%d_bn" % block_id)(x)
     return layers.ReLU(6.0, name="conv_pw_%d_relu" % block_id)(x)
 
 
 @keras_export("keras.applications.mobilenet.preprocess_input")
 def preprocess_input(x, data_format=None):
-    return imagenet_utils.preprocess_input(
-        x, data_format=data_format, mode="tf"
-    )
+    return imagenet_utils.preprocess_input(x, data_format=data_format, mode="tf")
 
 
 @keras_export("keras.applications.mobilenet.decode_predictions")

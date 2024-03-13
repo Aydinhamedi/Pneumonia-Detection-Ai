@@ -140,9 +140,7 @@ MOBILENET_V3_FOR_WEIGHTS = [
 class ApplicationsTest(tf.test.TestCase, parameterized.TestCase):
     def assertShapeEqual(self, shape1, shape2):
         if len(shape1) != len(shape2):
-            raise AssertionError(
-                f"Shapes are different rank: {shape1} vs {shape2}"
-            )
+            raise AssertionError(f"Shapes are different rank: {shape1} vs {shape2}")
         for v1, v2 in zip(shape1, shape2):
             if v1 != v2:
                 raise AssertionError(f"Shapes differ: {shape1} vs {shape2}")
@@ -168,9 +166,7 @@ class ApplicationsTest(tf.test.TestCase, parameterized.TestCase):
             only_check_last_dim = True
         else:
             only_check_last_dim = False
-        output_shape = _get_output_shape(
-            lambda: app(weights=None, include_top=False)
-        )
+        output_shape = _get_output_shape(lambda: app(weights=None, include_top=False))
         if only_check_last_dim:
             self.assertEqual(output_shape[-1], last_dim)
         else:
@@ -179,28 +175,20 @@ class ApplicationsTest(tf.test.TestCase, parameterized.TestCase):
 
     @parameterized.parameters(*MODEL_LIST)
     def test_application_notop_custom_input_shape(self, app, last_dim):
-        output_shape = _get_output_shape(
-            lambda: app(
-                weights="imagenet", include_top=False, input_shape=(224, 224, 3)
-            )
-        )
+        output_shape = _get_output_shape(lambda: app(weights="imagenet", include_top=False, input_shape=(224, 224, 3)))
 
         self.assertEqual(output_shape[-1], last_dim)
 
     @parameterized.parameters(MODEL_LIST)
     def test_application_pooling(self, app, last_dim):
-        output_shape = _get_output_shape(
-            lambda: app(weights=None, include_top=False, pooling="avg")
-        )
+        output_shape = _get_output_shape(lambda: app(weights=None, include_top=False, pooling="avg"))
         self.assertShapeEqual(output_shape, (None, last_dim))
 
     @parameterized.parameters(MODEL_LIST)
     def test_application_classifier_activation(self, app, _):
         if "RegNet" in app.__name__:
             self.skipTest("RegNet models do not support classifier activation")
-        model = app(
-            weights=None, include_top=True, classifier_activation="softmax"
-        )
+        model = app(weights=None, include_top=True, classifier_activation="softmax")
         last_layer_act = model.layers[-1].activation.__name__
         self.assertEqual(last_layer_act, "softmax")
 
@@ -210,11 +198,7 @@ class ApplicationsTest(tf.test.TestCase, parameterized.TestCase):
             input_shape = (1, None, None)
         else:
             input_shape = (None, None, 1)
-        output_shape = _get_output_shape(
-            lambda: app(
-                weights=None, include_top=False, input_shape=input_shape
-            )
-        )
+        output_shape = _get_output_shape(lambda: app(weights=None, include_top=False, input_shape=input_shape))
         self.assertShapeEqual(output_shape, (None, None, None, last_dim))
         backend.clear_session()
 
@@ -222,18 +206,12 @@ class ApplicationsTest(tf.test.TestCase, parameterized.TestCase):
             input_shape = (4, None, None)
         else:
             input_shape = (None, None, 4)
-        output_shape = _get_output_shape(
-            lambda: app(
-                weights=None, include_top=False, input_shape=input_shape
-            )
-        )
+        output_shape = _get_output_shape(lambda: app(weights=None, include_top=False, input_shape=input_shape))
         self.assertShapeEqual(output_shape, (None, None, None, last_dim))
         backend.clear_session()
 
     @parameterized.parameters(*MOBILENET_V3_FOR_WEIGHTS)
-    def test_mobilenet_v3_load_weights(
-        self, mobilenet_class, alpha, minimalistic, include_top
-    ):
+    def test_mobilenet_v3_load_weights(self, mobilenet_class, alpha, minimalistic, include_top):
         mobilenet_class(
             input_shape=(224, 224, 3),
             weights="imagenet",

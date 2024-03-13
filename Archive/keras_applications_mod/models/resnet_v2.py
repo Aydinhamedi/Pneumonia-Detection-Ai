@@ -27,9 +27,7 @@ from keras.applications import resnet
 from tensorflow.python.util.tf_export import keras_export
 
 
-@keras_export(
-    "keras.applications.resnet_v2.ResNet50V2", "keras.applications.ResNet50V2"
-)
+@keras_export("keras.applications.resnet_v2.ResNet50V2", "keras.applications.ResNet50V2")
 def ResNet50V2(
     include_top=True,
     weights="imagenet",
@@ -62,9 +60,7 @@ def ResNet50V2(
     )
 
 
-@keras_export(
-    "keras.applications.resnet_v2.ResNet101V2", "keras.applications.ResNet101V2"
-)
+@keras_export("keras.applications.resnet_v2.ResNet101V2", "keras.applications.ResNet101V2")
 def ResNet101V2(
     include_top=True,
     weights="imagenet",
@@ -97,9 +93,7 @@ def ResNet101V2(
     )
 
 
-@keras_export(
-    "keras.applications.resnet_v2.ResNet152V2", "keras.applications.ResNet152V2"
-)
+@keras_export("keras.applications.resnet_v2.ResNet152V2", "keras.applications.ResNet152V2")
 def ResNet152V2(
     include_top=True,
     weights="imagenet",
@@ -134,9 +128,7 @@ def ResNet152V2(
 
 @keras_export("keras.applications.resnet_v2.preprocess_input")
 def preprocess_input(x, data_format=None):
-    return imagenet_utils.preprocess_input(
-        x, data_format=data_format, mode="tf"
-    )
+    return imagenet_utils.preprocess_input(x, data_format=data_format, mode="tf")
 
 
 @keras_export("keras.applications.resnet_v2.decode_predictions")

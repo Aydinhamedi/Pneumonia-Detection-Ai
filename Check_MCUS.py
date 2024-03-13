@@ -1,11 +1,13 @@
 import hashlib
 import sys
 
+
 def calculate_hash(file_path):
-    with open(file_path, 'rb') as file:
+    with open(file_path, "rb") as file:
         bytes = file.read()
         readable_hash = hashlib.sha256(bytes).hexdigest()
     return readable_hash
+
 
 def compare_files(file1, file2):
     file1_hash = calculate_hash(file1)
@@ -16,6 +18,7 @@ def compare_files(file1, file2):
     else:
         print(f"The files {file1} and {file2} are different.")
         sys.exit(1)
+
 
 # Replace with your file paths
 file1 = "Model_T&T.ipynb"
