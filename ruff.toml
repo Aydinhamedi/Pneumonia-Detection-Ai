@@ -10,3 +10,4 @@ lint.fixable = ["ALL"]
 show-fixes = true
 # Applies auto-fixes to code
 fix = true
+lint.ignore = ["E402"]
