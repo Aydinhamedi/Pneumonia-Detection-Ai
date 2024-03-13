@@ -26,7 +26,7 @@ def GPU_memUsage(Print=True):
             meminfo = cuda.current_context().get_memory_info()
             if Print:
                 print_Color(
-                    f"~*(GPU-MEM)~*--{gpu}--[free: {meminfo.free / (1024 ** 3):.2f}GB, used: {meminfo.total / (1024 ** 3) - meminfo.free / (1024 ** 3):.2f}GB, total, {meminfo.total / (1024 ** 3):.2f}GB]",
+                    f"~*(GPU-MEM)~*--{gpu}--[free: {meminfo.free / (1024** 3):.2f}GB, used: {meminfo.total / (1024** 3) - meminfo.free / (1024** 3):.2f}GB, total, {meminfo.total / (1024** 3):.2f}GB]",
                     ["green", "cyan"],
                     advanced_mode=True,
                 )

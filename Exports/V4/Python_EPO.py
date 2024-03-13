@@ -404,7 +404,7 @@ if ADBD > 0:
             #  ┌-----------------┬--┬-------------------┐
             #  │ 𝑦=2/(𝑥+1)^(𝑥+𝑉) ├OR┤ 𝑦=2/(𝑥+1)^(𝑥+1.4) │
             #  └-----------------┴--┴-------------------┘
-        print(f">   Generating ADB[{i+1}/{ADBD}]...")
+        print(f">   Generating ADB[{i + 1}/{ADBD}]...")
         # prepare an iterators to scale images
         train_iterator = train_datagen.flow(x_train, y_train, batch_size=len(x_train))
 
@@ -1462,18 +1462,18 @@ class EpochEndMON(tf.keras.callbacks.Callback):
         optimizer = self.model.optimizer
         if hasattr(optimizer, "lr"):
             lr = tf.keras.backend.get_value(optimizer.lr)
-            print(f"\nLearning rate for epoch {epoch+1} is {lr}")
+            print(f"\nLearning rate for epoch {epoch + 1} is {lr}")
         if hasattr(optimizer, "momentum"):
             momentum = tf.keras.backend.get_value(optimizer.momentum)
-            print(f"Momentum for epoch {epoch+1} is {momentum}")
+            print(f"Momentum for epoch {epoch + 1} is {momentum}")
         if logs:
             val_loss = logs.get("val_loss")
             val_acc = logs.get("val_accuracy")
-            print(f"Validation loss for epoch {epoch+1} is {val_loss}")
-            print(f"Validation accuracy for epoch {epoch+1} is {val_acc}")
+            print(f"Validation loss for epoch {epoch + 1} is {val_loss}")
+            print(f"Validation accuracy for epoch {epoch + 1} is {val_acc}")
 
         print_Color_V2(
-            f"`red`<!--------------------------------------|Epoch`yellow` [{epoch+1}]`red` End|--------------------------------------!> `green`PBE↓",
+            f"`red`<!--------------------------------------|Epoch`yellow` [{epoch + 1}]`red` End|--------------------------------------!> `green`PBE↓",
             start_char="`",
             end_char="`",
         )

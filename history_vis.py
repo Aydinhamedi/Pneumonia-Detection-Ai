@@ -244,7 +244,7 @@ try:
         "Average Validation Accuracy and Loss for Each Epoch Across Chunks (Ignoring First Chunk)"
     )
     plt.xticks(
-        epoch_indices, [f"Epoch {i+1}" for i in epoch_indices]
+        epoch_indices, [f"Epoch {i + 1}" for i in epoch_indices]
     )  # Set x-tick labels to epoch numbers
     plt.legend()
 

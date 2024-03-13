@@ -230,12 +230,10 @@ class LayerScale(layers.Layer):
 
     def get_config(self):
         config = super().get_config()
-        config.update(
-            {
-                "init_values": self.init_values,
-                "projection_dim": self.projection_dim,
-            }
-        )
+        config.update({
+            "init_values": self.init_values,
+            "projection_dim": self.projection_dim,
+        })
         return config
 
 

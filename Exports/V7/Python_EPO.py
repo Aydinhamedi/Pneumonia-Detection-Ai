@@ -460,7 +460,7 @@ if ADBD > 0:
             #  ┌-----------------┬--┬-------------------┐
             #  │ 𝑦=2/(𝑥+1)^(𝑥+𝑉) ├OR┤ 𝑦=2/(𝑥+1)^(𝑥+1.4) │
             #  └-----------------┴--┴-------------------┘
-        print(f">   Generating ADB[{i+1}/{ADBD}]...")
+        print(f">   Generating ADB[{i + 1}/{ADBD}]...")
         # prepare an iterators to scale images
         train_iterator = train_datagen.flow(x_train, y_train, batch_size=len(x_train))
 
@@ -618,12 +618,14 @@ mean_intensity_pixels = reshaped_data_pixels.mean(axis=-1)
 mean_intensity_mean = reshaped_data_mean.mean(axis=-1)
 
 # Stack the mean intensity with the reshaped data
-data_with_mean_pixels = np.hstack(
-    [reshaped_data_pixels, mean_intensity_pixels.reshape(-1, 1)]
-)
-data_with_mean_mean = np.hstack(
-    [reshaped_data_mean, mean_intensity_mean.reshape(-1, 1)]
-)
+data_with_mean_pixels = np.hstack([
+    reshaped_data_pixels,
+    mean_intensity_pixels.reshape(-1, 1),
+])
+data_with_mean_mean = np.hstack([
+    reshaped_data_mean,
+    mean_intensity_mean.reshape(-1, 1),
+])
 
 # Calculate Z-scores
 z_scores_pixels = np.abs(zscore(data_with_mean_pixels, axis=0))
@@ -888,16 +890,14 @@ def Combo_Model(freeze_layers1, freeze_layers2):
         layer.trainable = True
 
     # Combine the output of the two base models
-    combined = concatenate(
-        [
-            Dense(512, activation="relu", kernel_regularizer=l2(0.02))(
-                GlobalAveragePooling2D()(base_model1_out)
-            ),
-            Dense(512, activation="relu", kernel_regularizer=l2(0.02))(
-                GlobalAveragePooling2D()(base_model2_out)
-            ),
-        ]
-    )
+    combined = concatenate([
+        Dense(512, activation="relu", kernel_regularizer=l2(0.02))(
+            GlobalAveragePooling2D()(base_model1_out)
+        ),
+        Dense(512, activation="relu", kernel_regularizer=l2(0.02))(
+            GlobalAveragePooling2D()(base_model2_out)
+        ),
+    ])
 
     # adding CDL
     Dense_L1 = Dense(1024, activation="relu", kernel_regularizer=l2(0.03))(combined)
@@ -1475,12 +1475,10 @@ for layer in model.layers[-7:]:
 
         old_weights, old_biases = layer.get_weights()
 
-        layer.set_weights(
-            [
-                weight_initializer(shape=old_weights.shape),
-                bias_initializer(shape=len(old_biases)),
-            ]
-        )
+        layer.set_weights([
+            weight_initializer(shape=old_weights.shape),
+            bias_initializer(shape=len(old_biases)),
+        ])
 
 
 # %% [markdown]
@@ -2272,18 +2270,18 @@ class EpochEndMON(tf.keras.callbacks.Callback):
         optimizer = self.model.optimizer
         if hasattr(optimizer, "lr"):
             lr = tf.keras.backend.get_value(optimizer.lr)
-            print(f"\nLearning rate for epoch {epoch+1} is {lr}")
+            print(f"\nLearning rate for epoch {epoch + 1} is {lr}")
         if hasattr(optimizer, "momentum"):
             momentum = tf.keras.backend.get_value(optimizer.momentum)
-            print(f"Momentum for epoch {epoch+1} is {momentum}")
+            print(f"Momentum for epoch {epoch + 1} is {momentum}")
         if logs:
             val_loss = logs.get("val_loss")
             val_acc = logs.get("val_accuracy")
-            print(f"Validation loss for epoch {epoch+1} is {val_loss}")
-            print(f"Validation accuracy for epoch {epoch+1} is {val_acc}")
+            print(f"Validation loss for epoch {epoch + 1} is {val_loss}")
+            print(f"Validation accuracy for epoch {epoch + 1} is {val_acc}")
 
         print_Color_V2(
-            f"`red`<!--------------------------------------|Epoch`yellow` [{epoch+1}]`red` End|--------------------------------------!> `green`PBE↓",
+            f"`red`<!--------------------------------------|Epoch`yellow` [{epoch + 1}]`red` End|--------------------------------------!> `green`PBE↓",
             start_char="`",
             end_char="`",
         )
@@ -2660,7 +2658,7 @@ try:
         "Average Validation Accuracy and Loss for Each Epoch Across Chunks (Ignoring First Chunk)"
     )
     plt.xticks(
-        epoch_indices, [f"Epoch {i+1}" for i in epoch_indices]
+        epoch_indices, [f"Epoch {i + 1}" for i in epoch_indices]
     )  # Set x-tick labels to epoch numbers
     plt.legend()
 

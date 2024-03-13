@@ -211,4 +211,4 @@ class LrFinder:
             ax.plot(lrs[mg], losses[mg], markersize=10, marker="o", color="red")
             self.min_grad_lr = lrs[mg]
             ml = np.argmin(losses)
-            print(f"Min loss divided by 10: {lrs[ml]/10:.2E}")
+            print(f"Min loss divided by 10: {lrs[ml] / 10:.2E}")
