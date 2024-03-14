@@ -11,10 +11,4 @@
 The last version of CLI is V0.8.9.3 and currently its has entered a minimal maintenance and not being updated.
 
 ## GUI:
-
-| Version | Supported          |
-| ------- | ------------------ |
-| 0.9.0   | :white_check_mark: |
-| 0.8.9   | :white_check_mark: |
-| 0.8.8   | ⚠️                 |
-| < 0.8.7 | :x:                |
+All version above 0.9.1 of the GUI are supported and maintained.
