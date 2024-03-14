@@ -26,7 +26,7 @@ jobs:
         pip install ruff
     - name: Lint with ruff
       run: |
-        ruff check . --fix --show-source --show-fixes --statistics
+        ruff check . --fix --show-fixes --statistics
     - name: Format with ruff
       run: |
         ruff format . --preview --line-length 140
