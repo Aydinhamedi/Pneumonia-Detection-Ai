@@ -26,10 +26,15 @@ except (ImportError, NameError):
 # prep GUI
 sg.theme("GrayGrayGray")
 # Start
-sg.popup_auto_close("┌──────────┐\n      Loading...    \n└──────────┘",
-                    non_blocking=True, auto_close_duration=3, no_titlebar=True,
-                    line_width=32, button_type=sg.POPUP_BUTTONS_NO_BUTTONS,
-                    font=(None, 14, "bold"))
+sg.popup_auto_close(
+    "┌──────────┐\n      Loading...    \n└──────────┘",
+    non_blocking=True,
+    auto_close_duration=3,
+    no_titlebar=True,
+    line_width=32,
+    button_type=sg.POPUP_BUTTONS_NO_BUTTONS,
+    font=(None, 14, "bold"),
+)
 # pylib
 try:
     # import re # noqa: F401
@@ -179,13 +184,7 @@ GUI_layout_Tab_Ai_Model = [
 GUI_layout_Tab_Sys_Info = [
     [sg.Text("System Info:", font=(None, 10, "bold"))],
     [
-        sg.Multiline(
-            "N/A",
-            key="-OUTPUT_ST_SYS_INFO-",
-            size=(54, 8),
-            expand_y=True,
-            disabled=True
-        ),
+        sg.Multiline("N/A", key="-OUTPUT_ST_SYS_INFO-", size=(54, 8), expand_y=True, disabled=True),
     ],
 ]
 
@@ -723,9 +722,7 @@ def main() -> None:
     # sg.SystemTray.notify("Pneumonia-Detection-Ai-GUI", f"Gui started.\nV{GUI_Ver}")
     if Debug_m:
         sg.SystemTray.notify(
-            "Pneumonia-Detection-Ai-GUI",
-            f"Looks like you are a programmer\nWow.\nV{GUI_Ver}",
-            icon=sg.SYSTEM_TRAY_MESSAGE_ICON_WARNING
+            "Pneumonia-Detection-Ai-GUI", f"Looks like you are a programmer\nWow.\nV{GUI_Ver}", icon=sg.SYSTEM_TRAY_MESSAGE_ICON_WARNING
         )
         sg.show_debugger_window()
     # global
