@@ -156,7 +156,7 @@ class OneCycleLr(keras.callbacks.Callback):
                 computed_momentum = self.anneal_func(self.m_momentum, self.b_momentum, self.step_num / self.step_size_up)
                 try:
                     K.set_value(self.model.optimizer.momentum, computed_momentum)
-                except:
+                except Exception:
                     K.set_value(self.model.optimizer.beta_1, computed_momentum)
         else:
             down_step_num = self.step_num - self.step_size_up
@@ -172,7 +172,7 @@ class OneCycleLr(keras.callbacks.Callback):
                 )
                 try:
                     K.set_value(self.model.optimizer.momentum, computed_momentum)
-                except:
+                except Exception:
                     K.set_value(self.model.optimizer.beta_1, computed_momentum)
 
     def on_train_begin(self, logs=None) -> None:
@@ -181,7 +181,7 @@ class OneCycleLr(keras.callbacks.Callback):
         if self.cycle_momentum:
             try:
                 K.set_value(self.model.optimizer.momentum, self.momentum)
-            except:
+            except Exception:
                 K.set_value(self.model.optimizer.beta_1, self.momentum)
 
     def on_train_batch_end(self, batch, logs=None) -> None:
@@ -189,7 +189,7 @@ class OneCycleLr(keras.callbacks.Callback):
         lr = float(K.get_value(self.model.optimizer.lr))
         try:
             mom = float(K.get_value(self.model.optimizer.momentum))
-        except:
+        except Exception:
             mom = float(K.get_value(self.model.optimizer.beta_1))
         # Append to the list
         self.track_lr.append(lr)
@@ -200,12 +200,12 @@ class OneCycleLr(keras.callbacks.Callback):
         self.step_num += 1
 
     def plot_lrs_moms(self, axes=None) -> None:
-        if axes == None:
+        if axes is None:
             _, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 5))
         else:
             try:
                 ax1, ax2 = axes
-            except:
+            except Exception:
                 ax1, ax2 = axes[0], axes[1]
         ax1.plot(self.track_lr)
         ax1.set_title("Learning Rate vs Steps")

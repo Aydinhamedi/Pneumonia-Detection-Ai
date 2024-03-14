@@ -108,7 +108,7 @@ class LrFinder:
         # save original model weights
         try:
             self.model.save_weights(self.weightsFile)
-        except:
+        except Exception:
             print("Unable to save initial weights, weights of model will change. Re-instantiate model to load previous weights ...")
         # start scheduler
         sched = Scheduler((start_lr, end_lr), num_iter)
@@ -161,7 +161,7 @@ class LrFinder:
         "Cleanup model weights disturbed during LRFinder exploration."
         try:
             self.model.load_weights(self.weightsFile)
-        except:
+        except Exception:
             print("Unable to load inital weights. Re-instantiate model to load previous weights ...")
         K.set_value(self.optimizer.lr, self.init_lr)
         print("LR Finder is complete, type {LrFinder}.plot_lrs() to see the graph.")
@@ -194,7 +194,7 @@ class LrFinder:
         if suggestion:
             try:
                 mg = (np.gradient(np.array(losses))).argmin()
-            except:
+            except Exception:
                 print("Failed to compute the gradients, there might not be enough points.")
                 return
             print(f"Min numerical gradient: {lrs[mg]:.2E}")
