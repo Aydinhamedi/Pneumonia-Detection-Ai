@@ -63,7 +63,6 @@ try:
     from Utils.print_color_V2_NEW import print_Color_V2  # noqa: F401
     from Utils.print_color_V1_OLD import print_Color
     from Utils.FixedDropout import FixedDropout
-    from Utils.Other import *  # noqa: F403
 except (ImportError, NameError):
     print("Failed to load the GUI libs")
     print("detailed error message:")
