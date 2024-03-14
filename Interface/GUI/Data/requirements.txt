@@ -4,8 +4,8 @@ numpy==1.25.1
 opencv-python==4.8.0.74
 pillow==10.2.0
 py-cpuinfo==9.0.0
-pydicom==2.4.4
-PySimpleGUI==4.60.5
+pydicom==2.4.3
+PySimpleGUI==5.0.3
 requests==2.31.0
 tensorflow==2.10.1
 tqdm==4.66.2
