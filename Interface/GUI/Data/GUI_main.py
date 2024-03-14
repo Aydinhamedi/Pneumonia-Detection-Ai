@@ -754,8 +754,8 @@ def main() -> None:
         if not event == "-TIMEOUT-":
             logger.debug(f"GUI_window:event: {event}")
             logger.debug(f"GUI_window:values: {values}")
-            print(f"GUI_window:event: {event}")
-            print(f"GUI_window:values: {values}")
+            print(f"GUI_window:event: ~e[{event}]e~\n")
+            print(f"GUI_window:values: ~v[{values}]v~\n")
 
         # Check if the window has been closed or the 'Close' button has been clicked
         if event == sg.WINDOW_CLOSED or event == "Close":
@@ -835,7 +835,7 @@ def main() -> None:
             # Retrieve the result from the queue
             result_expanded = ""
             result = GUI_Queue["-Main_log-"].get()
-            print(f"Queue Data: {result}")
+            print(f"Queue Data: {result}\n")
             logger.debug(f"Queue[-Main_log-]:get: {result}")
             # Update the GUI with the result message
             for block in result:
