@@ -12,3 +12,5 @@ show-fixes = true
 fix = true
 # Err Ignore
 lint.ignore = ["E402"]
+# exclude 
+exclude = ["backup", "Archive", "Exports"]
