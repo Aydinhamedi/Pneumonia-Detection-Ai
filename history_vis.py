@@ -1,9 +1,9 @@
-from Utils.Other import * # noqa: F403
+from Utils.Other import *  # noqa: F403
 import matplotlib.pyplot as plt
 import numpy as np
 
 # load history
-history = load_list("history\\model_history.pkl.gz", compressed=True) # noqa: F405
+history = load_list("history\\model_history.pkl.gz", compressed=True)  # noqa: F405
 
 # Chunk size for 3D plot
 chunk_size = 6  # Change this to your desired chunk size
