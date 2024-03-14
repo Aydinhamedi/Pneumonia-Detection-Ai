@@ -57,8 +57,10 @@ for /F "usebackq delims==" %%i in ("Data\requirements.txt") do (
 REM Write the current Python version + Python install time to the file
 echo %current_python_version% > %PV_filepath%
 @REM Pause for user input
-echo Press any key to load the GUI...
-pause > nul
+if not "%Full_Auto%"=="1" (
+    echo Press any key to load the GUI...
+    pause > nul
+)
 
 :FAST_START
 REM Print the appropriate loading message
