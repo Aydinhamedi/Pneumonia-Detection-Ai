@@ -29,7 +29,7 @@ sg.theme("GrayGrayGray")
 sg.popup_auto_close("Loading GUI...", non_blocking=True, auto_close_duration=2, no_titlebar=False)
 # pylib
 try:
-    import re
+    # import re # noqa: F401
     import time
     import cv2
     import json
@@ -38,14 +38,17 @@ try:
     import hashlib
     import pydicom
     import cpuinfo
-    import difflib
-    import inspect
+
+    # import difflib # noqa: F401
+    # import inspect # noqa: F401
     import traceback
     import subprocess
     import threading
     import requests
+    import numpy as np
     from tqdm import tqdm
-    from time import sleep
+
+    # from time import sleep # noqa: F401
     from loguru import logger
     from tkinter import filedialog
     from datetime import datetime
@@ -57,10 +60,10 @@ try:
     os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
     # Utils
     from Utils.Grad_cam import make_gradcam_heatmap
-    from Utils.print_color_V2_NEW import print_Color_V2
+    from Utils.print_color_V2_NEW import print_Color_V2  # noqa: F401
     from Utils.print_color_V1_OLD import print_Color
     from Utils.FixedDropout import FixedDropout
-    from Utils.Other import *
+    from Utils.Other import *  # noqa: F403
 except (ImportError, NameError):
     print("Failed to load the GUI libs")
     print("detailed error message:")
@@ -134,9 +137,8 @@ for gpu_instance in physical_devices:
 GUI_layout_Tab_main = [
     [sg.Text("Enter the image dir:", font=(None, 10, "bold"))],
     [
-        sg.Input(key="-INPUT_IMG_dir-"),
+        sg.Input(key="-INPUT_IMG_dir-", enable_events=True, size=(48, 1)),
         sg.Button("Browse", key="-BUTTON_BROWSE_IMG_dir-"),
-        sg.Button("Ok", key="-BUTTON_OK_IMG_dir-"),
     ],
     [sg.Text("Log:", font=(None, 10, "bold"))],
     [sg.Multiline(key="-OUTPUT_ST-", size=(54, 6), autoscroll=True)],
@@ -538,7 +540,8 @@ def CI_liid(img_dir, Show_DICOM_INFO: bool = True) -> str:
     try:
         _, file_extension = os.path.splitext(img_dir)
     except TypeError:
-        file_extension = "TEMP FILE EXTENSION"
+        logger.warning("CI_liid>>ERROR: Invalid file format. Please provide an image file. (Extension Extractiion Failed)")
+        return "ERROR: Invalid file format. Please provide an image file. (Extension Extractiion Failed)"
     if file_extension.upper()[1:] not in IMG_AF:
         logger.warning("CI_liid>>ERROR: Invalid file format. Please provide an image file.")
         return "ERROR: Invalid file format. Please provide an image file."
@@ -567,7 +570,7 @@ def CI_liid(img_dir, Show_DICOM_INFO: bool = True) -> str:
                     GUI_layout_DICOM_Info_Window.finalize()
             else:
                 img = Image.open(img_dir).resize((IMG_RES[1], IMG_RES[0]))
-        except NameError:
+        except (NameError, FileNotFoundError):
             logger.warning("CI_liid>>ERROR: Invalid file dir. Please provide an image file.")
             return "ERROR: Invalid file dir. Please provide an image file."
         else:
@@ -777,7 +780,7 @@ def main() -> None:
             GUI_window["-INPUT_IMG_dir-"].update(IMG_dir)
 
         # Handle event for confirming the selected image directory
-        if event == "-BUTTON_OK_IMG_dir-":
+        if event == "-INPUT_IMG_dir-":
             # Retrieve the image directory from the input field and update the display
             IMG_dir = GUI_window["-INPUT_IMG_dir-"].get()
             GUI_window["-INPUT_IMG_dir-"].update(IMG_dir)
