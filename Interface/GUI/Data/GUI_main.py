@@ -79,7 +79,7 @@ except (ImportError, NameError):
     sys.exit()
 # global vars>>>
 # CONST SYS
-GUI_Ver = "0.9.3 Pre1"
+GUI_Ver = "0.9.4"
 Model_dir = "Data/PAI_model"  # without file extention
 Database_dir = "Data/dataset.npy"
 IMG_AF = ("JPEG", "PNG", "BMP", "TIFF", "JPG", "DCM", "DICOM")
