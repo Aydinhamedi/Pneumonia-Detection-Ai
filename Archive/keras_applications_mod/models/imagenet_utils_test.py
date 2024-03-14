@@ -74,13 +74,11 @@ class TestImageNetUtils(test_combinations.TestCase):
         self.assertAllClose(x, x2[..., ::-1])
         self.assertNotEqual(xint.astype("float").max(), xint2.max())
 
-    @parameterized.named_parameters(
-        [
-            {"testcase_name": "mode_torch", "mode": "torch"},
-            {"testcase_name": "mode_tf", "mode": "tf"},
-            {"testcase_name": "mode_caffe", "mode": "caffe"},
-        ]
-    )
+    @parameterized.named_parameters([
+        {"testcase_name": "mode_torch", "mode": "torch"},
+        {"testcase_name": "mode_tf", "mode": "tf"},
+        {"testcase_name": "mode_caffe", "mode": "caffe"},
+    ])
     def test_preprocess_input_symbolic(self, mode):
         # Test image batch
         x = np.random.uniform(0, 255, (2, 10, 10, 3))
@@ -131,13 +129,11 @@ class TestImageNetUtils(test_combinations.TestCase):
         out2 = model2.predict(x2[np.newaxis])[0]
         self.assertAllClose(out1, out2.transpose(1, 2, 0))
 
-    @parameterized.named_parameters(
-        [
-            {"testcase_name": "mode_torch", "mode": "torch"},
-            {"testcase_name": "mode_tf", "mode": "tf"},
-            {"testcase_name": "mode_caffe", "mode": "caffe"},
-        ]
-    )
+    @parameterized.named_parameters([
+        {"testcase_name": "mode_torch", "mode": "torch"},
+        {"testcase_name": "mode_tf", "mode": "tf"},
+        {"testcase_name": "mode_caffe", "mode": "caffe"},
+    ])
     def test_preprocess_input_symbolic_mixed_precision(self, mode):
         if not tf.__internal__.tf2.enabled():
             self.skipTest("The global policy can only be tested in TensorFlow 2")
@@ -152,18 +148,16 @@ class TestImageNetUtils(test_combinations.TestCase):
         finally:
             set_global_policy("float32")
 
-    @parameterized.named_parameters(
-        [
-            {
-                "testcase_name": "channels_last_format",
-                "data_format": "channels_last",
-            },
-            {
-                "testcase_name": "channels_first_format",
-                "data_format": "channels_first",
-            },
-        ]
-    )
+    @parameterized.named_parameters([
+        {
+            "testcase_name": "channels_last_format",
+            "data_format": "channels_last",
+        },
+        {
+            "testcase_name": "channels_first_format",
+            "data_format": "channels_first",
+        },
+    ])
     def test_obtain_input_shape(self, data_format):
         # input_shape and default_size are not identical.
         with self.assertRaises(ValueError):
