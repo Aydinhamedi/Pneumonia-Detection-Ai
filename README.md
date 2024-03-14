@@ -37,7 +37,8 @@
 > ```
 
 The project includes a Command Line Interface (CLI) and a (GUI) Graphical User Interface for easy use of the model. The CLI, which is based on the [Python CLI template](https://github.com/Aydinhamedi/Python-CLI-template) from the same author, provides a user-friendly, colorful interface that allows you to interact with the model. you can fined the CLI in 
-
+> [!CAUTION]
+> The last version of CLI is V0.8.9.3 and currently its has entered a minimal maintenance and not being updated ***and its going to be deprecated***. 
 ```
 Interface\CLI
 ```
