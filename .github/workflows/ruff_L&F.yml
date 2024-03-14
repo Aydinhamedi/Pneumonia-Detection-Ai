@@ -7,7 +7,7 @@ on:
   push:
     branches: [ "main", "Alpha-b", "Beta-b" ]
   pull_request:
-    branches: [ "main", "Alpha-b", "Beta-b" ]
+    branches: [ "main" ]
     
 jobs:
   Ruff:
