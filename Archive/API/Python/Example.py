@@ -1,13 +1,13 @@
 # Import necessary libraries
 import pprint
 import numpy as np
-from pdai import *
+from pdai import * # noqa: F403
 from PIL import Image
 
 pp = pprint.PrettyPrinter(indent=4, width=10)
 
 # Instantiate the PneumoniaModel class
-pdai_model = PneumoniaModel("models\Ready\V1\PAI_model.h5", verbose=0)
+pdai_model = PneumoniaModel("models\Ready\V1\PAI_model.h5", verbose=0) # noqa: F405
 
 # Load the model
 pdai_model.load_model()

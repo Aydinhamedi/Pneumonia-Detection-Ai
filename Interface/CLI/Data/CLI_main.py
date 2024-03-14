@@ -29,7 +29,7 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 # Utils
 from Utils.Grad_cam import make_gradcam_heatmap
 from Utils.print_color_V1_OLD import print_Color
-from Utils.Other import *
+from Utils.Other import * # noqa: F403
 
 # global vars>>>
 # CONST SYS
@@ -463,7 +463,7 @@ def CI_tmwd(argv_Split: list = ["none"]):
             else:
                 print("Training the model...\n")
                 # training
-                history = model.fit(images, labels, epochs=train_epochs, batch_size=1, verbose="auto")  # history not used
+                model.fit(images, labels, epochs=train_epochs, batch_size=1, verbose="auto") 
                 print("Training done.\n")
         else:
             print_Color(
