@@ -98,7 +98,8 @@ if ERRORLEVEL 1 (
         "%pip_path%" install %1
         if ERRORLEVEL 1 (
             echo Failed to install package %1.
-            exit /B
+            Pause
+            goto :EOF
         )
     )
 ) else if "%DEBUG%"=="1" (
