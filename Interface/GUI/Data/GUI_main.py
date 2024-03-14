@@ -26,7 +26,15 @@ except (ImportError, NameError):
 # prep GUI
 sg.theme("GrayGrayGray")
 # Start
-sg.popup_auto_close("Loading GUI...", non_blocking=True, auto_close_duration=2, no_titlebar=False)
+sg.popup_auto_close(
+    "┌──────────┐\n      Loading...    \n└──────────┘",
+    non_blocking=True,
+    auto_close_duration=3,
+    no_titlebar=True,
+    line_width=32,
+    button_type=sg.POPUP_BUTTONS_NO_BUTTONS,
+    font=(None, 14, "bold"),
+)
 # pylib
 try:
     # import re # noqa: F401
@@ -78,7 +86,7 @@ except (ImportError, NameError):
     sys.exit()
 # global vars>>>
 # CONST SYS
-GUI_Ver = "0.9.4"
+GUI_Ver = "0.9.5"
 Model_dir = "Data/PAI_model"  # without file extention
 Database_dir = "Data/dataset.npy"
 IMG_AF = ("JPEG", "PNG", "BMP", "TIFF", "JPG", "DCM", "DICOM")
@@ -140,7 +148,7 @@ GUI_layout_Tab_main = [
         sg.Button("Browse", key="-BUTTON_BROWSE_IMG_dir-"),
     ],
     [sg.Text("Log:", font=(None, 10, "bold"))],
-    [sg.Multiline(key="-OUTPUT_ST-", size=(54, 6), autoscroll=True)],
+    [sg.Multiline(key="-OUTPUT_ST-", size=(54, 6), autoscroll=True, disabled=True)],
     [sg.Text("Result:", font=(None, 10, "bold"))],
     [sg.Text(key="-OUTPUT_ST_R-", size=(50, 2), background_color="white")],
     [
@@ -176,13 +184,7 @@ GUI_layout_Tab_Ai_Model = [
 GUI_layout_Tab_Sys_Info = [
     [sg.Text("System Info:", font=(None, 10, "bold"))],
     [
-        sg.Multiline(
-            "N/A",
-            key="-OUTPUT_ST_SYS_INFO-",
-            size=(54, 8),
-            autoscroll=True,
-            expand_y=True,
-        )
+        sg.Multiline("N/A", key="-OUTPUT_ST_SYS_INFO-", size=(54, 8), expand_y=True, disabled=True),
     ],
 ]
 
@@ -717,12 +719,10 @@ def UWL(Only_finalize: bool = False) -> None:
 def main() -> None:
     """Main function for the GUI."""
     # start
-    sg.SystemTray.notify("Pneumonia-Detection-Ai-GUI", f"Gui started.\nV{GUI_Ver}")
+    # sg.SystemTray.notify("Pneumonia-Detection-Ai-GUI", f"Gui started.\nV{GUI_Ver}")
     if Debug_m:
         sg.SystemTray.notify(
-            "Pneumonia-Detection-Ai-GUI",
-            f"Looks like you are a programmer\nWow.\nV{GUI_Ver}",
-            icon=sg.SYSTEM_TRAY_MESSAGE_ICON_WARNING,
+            "Pneumonia-Detection-Ai-GUI", f"Looks like you are a programmer\nWow.\nV{GUI_Ver}", icon=sg.SYSTEM_TRAY_MESSAGE_ICON_WARNING
         )
         sg.show_debugger_window()
     # global
