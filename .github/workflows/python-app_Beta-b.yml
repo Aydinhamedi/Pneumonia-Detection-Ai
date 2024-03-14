@@ -6,11 +6,6 @@ name: Python Test [Beta-b]
 on:
   push:
     branches: [ "Beta-b" ]
-  pull_request:
-    branches: [ "Beta-b" ]
-  schedule:
-    - cron: "0 0 */2 * *"
-
     
 jobs:
   Test_Global:
