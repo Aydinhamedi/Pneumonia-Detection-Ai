@@ -592,18 +592,14 @@ mean_intensity_pixels = reshaped_data_pixels.mean(axis=-1)
 mean_intensity_mean = reshaped_data_mean.mean(axis=-1)
 
 # Stack the mean intensity with the reshaped data
-data_with_mean_pixels = np.hstack(
-    [
-        reshaped_data_pixels,
-        mean_intensity_pixels.reshape(-1, 1),
-    ]
-)
-data_with_mean_mean = np.hstack(
-    [
-        reshaped_data_mean,
-        mean_intensity_mean.reshape(-1, 1),
-    ]
-)
+data_with_mean_pixels = np.hstack([
+    reshaped_data_pixels,
+    mean_intensity_pixels.reshape(-1, 1),
+])
+data_with_mean_mean = np.hstack([
+    reshaped_data_mean,
+    mean_intensity_mean.reshape(-1, 1),
+])
 
 # Calculate Z-scores
 z_scores_pixels = np.abs(zscore(data_with_mean_pixels, axis=0))
@@ -860,12 +856,10 @@ def Combo_Model(freeze_layers1, freeze_layers2):
         layer.trainable = True
 
     # Combine the output of the two base models
-    combined = concatenate(
-        [
-            Dense(512, activation="relu", kernel_regularizer=l2(0.02))(GlobalAveragePooling2D()(base_model1_out)),
-            Dense(512, activation="relu", kernel_regularizer=l2(0.02))(GlobalAveragePooling2D()(base_model2_out)),
-        ]
-    )
+    combined = concatenate([
+        Dense(512, activation="relu", kernel_regularizer=l2(0.02))(GlobalAveragePooling2D()(base_model1_out)),
+        Dense(512, activation="relu", kernel_regularizer=l2(0.02))(GlobalAveragePooling2D()(base_model2_out)),
+    ])
 
     # adding CDL
     Dense_L1 = Dense(1024, activation="relu", kernel_regularizer=l2(0.03))(combined)
@@ -1411,12 +1405,10 @@ for layer in model.layers[-7:]:
 
         old_weights, old_biases = layer.get_weights()
 
-        layer.set_weights(
-            [
-                weight_initializer(shape=old_weights.shape),
-                bias_initializer(shape=len(old_biases)),
-            ]
-        )
+        layer.set_weights([
+            weight_initializer(shape=old_weights.shape),
+            bias_initializer(shape=len(old_biases)),
+        ])
 
 
 # %% [markdown]
