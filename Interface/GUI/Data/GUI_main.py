@@ -40,7 +40,9 @@ try:
     # import re # noqa: F401
     import time
     import cv2
+    import gzip
     import json
+    import base64
     import atexit
     import queue
     import hashlib
@@ -86,7 +88,7 @@ except (ImportError, NameError):
     sys.exit()
 # global vars>>>
 # CONST SYS
-GUI_Ver = "0.9.5"
+GUI_Ver = "0.9.6"
 Model_dir = "Data/PAI_model"  # without file extention
 Database_dir = "Data/dataset.npy"
 IMG_AF = ("JPEG", "PNG", "BMP", "TIFF", "JPG", "DCM", "DICOM")
@@ -148,7 +150,7 @@ GUI_layout_Tab_main = [
         sg.Button("Browse", key="-BUTTON_BROWSE_IMG_dir-"),
     ],
     [sg.Text("Log:", font=(None, 10, "bold"))],
-    [sg.Multiline(key="-OUTPUT_ST-", size=(54, 6), autoscroll=True, disabled=True)],
+    [sg.Multiline(key="-OUTPUT_ST-", size=(54, 6), autoscroll=True, disabled=True, write_only=True)],
     [sg.Text("Result:", font=(None, 10, "bold"))],
     [sg.Text(key="-OUTPUT_ST_R-", size=(50, 2), background_color="white")],
     [
@@ -184,7 +186,7 @@ GUI_layout_Tab_Ai_Model = [
 GUI_layout_Tab_Sys_Info = [
     [sg.Text("System Info:", font=(None, 10, "bold"))],
     [
-        sg.Multiline("N/A", key="-OUTPUT_ST_SYS_INFO-", size=(54, 8), expand_y=True, disabled=True),
+        sg.Multiline("N/A", key="-OUTPUT_ST_SYS_INFO-", size=(54, 8), expand_y=True, disabled=True, write_only=True),
     ],
 ]
 
@@ -343,7 +345,11 @@ def get_latest_release_files(url) -> list:
     if response.status_code == 200:
         # Parse the JSON response
         data = response.json()
-
+        # Debug out
+        compressed_data = gzip.compress(str(data).encode())
+        compressed_base64 = base64.b64encode(compressed_data).decode()
+        logger.debug(f"get_latest_release_files:data(json/gzip/base64) ~Gzip_Base64[{compressed_base64}]Gzip_Base64~")
+        # You can decompress it like --> gzip.decompress(base64.b64decode(compressed_base64)).decode()
         # Extract the assets from the latest release
         assets_temp = data["assets"]
         assets = [asset["name"] for asset in assets_temp]
@@ -367,12 +373,15 @@ def download_file_from_github(url: str, file_name: str, save_as: str, chunk_size
     """
     response = requests.get(url)
     data = response.json()
-    logger.debug(f"download_file_from_github:data(json) {data}")
+    # Debug out
+    compressed_data = gzip.compress(str(data).encode())
+    compressed_base64 = base64.b64encode(compressed_data).decode()
+    logger.debug(f"download_file_from_github:data(json/gzip/base64) ~Gzip_Base64[{compressed_base64}]Gzip_Base64~")
+    # You can decompress it like --> gzip.decompress(base64.b64decode(compressed_base64)).decode()
     # Get the name of the latest release
     release_name = data["name"]
     print(f"Latest release: {release_name}")
     GUI_Queue["-Main_log-"].put(f"Latest Github repo release: {release_name}")
-
     # Get the assets of the latest release
     assets = data["assets"]
 
@@ -841,6 +850,9 @@ def main() -> None:
                 result_expanded += f"> {block}\n"
             GUI_window["-OUTPUT_ST-"].update(result_expanded, text_color="black")
             UWL()
+        # Main End log
+        if traceback.format_exc() != '':
+            logger.warning(f"main[Proc Loop End]>>ERROR: A error was detected traceback: {traceback.format_exc()}")
 
 
 # start>>>
