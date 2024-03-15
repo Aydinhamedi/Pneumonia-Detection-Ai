@@ -57,8 +57,7 @@ try:
     import requests
     import numpy as np
     from tqdm import tqdm
-
-    # from time import sleep # noqa: F401
+    from time import sleep # noqa: F401
     from loguru import logger
     from tkinter import filedialog
     from datetime import datetime
@@ -88,7 +87,7 @@ except (ImportError, NameError):
     sys.exit()
 # global vars>>>
 # CONST SYS
-GUI_Ver = "0.9.6"
+GUI_Ver = "1.0.0 Pre1 (Alpha)"
 Model_dir = "Data/PAI_model"  # without file extention
 Database_dir = "Data/dataset.npy"
 IMG_AF = ("JPEG", "PNG", "BMP", "TIFF", "JPG", "DCM", "DICOM")
@@ -98,11 +97,9 @@ Model_FORMAT = "H5_SF"  # TF_dir/H5_SF
 IMG_RES = (224, 224, 3)
 Debug_m = False
 # normal global
+Active_procs = []
 available_models = []
-img_array = None
-label = None
 model = None
-
 
 # Other
 class CustomQueue:
@@ -132,8 +129,17 @@ class CustomQueue:
         return self.is_updated
 
 
-# GUI_Queue
-GUI_Queue = {"-Main_log-": CustomQueue(max_items=128)}
+# GUI_Queue and Gvar manager
+GUI_Queue = {
+            "-Main_log-": CustomQueue(max_items=128),
+            "-Error_log-": CustomQueue(max_items=128)
+            }
+GUI_Data = {
+            "~Result~": ('', ''),
+            "~Model_info~": None,
+            "~Model_table~": None
+            }
+# Logger and ...
 logger.remove()
 logger.add("Data\\logs\\SYS_LOG_{time}.log", backtrace=True, diagnose=True, compression="zip")
 logger.info("GUI Start...\n")
@@ -207,6 +213,8 @@ def C_GUI_layout_DICOM_Info_Window() -> list:
                 size=(120, 40),
                 font=(None, 11, "normal"),
                 autoscroll=True,
+                disabled=True,
+                write_only=True
             )
         ]
     ]
@@ -233,8 +241,32 @@ GUI_text_logo = """
 
 
 # HF>>>
+# function_tracker
+def function_tracker(func):
+    """
+    A decorator that wraps a function to add its name to a list when it starts
+    and removes it when it ends.
+    """
+    def wrapper(*args, **kwargs):
+        # Get the name of the function
+        func_name = func.__name__
+        
+        # Add the function name to the list
+        Active_procs.append(func_name)
+        
+        # Call the original function
+        result = func(*args, **kwargs)
+        
+        # Remove the function name from the list
+        Active_procs.remove(func_name)
+        
+        return result
+    
+    return wrapper
 # calculate_file_hash
+@function_tracker
 def calculate_file_hash(file_path) -> str:
+    Active_procs.append("calculate_file_hash")
     """Calculates a SHA256 hash for the contents of the given file.
 
     Args:
@@ -246,10 +278,12 @@ def calculate_file_hash(file_path) -> str:
     with open(file_path, "rb") as f:
         bytes = f.read()
         readable_hash = hashlib.sha256(bytes).hexdigest()
+    Active_procs.remove("calculate_file_hash")
     return readable_hash
 
 
 # get_model_info
+@function_tracker
 def get_model_info(model_path) -> dict:
     """Gets information about a model file.
 
@@ -300,6 +334,7 @@ def get_model_info(model_path) -> dict:
 
 
 # open_file_GUI
+@function_tracker
 def open_file_GUI() -> str:
     """Opens a file selection dialog GUI to allow the user to select an image file.
 
@@ -318,6 +353,7 @@ def open_file_GUI() -> str:
 
 
 # get_latest_release_files
+@function_tracker
 def get_latest_release_files(url) -> list:
     """Fetches information about the latest release assets from the GitHub API.
 
@@ -338,15 +374,25 @@ def get_latest_release_files(url) -> list:
     try:
         response = requests.get(url)
     except (ConnectionError, RequestException):
-        print("Failed to make a GET request to the GitHub API (Possible Cause: Max requests exceeded / Broken internet connection)")
+        print("Failed to make a GET request to the GitHub API (Possible Cause: Broken internet connection)")
         GUI_Queue["-Main_log-"].put(
-            "Failed to make a GET request to the GitHub API (Possible Cause: Max requests exceeded / Broken internet connection)"
+            "Failed to make a GET request to the GitHub API (Possible Cause: Broken internet connection)"
         )
         logger.warning(
-            f"get_latest_release_files>>ERROR: Failed to make a GET request to the GitHub API (Possible Cause: Max requests exceeded / Broken internet connection) Tr({traceback.format_exc()})"
+            f"get_latest_release_files>>ERROR: Failed to make a GET request to the GitHub API (Possible Cause: Broken internet connection) Tr({traceback.format_exc()})"
         )
         return assets
-
+    
+    if response.status_code == 403:
+        print("Failed to make a GET request to the GitHub API (Possible Cause: Max requests exceeded)")
+        GUI_Queue["-Main_log-"].put(
+            "Failed to make a GET request to the GitHub API (Possible Cause: Max requests exceeded)"
+        )
+        logger.warning(
+            f"get_latest_release_files>>ERROR: Failed to make a GET request to the GitHub API (Possible Cause: Max requests exceeded) Tr({traceback.format_exc()})"
+        )
+        return assets
+    
     # Check if the request was successful
     if response.status_code == 200:
         # Parse the JSON response
@@ -368,6 +414,7 @@ def get_latest_release_files(url) -> list:
 
 
 # download_file_from_github
+@function_tracker
 def download_file_from_github(url: str, file_name: str, save_as: str, chunk_size: int) -> None:
     """Downloads a file from a GitHub release API URL to a local path.
 
@@ -381,14 +428,25 @@ def download_file_from_github(url: str, file_name: str, save_as: str, chunk_size
     try:
         response = requests.get(url)
     except (ConnectionError, RequestException):
-        print("Failed to make a GET request to the GitHub API (Possible Cause: Max requests exceeded / Broken internet connection)")
+        print("Failed to make a GET request to the GitHub API (Possible Cause: Broken internet connection)")
         GUI_Queue["-Main_log-"].put(
-            "Failed to make a GET request to the GitHub API (Possible Cause: Max requests exceeded / Broken internet connection)"
+            "Failed to make a GET request to the GitHub API (Possible Cause: Broken internet connection)"
         )
         logger.warning(
-            f"download_file_from_github>>ERROR: Failed to make a GET request to the GitHub API (Possible Cause: Max requests exceeded / Broken internet connection) Tr({traceback.format_exc()})"
+            f"download_file_from_github>>ERROR: Failed to make a GET request to the GitHub API (Possible Cause: Broken internet connection) Tr({traceback.format_exc()})"
         )
         raise Exception
+    
+    if response.status_code == 403:
+        print("Failed to make a GET request to the GitHub API (Possible Cause: Max requests exceeded)")
+        GUI_Queue["-Main_log-"].put(
+            "Failed to make a GET request to the GitHub API (Possible Cause: Max requests exceeded)"
+        )
+        logger.warning(
+            f"download_file_from_github>>ERROR: Failed to make a GET request to the GitHub API (Possible Cause: Max requests exceeded) Tr({traceback.format_exc()})"
+        )
+        raise Exception
+    
     data = response.json()
     # Debug out
     compressed_data = gzip.compress(str(data).encode())
@@ -444,90 +502,82 @@ def download_file_from_github(url: str, file_name: str, save_as: str, chunk_size
 
 
 # CF>>>
-# CI_ulmd
-def CI_ulmd() -> None:
-    """Prints a warning that model data upload is currently unavailable."""
-    print_Color("Warning: upload model data set (currently not available!!!)", ["yellow"])
+# GP_pwai
+@function_tracker
+def GP_pwai(img_array, show_gradcam: bool = True) -> str:
+    """Predict pneumonia using a trained AI model.
 
+    Loads the trained model if not already loaded, runs prediction on the input image array, 
+    and returns a string with the prediction class, confidence score, and optional Grad-CAM heatmap visualization.
 
-# CI_pwai
-def CI_pwai(show_gradcam: bool = True) -> str:
-    """
-    CI_pwai predicts pneumonia from an input image using a pre-trained deep learning model.
-
-    It loads the model if not already loaded, runs prediction, computes confidence score
-    and class name. Optionally displays GradCAM visualization heatmap.
-
-    Returns:
-        str: Prediction result string with class name, confidence score and warnings.
+    Warns if confidence is below 0.82.
     """
     # global var import
     global model
-    # check for input img
-    if img_array is not None:
-        try:
-            if model is None:
-                print_Color("loading the Ai model...", ["normal"])
-                model = load_model(Model_dir, custom_objects={"FixedDropout": FixedDropout})
-        except (ImportError, IOError):
-            logger.warning(f"CI_pwai>>ERROR: Failed to load the model. Tr({traceback.format_exc()})")
-            return "ERROR: Failed to load the model."
-        else:
-            print_Color("predicting with the Ai model...", ["normal"])
-            model_prediction_ORG = model.predict(img_array)
-            model_prediction = np.argmax(model_prediction_ORG, axis=1)
-            pred_class = "PNEUMONIA" if model_prediction == 1 else "NORMAL"
-            confidence = np.max(model_prediction_ORG)
-            return_temp = f"the Ai model prediction: {pred_class} with confidence {confidence:.2f}."
-            if confidence < 0.82:
-                return_temp += "WARNING: the confidence is low."
-            if model_prediction == 1 and show_gradcam:
-                clahe = cv2.createCLAHE(clipLimit=1.8)
-                Grad_cam_heatmap = make_gradcam_heatmap(
-                    img_array,
-                    model,
-                    "top_activation",
-                    second_last_conv_layer_name="top_conv",
-                    sensitivity_map=2,
-                    pred_index=tf.argmax(model_prediction_ORG[0]),
-                )
-                Grad_cam_heatmap = cv2.resize(
-                    np.clip(Grad_cam_heatmap, 0, 1),
-                    (img_array.shape[1], img_array.shape[2]),
-                )
-                Grad_cam_heatmap = np.uint8(255 * Grad_cam_heatmap)
-                Grad_cam_heatmap = cv2.applyColorMap(Grad_cam_heatmap, cv2.COLORMAP_VIRIDIS)
-                Grad_cam_heatmap = np.clip(
-                    np.uint8((Grad_cam_heatmap * 0.3) + ((img_array * 255) * 0.7)),
-                    0,
-                    255,
-                )
-                # Resize the heatmap for a larger display
-                display_size = (600, 600)  # Change this to your desired display size
-                Grad_cam_heatmap = cv2.resize(Grad_cam_heatmap[0], display_size)
-                reference_image = np.uint8(cv2.resize(img_array[0] * 255, display_size))
-                # Apply the CLAHE algorithm to the reference image
-                reference_image_CLAHE = np.clip(
-                    clahe.apply(cv2.cvtColor(reference_image, cv2.COLOR_BGR2GRAY)),
-                    0,
-                    255,
-                )
-                # Display the heatmap in a new window
-                cv2.imshow("Grad-CAM Heatmap", Grad_cam_heatmap)
-                cv2.imshow("Reference Original Image", reference_image)
-                cv2.imshow("Reference Original Image (CLAHE)", reference_image_CLAHE)
-            return return_temp
+    # Main
+    try:
+        if model is None:
+            print_Color("loading the Ai model...", ["normal"])
+            model = load_model(Model_dir, custom_objects={
+                               "FixedDropout": FixedDropout})
+    except (ImportError, IOError):
+        logger.warning(
+            f"GP_pwai>>ERROR: Failed to load the model. Tr({traceback.format_exc()})")
+        return ("ERROR: Failed to load the model.", False)
     else:
-        print_Color(
-            "~*ERROR: ~*image data doesnt exist.",
-            ["red", "yellow"],
-            advanced_mode=True,
-            return_str=True,
-        )
+        print_Color("predicting with the Ai model...", ["normal"])
+        model_prediction_ORG = model.predict(img_array)
+        model_prediction = np.argmax(model_prediction_ORG, axis=1)
+        pred_class = "PNEUMONIA" if model_prediction == 1 else "NORMAL"
+        confidence = np.max(model_prediction_ORG)
+        return_temp = f"the Ai model prediction: {pred_class} with confidence {confidence:.2f}."
+        if confidence < 0.82:
+            return_temp += "WARNING: the confidence is low."
+        if model_prediction == 1 and show_gradcam:
+            clahe = cv2.createCLAHE(clipLimit=1.8)
+            Grad_cam_heatmap = make_gradcam_heatmap(
+                img_array,
+                model,
+                "top_activation",
+                second_last_conv_layer_name="top_conv",
+                sensitivity_map=2,
+                pred_index=tf.argmax(model_prediction_ORG[0]),
+            )
+            Grad_cam_heatmap = cv2.resize(
+                np.clip(Grad_cam_heatmap, 0, 1),
+                (img_array.shape[1], img_array.shape[2]),
+            )
+            Grad_cam_heatmap = np.uint8(255 * Grad_cam_heatmap)
+            Grad_cam_heatmap = cv2.applyColorMap(
+                Grad_cam_heatmap, cv2.COLORMAP_VIRIDIS)
+            Grad_cam_heatmap = np.clip(
+                np.uint8((Grad_cam_heatmap * 0.3) + ((img_array * 255) * 0.7)),
+                0,
+                255,
+            )
+            # Resize the heatmap for a larger display
+            # Change this to your desired display size
+            display_size = (600, 600)
+            Grad_cam_heatmap = cv2.resize(Grad_cam_heatmap[0], display_size)
+            reference_image = np.uint8(cv2.resize(
+                img_array[0] * 255, display_size))
+            # Apply the CLAHE algorithm to the reference image
+            reference_image_CLAHE = np.clip(
+                clahe.apply(cv2.cvtColor(reference_image, cv2.COLOR_BGR2GRAY)),
+                0,
+                255,
+            )
+            # Display the heatmap in a new window
+            cv2.imshow("Grad-CAM Heatmap (Press `q` to close all the images)", Grad_cam_heatmap)
+            cv2.imshow("Reference Original Image (Press `q` to close all the images)", reference_image)
+            cv2.imshow("Reference Original Image (CLAHE) (Press `q` to close all the images)",
+                       reference_image_CLAHE)
+            cv2.waitKey(1)
+        return (return_temp, True)
 
-
-# CI_rlmw
-def CI_rlmw() -> None:
+# GP_rlmw
+@function_tracker
+def GP_rlmw() -> None:
     """Loads the AI model on startup.
 
     Tries to load the model from the Model_dir path. If successful, logs a message to the GUI queue. If loading fails, logs an error.
@@ -541,13 +591,14 @@ def CI_rlmw() -> None:
         model = load_model(Model_dir, custom_objects={"FixedDropout": FixedDropout})
     except (ImportError, IOError):
         GUI_Queue["-Main_log-"].put("ERROR: Failed to load the model.")
-        logger.warning(f"CI_rlmw>>ERROR: Failed to load the model. Tr({traceback.format_exc()})")
+        logger.warning(f"GP_rlmw>>ERROR: Failed to load the model. Tr({traceback.format_exc()})")
         return None
     GUI_Queue["-Main_log-"].put("loading the Ai model done.")
 
 
-# CI_liid
-def CI_liid(img_dir, Show_DICOM_INFO: bool = True) -> str:
+# GP_liid
+@function_tracker
+def GP_liid(img_dir, Show_DICOM_INFO: bool = True) -> str:
     """Loads an image from the given image file path into a numpy array for model prediction.
 
     Supports JPEG, PNG and DICOM image formats. Resizes images to the model input shape, normalizes pixel values,
@@ -564,16 +615,16 @@ def CI_liid(img_dir, Show_DICOM_INFO: bool = True) -> str:
     # global var import
     global img_array
     # check for img
-    logger.debug(f"CI_liid:img_dir {img_dir}")
+    logger.debug(f"GP_liid:img_dir {img_dir}")
     # Extract file extension from img_dir
     try:
         _, file_extension = os.path.splitext(img_dir)
     except TypeError:
-        logger.warning("CI_liid>>ERROR: Invalid file format. Please provide an image file. (Extension Extractiion Failed)")
-        return "ERROR: Invalid file format. Please provide an image file. (Extension Extractiion Failed)"
+        logger.warning("GP_liid>>ERROR: Invalid file format. Please provide an image file. (Extension Extractiion Failed)")
+        return ("ERROR: Invalid file format. Please provide an image file. (Extension Extractiion Failed)", False)
     if file_extension.upper()[1:] not in IMG_AF:
-        logger.warning("CI_liid>>ERROR: Invalid file format. Please provide an image file.")
-        return "ERROR: Invalid file format. Please provide an image file."
+        logger.warning("GP_liid>>ERROR: Invalid file format. Please provide an image file.", False)
+        return ("ERROR: Invalid file format. Please provide an image file.", False)
     else:
         try:
             # Load and resize the image
@@ -600,8 +651,8 @@ def CI_liid(img_dir, Show_DICOM_INFO: bool = True) -> str:
             else:
                 img = Image.open(img_dir).resize((IMG_RES[1], IMG_RES[0]))
         except (NameError, FileNotFoundError):
-            logger.warning("CI_liid>>ERROR: Invalid file dir. Please provide an image file.")
-            return "ERROR: Invalid file dir. Please provide an image file."
+            logger.warning("GP_liid>>ERROR: Invalid file dir. Please provide an image file.")
+            return ("ERROR: Invalid file dir. Please provide an image file.", False)
         else:
             # Check for RGB mode
             if img.mode != "RGB":
@@ -615,11 +666,12 @@ def CI_liid(img_dir, Show_DICOM_INFO: bool = True) -> str:
             # Add a dimension to transform from (height, width, channels) to (batch_size, height, width, channels)
             img_array = np.expand_dims(img_array, axis=0)
 
-            return "Image loaded."
+            return ("Image loaded.", True, img_array)
 
 
-# CI_uaim
-def CI_uaim(model_type_id) -> None:
+# GP_uaim
+@function_tracker
+def GP_uaim(model_type_id) -> None:
     """Downloads the model from GitHub releases.
 
     Handles logging status messages to the GUI queue and any errors.
@@ -632,17 +684,18 @@ def CI_uaim(model_type_id) -> None:
             Model_dir,
             1024,
         )
-        CI_rlmw()
+        GP_rlmw()
         print("Model downloaded.")
     except Exception:
         GUI_Queue["-Main_log-"].put("ERROR: Failed to download the model.")
-        logger.warning(f"CI_uaim>>ERROR: Failed to download the model. Tr({traceback.format_exc()})")
+        logger.warning(f"GP_uaim>>ERROR: Failed to download the model. Tr({traceback.format_exc()})")
     else:
         GUI_Queue["-Main_log-"].put("Model downloaded.")
 
 
-# CI_umij
-def CI_umij() -> None:
+# GP_umij
+@function_tracker
+def GP_umij() -> None:
     """Downloads the model info JSON file from GitHub releases.
 
     Handles logging status messages to the GUI queue and any errors.
@@ -657,15 +710,16 @@ def CI_umij() -> None:
         )
     except Exception:
         GUI_Queue["-Main_log-"].put("ERROR: Failed to download the model info.")
-        logger.warning(f"CI_umij>>ERROR: Failed to download the model info. Tr({traceback.format_exc()})")
+        logger.warning(f"GP_umij>>ERROR: Failed to download the model info. Tr({traceback.format_exc()})")
     else:
         GUI_Queue["-Main_log-"].put("Model info downloaded.")
 
 
-# CI_gmi
-def CI_gmi() -> str:
+# GP_gmi
+@function_tracker
+def GP_gmi() -> str:
     if not os.path.isfile("Data\\model_info.json") or time.time() - os.path.getmtime("Data/model_info.json") > 4 * 60 * 60:
-        CI_umij()
+        GP_umij()
     model_info_dict = get_model_info(Model_dir)
     if model_info_dict["Ver"] != "Unknown":
         Model_State = "OK"
@@ -680,8 +734,76 @@ def CI_gmi() -> str:
     model_info_str += f'Ver: {model_info_dict["Ver"]}'
     return {"model_info_str": model_info_str}
 
-
+# funcs(Proc manager)>>>
+# PM_Other
+@function_tracker
+def PM_Other():
+    release_files = get_latest_release_files(Github_repo_Releases_URL)
+    for model_name in release_files:
+        if model_name.split(".")[1] == "h5" and not model_name.__contains__("weights"):
+            available_models.append([model_name])
+    while True:
+        GUI_Data['~Model_info~'] = GP_gmi()
+        
+        # End
+        sleep(0.75) # To limit usage
+# PM_Analyzer
+@function_tracker
+def PM_Analyzer(img_dir, dicom_info, show_gradcam):
+    logger.debug(f"PM_Analyzer>>Start... {img_dir}")
+    try:
+        GUI_Queue["-Main_log-"].put("Analyzing image...")
+        GP_liid_re = GP_liid(img_dir, Show_DICOM_INFO=dicom_info)
+        GUI_Queue["-Main_log-"].put(GP_liid_re[0])
+        if GP_liid_re[1]:
+            GUI_Queue["-Main_log-"].put("Using the Ai model to analyze the image...")
+            GP_pwai_re = GP_pwai(GP_liid_re[2], show_gradcam=show_gradcam)
+            if GP_pwai_re[1]:
+                GUI_Data["~Result~"] = (GP_pwai_re[0], "N" if "NORMAL" in GP_pwai_re[0] else "P")
+                GUI_Queue["-Main_log-"].put("Done analyzing the image.")
+                        # List of window names
+                window_names = ["Grad-CAM Heatmap (Press `q` to close all the images)",
+                                "Reference Original Image (Press `q` to close all the images)",
+                                "Reference Original Image (CLAHE) (Press `q` to close all the images)"]
+                while True:
+                    # Check if all windows are closed
+                    all_closed = True
+                    for name in window_names:
+                        try:
+                            if cv2.getWindowProperty(name, cv2.WND_PROP_AUTOSIZE) != -1:
+                                all_closed = False
+                                break
+                        except cv2.error:
+                            pass
+                    
+                    if all_closed:
+                        break
+                    if cv2.waitKey(1) & 0xFF == ord('q'):
+                        break
+                cv2.destroyAllWindows()
+            else:
+                GUI_Queue["-Main_log-"].put(GP_pwai_re[0] + "")
+                GUI_Queue["-Main_log-"].put("Failed to analyze the image.")
+    except Exception:
+        GUI_Queue["-Main_log-"].put("ERROR: Failed to analyze the image. (G-Exception)")
+        logger.warning(f"PM_Analyzer>>ERROR: Failed to analyze the image. Tr({traceback.format_exc()})")
+    logger.debug("PM_Analyzer>>End.")
+    
 # funcs(INTERNAL)>>>
+# Start_Thread
+def Start_Thread(func, Func_args=()):
+    """
+    Starts a thread to run the given function asynchronously.
+
+    Args:
+        func (callable): The function to run in the thread.
+        Func_args (tuple): Arguments to pass to the function.
+
+    Returns:
+        None
+    """
+    Thread = threading.Thread(target=func, args=Func_args, daemon=True)
+    Thread.start()
 # IEH
 def IEH(id: str = "Unknown", stop: bool = True, DEV: bool = True) -> None:
     """Prints an error message, logs the exception, optionally shows the traceback, and optionally exits.
@@ -763,8 +885,7 @@ def main() -> None:
     print_Color(GUI_text_logo, ["yellow", "green"], advanced_mode=True)
     # prep var
     IMG_dir = None
-    Update_model_info_LXT = None
-    Update_release_files_LXT = None
+    
     # Create the tabs
     GUI_tab_main = sg.Tab("Main", GUI_layout_Tab_main)
     GUI_tab_Ai_model = sg.Tab("Ai Model", GUI_layout_Tab_Ai_Model)
@@ -773,11 +894,14 @@ def main() -> None:
     # Create the window
     GUI_window = sg.Window(f"Pneumonia-Detection-Ai-GUI V{GUI_Ver}", GUI_layout_group, finalize=True)
     # Pre up
-    CI_umij()
+    Start_Thread(PM_Other)
     # Prep GUI sys info
     GUI_window["-OUTPUT_ST_SYS_INFO-"].update(GUI_Info)
     # Main loop for the Graphical User Interface (GUI)
     while True:
+        print(f"Active Funcs: {Active_procs}") if Debug_m else None
+        logger.debug(f"Active Funcs: {Active_procs}") if Debug_m else None
+        
         # Read events and values from the GUI window
         event, values = GUI_window.read(timeout=100, timeout_key="-TIMEOUT-")
         if not event == "-TIMEOUT-":
@@ -790,17 +914,12 @@ def main() -> None:
         if event == sg.WINDOW_CLOSED or event == "Close":
             # close GUI_window
             GUI_window.close()
-            # try to stop the CI_uaim_Thread
-            # try:
-            #     CI_uaim_Thread.()
-            # except Exception:
-            #     pass
             break  # Exit the loop and close the window
 
         # Handle event for updating the model
         if event == "-BUTTON_RELOAD_MODEL-":
             # Call the function to reload the model
-            CI_rlmw()
+            Start_Thread(GP_rlmw)
 
         # Handle event for browsing and selecting an image directory
         if event == "-BUTTON_BROWSE_IMG_dir-":
@@ -808,7 +927,7 @@ def main() -> None:
             IMG_dir = open_file_GUI()
             GUI_window["-INPUT_IMG_dir-"].update(IMG_dir)
 
-        # Handle event for confirming the selected image directory
+        # Handle event for the selected image directory
         if event == "-INPUT_IMG_dir-":
             # Retrieve the image directory from the input field and update the display
             IMG_dir = GUI_window["-INPUT_IMG_dir-"].get()
@@ -816,26 +935,7 @@ def main() -> None:
 
         # Handle event for analyzing the selected image
         if event == "Analyse":
-            # Call the function to load the image and update the output status
-            Log_temp_txt = CI_liid(IMG_dir, Show_DICOM_INFO=values["-CHECKBOX_SHOW_DICOM_INFO-"])
-            GUI_Queue["-Main_log-"].put(Log_temp_txt)
-            UWL()
-
-            # If the image is successfully loaded, proceed with analysis
-            if Log_temp_txt == "Image loaded.":
-                GUI_Queue["-Main_log-"].put("Analyzing...")
-                UWL()
-                # Call the function to perform pneumonia analysis and display the results
-                Log_temp_txt2 = CI_pwai(show_gradcam=values["-CHECKBOX_SHOW_Grad-CAM-"])
-                logger.info(f"CI_pwai: {Log_temp_txt2}")
-                GUI_Queue["-Main_log-"].put("Done Analyzing.")
-                UWL()
-                GUI_window["-OUTPUT_ST_R-"].update(
-                    Log_temp_txt2,
-                    text_color="green" if "NORMAL" in Log_temp_txt2 else "red",
-                    background_color="white",
-                )
-                UWL()
+            Start_Thread(PM_Analyzer, Func_args=(IMG_dir, values["-CHECKBOX_SHOW_DICOM_INFO-"], values["-CHECKBOX_SHOW_Grad-CAM-"]))
 
         # Handle event for updating the AI model
         if event == "-BUTTON_UPDATE_MODEL-":
@@ -843,23 +943,17 @@ def main() -> None:
             if values["-TABLE_ST_MODEL-"] == []:
                 GUI_Queue["-Main_log-"].put("ERROR: Failed to download the model. Select a available model from the list.")
             else:
-                CI_uaim_Thread = threading.Thread(target=CI_uaim, args=(values["-TABLE_ST_MODEL-"],), daemon=True)
-                CI_uaim_Thread.start()
-        # Updating the model info + ...
-        if Update_release_files_LXT is None or time.time() - Update_release_files_LXT > 1 * 60 * 60:
-            Update_release_files_LXT = time.time()
-            release_files = get_latest_release_files(Github_repo_Releases_URL)
-            for model_name in release_files:
-                if model_name.split(".")[1] == "h5" and not model_name.__contains__("weights"):
-                    available_models.append([model_name])
+                Start_Thread(GP_uaim, Func_args=(values["-TABLE_ST_MODEL-"]))
 
-        if Update_model_info_LXT is None or time.time() - Update_model_info_LXT > 15:
-            Update_model_info_LXT = time.time()
-            Github_repo_Release_info = CI_gmi()
-            GUI_window["-OUTPUT_Model_info-"].update(Github_repo_Release_info["model_info_str"], text_color="black")
-            GUI_window["-TABLE_ST_MODEL-"].update(available_models)
-            UWL(Only_finalize=True)
-        # Continuously check if there are results in the queue to be processed '-Main_log-'
+        # Continuously check if there are results in the queue to be processed '-Main_log-' and ...
+        GUI_window["-OUTPUT_ST_R-"].update(
+            GUI_Data["~Result~"][0],
+            text_color="green" if GUI_Data["~Result~"][1] == "N" else "red",
+            background_color="white",
+        )
+        GUI_window["-TABLE_ST_MODEL-"].update(GUI_Data["~Model_table~"])
+        if GUI_Data["~Model_info~"] is not None:
+            GUI_window["-OUTPUT_Model_info-"].update(GUI_Data["~Model_info~"]["model_info_str"], text_color="black")
         if GUI_Queue["-Main_log-"].is_updated:
             # Retrieve the result from the queue
             result_expanded = ""
@@ -869,10 +963,8 @@ def main() -> None:
             # Update the GUI with the result message
             for block in result:
                 result_expanded += f"> {block}\n"
-            GUI_window["-OUTPUT_ST-"].update(result_expanded, text_color="black")
-            UWL()
-
-
+            GUI_window["-OUTPUT_ST-"].update(result_expanded, text_color='black')
+            
 # start>>>
 # clear the 'start L1' prompt
 print("                  ", end="\r")
