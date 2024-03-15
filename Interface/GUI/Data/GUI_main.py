@@ -18,7 +18,7 @@ try:
 except (ImportError, NameError):
     print("Failed to load PySimpleGUI lib | Exiting")
     with open("Data\\logs\\SYS_FAILED_START_LOG.log", "a") as log_file:
-        log_file.write("\n<L1> Failed to load PySimpleGUI lib </L1>\n")
+        log_file.write(f"\n<L1> Failed to load PySimpleGUI lib Tr({traceback.format_exc()})</L1>\n")
     root = tk.Tk()
     root.withdraw()
     messagebox.showinfo("Internal Error | Exiting", "Failed to import PySimpleGUI, exiting...")
@@ -338,7 +338,13 @@ def get_latest_release_files(url) -> list:
     try:
         response = requests.get(url)
     except (ConnectionError, RequestException):
-        print("Failed to make a GET request to the GitHub API (Possible Cause: Max requests exceeded)")
+        print("Failed to make a GET request to the GitHub API (Possible Cause: Max requests exceeded / Broken internet connection)")
+        GUI_Queue["-Main_log-"].put(
+            "Failed to make a GET request to the GitHub API (Possible Cause: Max requests exceeded / Broken internet connection)"
+        )
+        logger.warning(
+            f"get_latest_release_files>>ERROR: Failed to make a GET request to the GitHub API (Possible Cause: Max requests exceeded / Broken internet connection) Tr({traceback.format_exc()})"
+        )
         return assets
 
     # Check if the request was successful
@@ -371,7 +377,18 @@ def download_file_from_github(url: str, file_name: str, save_as: str, chunk_size
         save_as (str): The local path to save the downloaded file to.
         chunk_size (int): The chunk size to use when streaming the download.
     """
-    response = requests.get(url)
+    # Make a GET request to the GitHub API
+    try:
+        response = requests.get(url)
+    except (ConnectionError, RequestException):
+        print("Failed to make a GET request to the GitHub API (Possible Cause: Max requests exceeded / Broken internet connection)")
+        GUI_Queue["-Main_log-"].put(
+            "Failed to make a GET request to the GitHub API (Possible Cause: Max requests exceeded / Broken internet connection)"
+        )
+        logger.warning(
+            f"download_file_from_github>>ERROR: Failed to make a GET request to the GitHub API (Possible Cause: Max requests exceeded / Broken internet connection) Tr({traceback.format_exc()})"
+        )
+        raise Exception
     data = response.json()
     # Debug out
     compressed_data = gzip.compress(str(data).encode())
@@ -453,6 +470,7 @@ def CI_pwai(show_gradcam: bool = True) -> str:
                 print_Color("loading the Ai model...", ["normal"])
                 model = load_model(Model_dir, custom_objects={"FixedDropout": FixedDropout})
         except (ImportError, IOError):
+            logger.warning(f"CI_pwai>>ERROR: Failed to load the model. Tr({traceback.format_exc()})")
             return "ERROR: Failed to load the model."
         else:
             print_Color("predicting with the Ai model...", ["normal"])
@@ -523,6 +541,7 @@ def CI_rlmw() -> None:
         model = load_model(Model_dir, custom_objects={"FixedDropout": FixedDropout})
     except (ImportError, IOError):
         GUI_Queue["-Main_log-"].put("ERROR: Failed to load the model.")
+        logger.warning(f"CI_rlmw>>ERROR: Failed to load the model. Tr({traceback.format_exc()})")
         return None
     GUI_Queue["-Main_log-"].put("loading the Ai model done.")
 
@@ -617,6 +636,7 @@ def CI_uaim(model_type_id) -> None:
         print("Model downloaded.")
     except Exception:
         GUI_Queue["-Main_log-"].put("ERROR: Failed to download the model.")
+        logger.warning(f"CI_uaim>>ERROR: Failed to download the model. Tr({traceback.format_exc()})")
     else:
         GUI_Queue["-Main_log-"].put("Model downloaded.")
 
@@ -637,6 +657,7 @@ def CI_umij() -> None:
         )
     except Exception:
         GUI_Queue["-Main_log-"].put("ERROR: Failed to download the model info.")
+        logger.warning(f"CI_umij>>ERROR: Failed to download the model info. Tr({traceback.format_exc()})")
     else:
         GUI_Queue["-Main_log-"].put("Model info downloaded.")
 
@@ -850,9 +871,6 @@ def main() -> None:
                 result_expanded += f"> {block}\n"
             GUI_window["-OUTPUT_ST-"].update(result_expanded, text_color="black")
             UWL()
-        # Main End log
-        if traceback.format_exc() is not None:
-            logger.warning(f"main[Proc Loop End]>>ERROR: A error was detected traceback: {traceback.format_exc()}")
 
 
 # start>>>
