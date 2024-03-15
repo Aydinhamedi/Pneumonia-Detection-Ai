@@ -18,7 +18,7 @@ try:
 except (ImportError, NameError):
     print("Failed to load PySimpleGUI lib | Exiting")
     with open("Data\\logs\\SYS_FAILED_START_LOG.log", "a") as log_file:
-        log_file.write("\n<L1> Failed to load PySimpleGUI lib </L1>\n")
+        log_file.write(f"\n<L1> Failed to load PySimpleGUI lib Tr({traceback.format_exc()})</L1>\n")
     root = tk.Tk()
     root.withdraw()
     messagebox.showinfo("Internal Error | Exiting", "Failed to import PySimpleGUI, exiting...")
@@ -40,7 +40,9 @@ try:
     # import re # noqa: F401
     import time
     import cv2
+    import gzip
     import json
+    import base64
     import atexit
     import queue
     import hashlib
@@ -86,7 +88,7 @@ except (ImportError, NameError):
     sys.exit()
 # global vars>>>
 # CONST SYS
-GUI_Ver = "0.9.5"
+GUI_Ver = "0.9.6"
 Model_dir = "Data/PAI_model"  # without file extention
 Database_dir = "Data/dataset.npy"
 IMG_AF = ("JPEG", "PNG", "BMP", "TIFF", "JPG", "DCM", "DICOM")
@@ -148,7 +150,7 @@ GUI_layout_Tab_main = [
         sg.Button("Browse", key="-BUTTON_BROWSE_IMG_dir-"),
     ],
     [sg.Text("Log:", font=(None, 10, "bold"))],
-    [sg.Multiline(key="-OUTPUT_ST-", size=(54, 6), autoscroll=True, disabled=True)],
+    [sg.Multiline(key="-OUTPUT_ST-", size=(54, 6), autoscroll=True, disabled=True, write_only=True)],
     [sg.Text("Result:", font=(None, 10, "bold"))],
     [sg.Text(key="-OUTPUT_ST_R-", size=(50, 2), background_color="white")],
     [
@@ -184,7 +186,7 @@ GUI_layout_Tab_Ai_Model = [
 GUI_layout_Tab_Sys_Info = [
     [sg.Text("System Info:", font=(None, 10, "bold"))],
     [
-        sg.Multiline("N/A", key="-OUTPUT_ST_SYS_INFO-", size=(54, 8), expand_y=True, disabled=True),
+        sg.Multiline("N/A", key="-OUTPUT_ST_SYS_INFO-", size=(54, 8), expand_y=True, disabled=True, write_only=True),
     ],
 ]
 
@@ -336,14 +338,24 @@ def get_latest_release_files(url) -> list:
     try:
         response = requests.get(url)
     except (ConnectionError, RequestException):
-        print("Failed to make a GET request to the GitHub API (Possible Cause: Max requests exceeded)")
+        print("Failed to make a GET request to the GitHub API (Possible Cause: Max requests exceeded / Broken internet connection)")
+        GUI_Queue["-Main_log-"].put(
+            "Failed to make a GET request to the GitHub API (Possible Cause: Max requests exceeded / Broken internet connection)"
+        )
+        logger.warning(
+            f"get_latest_release_files>>ERROR: Failed to make a GET request to the GitHub API (Possible Cause: Max requests exceeded / Broken internet connection) Tr({traceback.format_exc()})"
+        )
         return assets
 
     # Check if the request was successful
     if response.status_code == 200:
         # Parse the JSON response
         data = response.json()
-
+        # Debug out
+        compressed_data = gzip.compress(str(data).encode())
+        compressed_base64 = base64.b64encode(compressed_data).decode()
+        logger.debug(f"get_latest_release_files:data(json/gzip/base64) ~Gzip_Base64[{compressed_base64}]Gzip_Base64~")
+        # You can decompress it like --> gzip.decompress(base64.b64decode(compressed_base64)).decode()
         # Extract the assets from the latest release
         assets_temp = data["assets"]
         assets = [asset["name"] for asset in assets_temp]
@@ -365,14 +377,28 @@ def download_file_from_github(url: str, file_name: str, save_as: str, chunk_size
         save_as (str): The local path to save the downloaded file to.
         chunk_size (int): The chunk size to use when streaming the download.
     """
-    response = requests.get(url)
+    # Make a GET request to the GitHub API
+    try:
+        response = requests.get(url)
+    except (ConnectionError, RequestException):
+        print("Failed to make a GET request to the GitHub API (Possible Cause: Max requests exceeded / Broken internet connection)")
+        GUI_Queue["-Main_log-"].put(
+            "Failed to make a GET request to the GitHub API (Possible Cause: Max requests exceeded / Broken internet connection)"
+        )
+        logger.warning(
+            f"download_file_from_github>>ERROR: Failed to make a GET request to the GitHub API (Possible Cause: Max requests exceeded / Broken internet connection) Tr({traceback.format_exc()})"
+        )
+        raise Exception
     data = response.json()
-    logger.debug(f"download_file_from_github:data(json) {data}")
+    # Debug out
+    compressed_data = gzip.compress(str(data).encode())
+    compressed_base64 = base64.b64encode(compressed_data).decode()
+    logger.debug(f"download_file_from_github:data(json/gzip/base64) ~Gzip_Base64[{compressed_base64}]Gzip_Base64~")
+    # You can decompress it like --> gzip.decompress(base64.b64decode(compressed_base64)).decode()
     # Get the name of the latest release
     release_name = data["name"]
     print(f"Latest release: {release_name}")
     GUI_Queue["-Main_log-"].put(f"Latest Github repo release: {release_name}")
-
     # Get the assets of the latest release
     assets = data["assets"]
 
@@ -444,6 +470,7 @@ def CI_pwai(show_gradcam: bool = True) -> str:
                 print_Color("loading the Ai model...", ["normal"])
                 model = load_model(Model_dir, custom_objects={"FixedDropout": FixedDropout})
         except (ImportError, IOError):
+            logger.warning(f"CI_pwai>>ERROR: Failed to load the model. Tr({traceback.format_exc()})")
             return "ERROR: Failed to load the model."
         else:
             print_Color("predicting with the Ai model...", ["normal"])
@@ -514,6 +541,7 @@ def CI_rlmw() -> None:
         model = load_model(Model_dir, custom_objects={"FixedDropout": FixedDropout})
     except (ImportError, IOError):
         GUI_Queue["-Main_log-"].put("ERROR: Failed to load the model.")
+        logger.warning(f"CI_rlmw>>ERROR: Failed to load the model. Tr({traceback.format_exc()})")
         return None
     GUI_Queue["-Main_log-"].put("loading the Ai model done.")
 
@@ -608,6 +636,7 @@ def CI_uaim(model_type_id) -> None:
         print("Model downloaded.")
     except Exception:
         GUI_Queue["-Main_log-"].put("ERROR: Failed to download the model.")
+        logger.warning(f"CI_uaim>>ERROR: Failed to download the model. Tr({traceback.format_exc()})")
     else:
         GUI_Queue["-Main_log-"].put("Model downloaded.")
 
@@ -628,6 +657,7 @@ def CI_umij() -> None:
         )
     except Exception:
         GUI_Queue["-Main_log-"].put("ERROR: Failed to download the model info.")
+        logger.warning(f"CI_umij>>ERROR: Failed to download the model info. Tr({traceback.format_exc()})")
     else:
         GUI_Queue["-Main_log-"].put("Model info downloaded.")
 
