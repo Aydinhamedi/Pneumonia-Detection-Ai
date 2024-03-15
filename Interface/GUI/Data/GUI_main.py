@@ -851,7 +851,7 @@ def main() -> None:
             GUI_window["-OUTPUT_ST-"].update(result_expanded, text_color="black")
             UWL()
         # Main End log
-        if traceback.format_exc() != '':
+        if traceback.format_exc() is not None:
             logger.warning(f"main[Proc Loop End]>>ERROR: A error was detected traceback: {traceback.format_exc()}")
 
 
