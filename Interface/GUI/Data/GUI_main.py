@@ -132,7 +132,7 @@ class CustomQueue:
         return self.is_updated
 
 
-# GUI_Queue
+# GUI_Data
 GUI_Queue = {"-Main_log-": CustomQueue(max_items=128)}
 logger.remove()
 logger.add("Data\\logs\\SYS_LOG_{time}.log", backtrace=True, diagnose=True, compression="zip")
