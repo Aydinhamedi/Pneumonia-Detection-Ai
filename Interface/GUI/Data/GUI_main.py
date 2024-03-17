@@ -132,7 +132,7 @@ class CustomQueue:
         return self.is_updated
 
 
-# GUI_Queue
+# GUI_Data
 GUI_Queue = {"-Main_log-": CustomQueue(max_items=128)}
 logger.remove()
 logger.add("Data\\logs\\SYS_LOG_{time}.log", backtrace=True, diagnose=True, compression="zip")
@@ -444,16 +444,10 @@ def download_file_from_github(url: str, file_name: str, save_as: str, chunk_size
 
 
 # CF>>>
-# CI_ulmd
-def CI_ulmd() -> None:
-    """Prints a warning that model data upload is currently unavailable."""
-    print_Color("Warning: upload model data set (currently not available!!!)", ["yellow"])
-
-
-# CI_pwai
-def CI_pwai(show_gradcam: bool = True) -> str:
+# Ai_Predict
+def Ai_Predict(show_gradcam: bool = True) -> str:
     """
-    CI_pwai predicts pneumonia from an input image using a pre-trained deep learning model.
+    Ai_Predict predicts pneumonia from an input image using a pre-trained deep learning model.
 
     It loads the model if not already loaded, runs prediction, computes confidence score
     and class name. Optionally displays GradCAM visualization heatmap.
@@ -470,7 +464,7 @@ def CI_pwai(show_gradcam: bool = True) -> str:
                 print_Color("loading the Ai model...", ["normal"])
                 model = load_model(Model_dir, custom_objects={"FixedDropout": FixedDropout})
         except (ImportError, IOError):
-            logger.warning(f"CI_pwai>>ERROR: Failed to load the model. Tr({traceback.format_exc()})")
+            logger.warning(f"Ai_Predict>>ERROR: Failed to load the model. Tr({traceback.format_exc()})")
             return "ERROR: Failed to load the model."
         else:
             print_Color("predicting with the Ai model...", ["normal"])
@@ -526,8 +520,8 @@ def CI_pwai(show_gradcam: bool = True) -> str:
         )
 
 
-# CI_rlmw
-def CI_rlmw() -> None:
+# reload_model
+def reload_model() -> None:
     """Loads the AI model on startup.
 
     Tries to load the model from the Model_dir path. If successful, logs a message to the GUI queue. If loading fails, logs an error.
@@ -541,13 +535,13 @@ def CI_rlmw() -> None:
         model = load_model(Model_dir, custom_objects={"FixedDropout": FixedDropout})
     except (ImportError, IOError):
         GUI_Queue["-Main_log-"].put("ERROR: Failed to load the model.")
-        logger.warning(f"CI_rlmw>>ERROR: Failed to load the model. Tr({traceback.format_exc()})")
+        logger.warning(f"reload_model>>ERROR: Failed to load the model. Tr({traceback.format_exc()})")
         return None
     GUI_Queue["-Main_log-"].put("loading the Ai model done.")
 
 
-# CI_liid
-def CI_liid(img_dir, Show_DICOM_INFO: bool = True) -> str:
+# load_image
+def load_image(img_dir, Show_DICOM_INFO: bool = True) -> str:
     """Loads an image from the given image file path into a numpy array for model prediction.
 
     Supports JPEG, PNG and DICOM image formats. Resizes images to the model input shape, normalizes pixel values,
@@ -564,15 +558,15 @@ def CI_liid(img_dir, Show_DICOM_INFO: bool = True) -> str:
     # global var import
     global img_array
     # check for img
-    logger.debug(f"CI_liid:img_dir {img_dir}")
+    logger.debug(f"load_image:img_dir {img_dir}")
     # Extract file extension from img_dir
     try:
         _, file_extension = os.path.splitext(img_dir)
     except TypeError:
-        logger.warning("CI_liid>>ERROR: Invalid file format. Please provide an image file. (Extension Extractiion Failed)")
+        logger.warning("load_image>>ERROR: Invalid file format. Please provide an image file. (Extension Extractiion Failed)")
         return "ERROR: Invalid file format. Please provide an image file. (Extension Extractiion Failed)"
     if file_extension.upper()[1:] not in IMG_AF:
-        logger.warning("CI_liid>>ERROR: Invalid file format. Please provide an image file.")
+        logger.warning("load_image>>ERROR: Invalid file format. Please provide an image file.")
         return "ERROR: Invalid file format. Please provide an image file."
     else:
         try:
@@ -600,7 +594,7 @@ def CI_liid(img_dir, Show_DICOM_INFO: bool = True) -> str:
             else:
                 img = Image.open(img_dir).resize((IMG_RES[1], IMG_RES[0]))
         except (NameError, FileNotFoundError):
-            logger.warning("CI_liid>>ERROR: Invalid file dir. Please provide an image file.")
+            logger.warning("load_image>>ERROR: Invalid file dir. Please provide an image file.")
             return "ERROR: Invalid file dir. Please provide an image file."
         else:
             # Check for RGB mode
@@ -618,8 +612,8 @@ def CI_liid(img_dir, Show_DICOM_INFO: bool = True) -> str:
             return "Image loaded."
 
 
-# CI_uaim
-def CI_uaim(model_type_id) -> None:
+# download_model
+def download_model(model_type_id) -> None:
     """Downloads the model from GitHub releases.
 
     Handles logging status messages to the GUI queue and any errors.
@@ -632,17 +626,17 @@ def CI_uaim(model_type_id) -> None:
             Model_dir,
             1024,
         )
-        CI_rlmw()
+        reload_model()
         print("Model downloaded.")
     except Exception:
         GUI_Queue["-Main_log-"].put("ERROR: Failed to download the model.")
-        logger.warning(f"CI_uaim>>ERROR: Failed to download the model. Tr({traceback.format_exc()})")
+        logger.warning(f"download_model>>ERROR: Failed to download the model. Tr({traceback.format_exc()})")
     else:
         GUI_Queue["-Main_log-"].put("Model downloaded.")
 
 
-# CI_umij
-def CI_umij() -> None:
+# download_model_info
+def download_model_info() -> None:
     """Downloads the model info JSON file from GitHub releases.
 
     Handles logging status messages to the GUI queue and any errors.
@@ -657,15 +651,15 @@ def CI_umij() -> None:
         )
     except Exception:
         GUI_Queue["-Main_log-"].put("ERROR: Failed to download the model info.")
-        logger.warning(f"CI_umij>>ERROR: Failed to download the model info. Tr({traceback.format_exc()})")
+        logger.warning(f"download_model_info>>ERROR: Failed to download the model info. Tr({traceback.format_exc()})")
     else:
         GUI_Queue["-Main_log-"].put("Model info downloaded.")
 
 
-# CI_gmi
-def CI_gmi() -> str:
+# model_info
+def model_info() -> str:
     if not os.path.isfile("Data\\model_info.json") or time.time() - os.path.getmtime("Data/model_info.json") > 4 * 60 * 60:
-        CI_umij()
+        download_model_info()
     model_info_dict = get_model_info(Model_dir)
     if model_info_dict["Ver"] != "Unknown":
         Model_State = "OK"
@@ -773,7 +767,7 @@ def main() -> None:
     # Create the window
     GUI_window = sg.Window(f"Pneumonia-Detection-Ai-GUI V{GUI_Ver}", GUI_layout_group, finalize=True)
     # Pre up
-    CI_umij()
+    download_model_info()
     # Prep GUI sys info
     GUI_window["-OUTPUT_ST_SYS_INFO-"].update(GUI_Info)
     # Main loop for the Graphical User Interface (GUI)
@@ -790,9 +784,9 @@ def main() -> None:
         if event == sg.WINDOW_CLOSED or event == "Close":
             # close GUI_window
             GUI_window.close()
-            # try to stop the CI_uaim_Thread
+            # try to stop the download_model_Thread
             # try:
-            #     CI_uaim_Thread.()
+            #     download_model_Thread.()
             # except Exception:
             #     pass
             break  # Exit the loop and close the window
@@ -800,7 +794,7 @@ def main() -> None:
         # Handle event for updating the model
         if event == "-BUTTON_RELOAD_MODEL-":
             # Call the function to reload the model
-            CI_rlmw()
+            reload_model()
 
         # Handle event for browsing and selecting an image directory
         if event == "-BUTTON_BROWSE_IMG_dir-":
@@ -817,7 +811,7 @@ def main() -> None:
         # Handle event for analyzing the selected image
         if event == "Analyse":
             # Call the function to load the image and update the output status
-            Log_temp_txt = CI_liid(IMG_dir, Show_DICOM_INFO=values["-CHECKBOX_SHOW_DICOM_INFO-"])
+            Log_temp_txt = load_image(IMG_dir, Show_DICOM_INFO=values["-CHECKBOX_SHOW_DICOM_INFO-"])
             GUI_Queue["-Main_log-"].put(Log_temp_txt)
             UWL()
 
@@ -826,8 +820,8 @@ def main() -> None:
                 GUI_Queue["-Main_log-"].put("Analyzing...")
                 UWL()
                 # Call the function to perform pneumonia analysis and display the results
-                Log_temp_txt2 = CI_pwai(show_gradcam=values["-CHECKBOX_SHOW_Grad-CAM-"])
-                logger.info(f"CI_pwai: {Log_temp_txt2}")
+                Log_temp_txt2 = Ai_Predict(show_gradcam=values["-CHECKBOX_SHOW_Grad-CAM-"])
+                logger.info(f"Ai_Predict: {Log_temp_txt2}")
                 GUI_Queue["-Main_log-"].put("Done Analyzing.")
                 UWL()
                 GUI_window["-OUTPUT_ST_R-"].update(
@@ -843,8 +837,8 @@ def main() -> None:
             if values["-TABLE_ST_MODEL-"] == []:
                 GUI_Queue["-Main_log-"].put("ERROR: Failed to download the model. Select a available model from the list.")
             else:
-                CI_uaim_Thread = threading.Thread(target=CI_uaim, args=(values["-TABLE_ST_MODEL-"],), daemon=True)
-                CI_uaim_Thread.start()
+                download_model_Thread = threading.Thread(target=download_model, args=(values["-TABLE_ST_MODEL-"],), daemon=True)
+                download_model_Thread.start()
         # Updating the model info + ...
         if Update_release_files_LXT is None or time.time() - Update_release_files_LXT > 1 * 60 * 60:
             Update_release_files_LXT = time.time()
@@ -855,7 +849,7 @@ def main() -> None:
 
         if Update_model_info_LXT is None or time.time() - Update_model_info_LXT > 15:
             Update_model_info_LXT = time.time()
-            Github_repo_Release_info = CI_gmi()
+            Github_repo_Release_info = model_info()
             GUI_window["-OUTPUT_Model_info-"].update(Github_repo_Release_info["model_info_str"], text_color="black")
             GUI_window["-TABLE_ST_MODEL-"].update(available_models)
             UWL(Only_finalize=True)
