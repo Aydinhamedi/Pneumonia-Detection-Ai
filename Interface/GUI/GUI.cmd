@@ -1,8 +1,9 @@
 @echo off
 REM Conf:
 setlocal enabledelayedexpansion
-TITLE Pneumonia-Detection-Ai-GUI
+TITLE Pneumonia-Detection-Ai-GUI-Launcher
 set python_min_VER=10
+set python_max_VER=10
 set DEBUG=0
 set Full_Auto=1
 set arg=%1
@@ -44,21 +45,27 @@ echo Checking Python version...
 REM Ensure Python version is %python_min_VER% or higher
 for /F "tokens=2 delims=." %%i IN ('"%python_path%" --version 2^>^&1') DO set python_version_major=%%i
 if %python_version_major% LSS %python_min_VER% (
-    echo Warning: Please update your Python version to 3.%python_min_VER%.x or higher!
+    echo Warning: Please uninstall python and install Python 3.%python_max_VER%.x ^(Ver too low^)
+    pause
+    exit /B
+) else if %python_version_major% GTR %python_max_VER% (
+    echo Warning: Please uninstall python and install Python 3.%python_max_VER%.x ^(Ver too high^)
     pause
     exit /B
 )
 
 REM Check if the required packages are installed
 echo Checking the required packages...
-for /F "usebackq delims==" %%i in ("Data\requirements.txt") do (
+for /F "usebackq delims=" %%i in ("Data\requirements.txt") do (
     call :check_install %%i
 )
 REM Write the current Python version + Python install time to the file
 echo %current_python_version% > %PV_filepath%
 @REM Pause for user input
-echo Press any key to load the GUI...
-pause > nul
+if not "%Full_Auto%"=="1" (
+    echo Press any key to load the GUI...
+    pause > nul
+)
 
 :FAST_START
 REM Print the appropriate loading message
@@ -85,21 +92,23 @@ goto :EOF
 :check_install
 REM Check if a package is installed and offer to install it if not
 set userinput=Y
-"%pip_path%" show %1 >nul
+set "P_name=%~1==%~2"
+"%pip_path%" show %~1 >nul 2>&1
 if ERRORLEVEL 1 (
     if not "%Full_Auto%"=="1" (
-        echo Package %1 not found. Do you want to automatically install it? [Y/n]
+        echo Package %P_name% not found. Do you want to automatically install it? [Y/n]
         set /p userinput="Answer: "
     )
     if /I "%userinput%"=="Y" (
-        echo Installing package %1
-        "%pip_path%" install %1
+        echo Installing package %P_name%
+        "%pip_path%" install %P_name%
         if ERRORLEVEL 1 (
-            echo Failed to install package %1.
-            exit /B
+            echo Failed to install package %P_name%.
+            Pause
+            goto :EOF
         )
     )
 ) else if "%DEBUG%"=="1" (
-    echo Package %1 is already installed.
+    echo Package %P_name% is already installed.
 )
 GOTO:EOF

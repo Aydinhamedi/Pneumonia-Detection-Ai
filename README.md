@@ -2,8 +2,9 @@
 
 <img src="https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue"/> <img src="https://img.shields.io/badge/Jupyter-F37626.svg?&style=for-the-badge&logo=Jupyter&logoColor=white"/> <img src="https://img.shields.io/badge/TensorFlow-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white"/> <img src="https://img.shields.io/badge/Keras-FF0000?style=for-the-badge&logo=keras&logoColor=white"/> <img src="https://img.shields.io/badge/OpenCV-27338e?style=for-the-badge&logo=OpenCV&logoColor=white"/>
 
-
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![Ruff](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/actions/workflows/ruff_L&F.yml/badge.svg)](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/actions/workflows/ruff_L&F.yml)
 [![CodeQL](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/actions/workflows/codeql.yml)
 [![Dependency Review](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/actions/workflows/dependency-review.yml/badge.svg)](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/actions/workflows/dependency-review.yml)\
 [![Python Test [main]](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/actions/workflows/python-app.yml/badge.svg?branch=main)](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/actions/workflows/python-app.yml)
@@ -36,7 +37,8 @@
 > ```
 
 The project includes a Command Line Interface (CLI) and a (GUI) Graphical User Interface for easy use of the model. The CLI, which is based on the [Python CLI template](https://github.com/Aydinhamedi/Python-CLI-template) from the same author, provides a user-friendly, colorful interface that allows you to interact with the model. you can fined the CLI in 
-
+> [!CAUTION]
+> The last version of CLI is V0.8.9.3 and currently its has entered a minimal maintenance and not being updated ***and its going to be deprecated***. 
 ```
 Interface\CLI
 ```
