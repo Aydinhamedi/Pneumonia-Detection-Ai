@@ -1,11 +1,9 @@
-# This workflow will install Python dependencies, run tests and lint with a single version of Python
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
-
-name: Ruff
+# Main
+name: Ruff - Main
 
 on:
   push:
-    branches: [ "main", "Alpha-b", "Beta-b" ]
+    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
     
