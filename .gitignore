@@ -96,3 +96,7 @@ Samples/*
 /Temp
 /Test.md
 /Interface/GUI/Data/model_info.json
+/Load_Backup.py
+
+# Exclude backup load
+/Backup_*_COPY.ipynb
