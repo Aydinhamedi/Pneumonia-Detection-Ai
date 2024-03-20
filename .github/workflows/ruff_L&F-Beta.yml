@@ -3,7 +3,7 @@ name: Ruff - Beta
 
 on:
   push:
-    branches: [ "Beta" ]
+    branches: [ "Beta-b" ]
     
 jobs:
   Ruff:
