@@ -72,11 +72,11 @@ The model is a Convolutional Neural Network (CNN) trained on a dataset of 23681 
 This combined dataset provides a comprehensive set of images for training the model.\
 
 ### Model list:
-| Model    | Base Model      | Params | acc    | Status |
-|----------|-----------------|--------|--------|--------|
-| V6       | efficientnet-b7 | 65.4M  | 97.12% |   ✅   |
-| V7 light | efficientnet-b4 | 29.7M  | 97.12% |   ✅  |
-| V8 Super light | efficientnet-b0 | 4.8M  | 96.47% |   ✅  |
+| Model    | Base Model      | Params | acc    | Status | Grad Cam |
+|----------|-----------------|--------|--------|--------|----------|
+| V6       | efficientnet-b7 | 65.4M  | 97.12% |   ✅   |  ✅  | 
+| V7 light | efficientnet-b4 | 29.7M  | 97.12% |   ✅   |  ⚠️  | 
+| V8 Super light | efficientnet-b0 | 4.8M  | 96.47% |  ✅  |   ❌  | 
 
 ## Training Methods
 ### The AI model supports two distinct training approaches:
