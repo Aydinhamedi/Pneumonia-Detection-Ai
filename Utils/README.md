@@ -19,9 +19,6 @@
 
 ## Timeout_input.py (by Me)
 
-## swap_ema_weights and New_SGD.py (\`**smi**\` copy of keras 3)
-- ### github repo used: [keras](https://github.com/keras-team/keras)
-
 ## FixedDropout.py (by Me)
 For EfficientNet model Example:
 ```python
