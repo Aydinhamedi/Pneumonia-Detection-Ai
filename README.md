@@ -10,6 +10,8 @@
 [![Ruff - Beta](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/actions/workflows/ruff_L&F-Beta.yml/badge.svg?branch=Beta-b)](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/actions/workflows/ruff_L&F-Beta.yml)
 [![Ruff - Alpha](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/actions/workflows/ruff_L&F-Alpha.yml/badge.svg?branch=Alpha-b)](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/actions/workflows/ruff_L&F-Alpha.yml)
 
+# <h1><p align="center">**🚧Deprecated🚧**</p></h1>
+
 ### This project uses a deep learning model built with the TensorFlow Library to detect pneumonia in X-ray images. The model architecture is based on the EfficientNetB7 model, which has achieved an accuracy of approximately 97.12% (97.11538%) on our test data. This high accuracy rate is one of the strengths of our AI model.
 > [!IMPORTANT]
 > The code that had achieved the highest acc is `backup/V6/Model_T&T.ipynb`.\
