@@ -104,4 +104,5 @@ Samples/*
 /Backup_*_COPY.ipynb
 
 # Temp
-/Utils/QHAdam.py
+/history/Archive
+/Test_ENV_G.ipynb
