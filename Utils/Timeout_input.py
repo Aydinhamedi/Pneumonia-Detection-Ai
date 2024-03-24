@@ -2,6 +2,7 @@ import threading
 import queue
 import keyboard
 
+
 class TimeoutInput:
     """
     A class to get user input with a timeout.
@@ -24,9 +25,9 @@ class TimeoutInput:
 
     def get_input(self):
         """Get user input in a non-blocking manner."""
-        print(self.prompt, end='', flush=True)
+        print(self.prompt, end="", flush=True)
         while not self.stop_thread:
-            if keyboard.is_pressed('\n'):
+            if keyboard.is_pressed("\n"):
                 line = input()
                 if line:
                     self.input_queue.put(line.strip())
@@ -49,6 +50,7 @@ class TimeoutInput:
         else:
             self.user_input = self.input_queue.get()
             return {"user_input": self.user_input, "input_time": self.timeout, "default_var_used": False}
+
 
 # Example usage
 if __name__ == "__main__":

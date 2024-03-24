@@ -2,6 +2,7 @@ from keras import backend
 from keras import ops
 from keras.callbacks import Callback
 
+
 class SwapEMAWeights(Callback):
     """Swaps model weights and EMA weights before and after evaluation.
 
@@ -114,9 +115,7 @@ class SwapEMAWeights(Callback):
             optimizer = self.model.optimizer
         if not hasattr(optimizer, "_model_variables_moving_average"):
             raise ValueError(
-                "SwapEMAWeights must be used when "
-                "`use_ema=True` is set on the optimizer. "
-                f"Received: use_ema={optimizer.use_ema}"
+                "SwapEMAWeights must be used when " "`use_ema=True` is set on the optimizer. " f"Received: use_ema={optimizer.use_ema}"
             )
         if backend.backend() == "tensorflow":
             self._tf_swap_variables(optimizer)
@@ -131,9 +130,7 @@ class SwapEMAWeights(Callback):
             optimizer = self.model.optimizer
         if not hasattr(optimizer, "_model_variables_moving_average"):
             raise ValueError(
-                "SwapEMAWeights must be used when "
-                "`use_ema=True` is set on the optimizer. "
-                f"Received: use_ema={optimizer.use_ema}"
+                "SwapEMAWeights must be used when " "`use_ema=True` is set on the optimizer. " f"Received: use_ema={optimizer.use_ema}"
             )
         if backend.backend() == "tensorflow":
             self._tf_finalize_ema_values(optimizer)

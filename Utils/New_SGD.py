@@ -1,6 +1,7 @@
 from keras import ops
 from keras.optimizers import optimizer
 
+
 class N_SGD(optimizer.Optimizer):
     """Gradient descent (with momentum) optimizer.
 
@@ -84,11 +85,7 @@ class N_SGD(optimizer.Optimizer):
         self.momentums = []
         if self.momentum != 0:
             for variable in variables:
-                self.momentums.append(
-                    self.add_variable_from_reference(
-                        reference_variable=variable, name="momentum"
-                    )
-                )
+                self.momentums.append(self.add_variable_from_reference(reference_variable=variable, name="momentum"))
 
     def update_step(self, gradient, variable, learning_rate):
         """Update step given gradient and the associated model variable."""
