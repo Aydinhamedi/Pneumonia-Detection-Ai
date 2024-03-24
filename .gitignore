@@ -96,9 +96,13 @@ Samples/*
 /Temp
 /Test.md
 /Interface/GUI/Data/model_info.json
+/ruff_check_results.txt
+/ruff_format_results.txt
 /Load_Backup.py
 
 # Exclude backup load
 /Backup_*_COPY.ipynb
-/ruff_check_results.txt
-/ruff_format_results.txt
+
+# Temp
+/history/Archive
+/Test_ENV_G.ipynb

@@ -4,12 +4,11 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
-[![Ruff](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/actions/workflows/ruff_L&F.yml/badge.svg)](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/actions/workflows/ruff_L&F.yml)
 [![CodeQL](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/actions/workflows/codeql.yml)
 [![Dependency Review](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/actions/workflows/dependency-review.yml/badge.svg)](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/actions/workflows/dependency-review.yml)\
-[![Python Test [main]](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/actions/workflows/python-app.yml/badge.svg?branch=main)](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/actions/workflows/python-app.yml)
-[![Python Test [Beta-b]](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/actions/workflows/python-app_Beta-b.yml/badge.svg?branch=Beta-b)](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/actions/workflows/python-app_Beta-b.yml)\
-[![Python Test [Alpha-b]](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/actions/workflows/python-app_Alpha-b.yml/badge.svg?branch=Alpha-b)](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/actions/workflows/python-app_Alpha-b.yml)
+[![Ruff - Main](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/actions/workflows/ruff_L&F-Main.yml/badge.svg)](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/actions/workflows/ruff_L&F-Main.yml)
+[![Ruff - Beta](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/actions/workflows/ruff_L&F-Beta.yml/badge.svg?branch=Beta-b)](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/actions/workflows/ruff_L&F-Beta.yml)
+[![Ruff - Alpha](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/actions/workflows/ruff_L&F-Alpha.yml/badge.svg?branch=Alpha-b)](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/actions/workflows/ruff_L&F-Alpha.yml)
 
 ### This project uses a deep learning model built with the TensorFlow Library to detect pneumonia in X-ray images. The model architecture is based on the EfficientNetB7 model, which has achieved an accuracy of approximately 97.12% (97.11538%) on our test data. This high accuracy rate is one of the strengths of our AI model.
 > [!IMPORTANT]
@@ -73,11 +72,11 @@ The model is a Convolutional Neural Network (CNN) trained on a dataset of 23681 
 This combined dataset provides a comprehensive set of images for training the model.\
 
 ### Model list:
-| Model    | Base Model      | Params | acc    | Status |
-|----------|-----------------|--------|--------|--------|
-| V6       | efficientnet-b7 | 65.4M  | 97.12% |   ✅   |
-| V7 light | efficientnet-b4 | 29.7M  | 97.12% |   ✅  |
-| V8 Super light | efficientnet-b0 | 4.8M  | 96.47% |   ✅  |
+| Model    | Base Model      | Params | acc    | Status | Grad Cam |
+|----------|-----------------|--------|--------|--------|----------|
+| V6       | efficientnet-b7 | 65.4M  | 97.12% |   ✅   |  ✅  | 
+| V7 light | efficientnet-b4 | 29.7M  | 97.12% |   ✅   |  ⚠️  | 
+| V8 Super light | efficientnet-b0 | 4.8M  | 96.47% |  ✅  |   ❌  | 
 
 ## Training Methods
 ### The AI model supports two distinct training approaches:
@@ -149,4 +148,4 @@ The model provided in this project should not be used for medical diagnosis with
 
 ## License
 
-This project is open-source and is licensed under the MIT License. See the `LICENSE` file for details.
+This project is open-source and is licensed under the MIT License. See the `LICENSE` file for details.
