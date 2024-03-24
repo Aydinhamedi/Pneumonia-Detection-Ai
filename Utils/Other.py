@@ -1,7 +1,6 @@
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from Utils.print_color_V2_NEW import print_Color_V2
 from Utils.print_color_V1_OLD import print_Color
-import keras.backend as K
 from tabulate import tabulate
 from numba import cuda
 import numpy as np
@@ -141,9 +140,10 @@ def set_optimizer_attribute(optimizer, attribute, value, verbose: bool = False):
         verbose: Whether to print a message if the attribute does not exist.
     """
     if hasattr(optimizer, attribute):
-        K.set_value(getattr(optimizer, attribute), value)
+        setattr(optimizer, attribute, value)
     else:
-        print(f"The optimizer does not have an attribute named '{attribute}'") if verbose else None
+        if verbose:
+            print(f"The optimizer does not have an attribute named '{attribute}'")
 
 
 def print_optimizer_info(model):
