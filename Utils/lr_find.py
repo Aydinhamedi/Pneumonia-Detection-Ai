@@ -1,13 +1,10 @@
+import keras
 import tempfile
-
 import matplotlib.pyplot as plt
 import numpy as np
-
 import tensorflow as tf
-from tensorflow import keras
 from tqdm.auto import tqdm
-
-K = keras.backend
+import keras.src.legacy.backend as K
 
 
 class Scheduler:
@@ -59,9 +56,9 @@ class LrFinder:
 
     def __init__(
         self,
-        model: tf.keras.Model,
-        optimizer: tf.keras.optimizers.Optimizer,
-        loss_fn: tf.keras.losses.Loss,
+        model: keras.Model,
+        optimizer: keras.optimizers.Optimizer,
+        loss_fn: keras.losses.Loss,
     ) -> None:
         self.lrs = []
         self.losses = []

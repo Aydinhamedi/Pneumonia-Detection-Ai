@@ -1,9 +1,7 @@
-from tensorflow import keras
+import keras
 import math
 import matplotlib.pyplot as plt
-
-K = keras.backend
-
+import keras.src.legacy.backend as K
 
 class OneCycleLr(keras.callbacks.Callback):
     """
