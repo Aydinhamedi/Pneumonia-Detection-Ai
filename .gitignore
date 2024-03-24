@@ -106,3 +106,5 @@ Samples/*
 # Temp
 /history/Archive
 /Test_ENV_G.ipynb
+/PAI_model_weights_BL.weights.h5
+/PAI_model_weights.weights.h5
