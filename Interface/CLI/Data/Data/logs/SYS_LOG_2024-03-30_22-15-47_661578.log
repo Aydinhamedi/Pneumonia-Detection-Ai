@@ -1,0 +1,6 @@
+2024-03-30 22:15:47.663 | INFO     | __main__:<module>:55 - CLI Start...
+
+2024-03-30 22:15:47.717 | INFO     | __main__:<module>:898 - PDAI Ver: V0.8.9.3 (CLI) CDT(2024/03/30 | 22:15:47)
+2024-03-30 22:15:47.718 | INFO     | __main__:<module>:899 - Python Ver: 3.10.8 (tags/v3.10.8:aaaf517, Oct 11 2022, 16:50:30) [MSC v.1933 64 bit (AMD64)]
+2024-03-30 22:15:47.718 | INFO     | __main__:<module>:900 - Tensorflow Ver: 2.10.1
+2024-03-30 22:15:47.718 | INFO     | __main__:<module>:901 - Mode: GPU, GPU NAME: /physical_device:GPU:0>>NVIDIA GeForce RTX 3090, CUDA Version: 64_112
