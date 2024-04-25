@@ -15,7 +15,7 @@
 > The code that had achieved the highest acc is `backup/V6/Model_T&T.ipynb`.\
 > And the codes with the light and super light models are `backup/V7/Model_T&T.ipynb`, `backup/V8/Model_T&T.ipynb`.
 
-## Usage
+## 🚀 Usage
 > [!TIP]
 > If you just want the model go to the Github Releases.
 
@@ -50,18 +50,18 @@ Interface\GUI
 ### Example Image of the GUI (V0.8.9.6) ⤵
 ![Example](doc/Other/GUI_V0.8.9.6.png)  
 
-## Release
+## 📦 Release
 > ### Newest release 📃
 > #### [Go to newest release](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/releases/latest)
 
-## Training System Specifications
+## 📜 Training System Specifications
 
 - **Graphics Card (GPU)**: RTX 3090
 - **Memory (RAM)**: 64GB
 - **Operating System (OS)**: Windows 11 Pro
 - **Processor (CPU)**: Intel Core i7-12700KF
 
-## Model
+## 📜 Model
 
 The model is a Convolutional Neural Network (CNN) trained on a dataset of 23681 X-ray images. The dataset is a combination of the following:
 
@@ -78,7 +78,7 @@ This combined dataset provides a comprehensive set of images for training the mo
 | V7 light | efficientnet-b4 | 29.7M  | 97.12% |   ✅   |  ⚠️  | 
 | V8 Super light | efficientnet-b0 | 4.8M  | 96.47% |  ✅  |   ❌  | 
 
-## Training Methods
+## 🧪 Training Methods
 ### The AI model supports two distinct training approaches:
 
 - rev1: A straightforward method using Keras fit function for basic training.
@@ -95,20 +95,20 @@ This combined dataset provides a comprehensive set of images for training the mo
 - Robustness Enhancement: Introduces random noise to training images to strengthen model robustness against unseen data.
 - While rev1 is suitable for quick and simple model training, rev2 is tailored for those seeking a more sophisticated and potentially more effective training regimen.
 
-## Repository Structure
+## 📁 Repository Structure
 
 Please note that due to the large size of some files and folders, they are not available directly in the repository. However, they can be found in the [Releases](https://github.com/Aydinhamedi/Pneumonia-Detection-Ai/releases) page of the repository. This includes the model weights and the database, which are crucial for the functioning of the AI model.
 
-## Contribution
+## 🤝 Contribution
 
 Any contributions to improve the project are welcome. You can submit a pull request or open an issue on GitHub. Please make sure to test your changes thoroughly before submitting. We appreciate your help in making this project better.
 
-## WARNING
+## ⚠️ WARNING
 > [!CAUTION]
 The model provided in this project should not be used for medical diagnosis without further validation. While the model has shown high accuracy in detecting pneumonia from X-ray images, it is not a substitute for professional medical advice. Please consult with a healthcare professional for medical advice.
 
 
-## Other
+## 📂 Other
 > [!NOTE]
 > Please note that this code uses my:
 > - Python-CLI-template
@@ -118,7 +118,7 @@ The model provided in this project should not be used for medical diagnosis with
 > - Python-color-print
 >   - for more info go to https://github.com/Aydinhamedi/Python-color-print.
 
-## Results
+## 📃 Results
 
 > [!WARNING]
 > Results were achieved using Rev2 training method and Rev1.2 model and
@@ -126,13 +126,13 @@ The model provided in this project should not be used for medical diagnosis with
 <!-- #### N/A --> 
 ### Acc:
 ![img_](doc/V6/D1.png)
-### Grad cam:
+### 📷 Grad cam:
 | Model    | Grad-cam Ex |
 |----------|----------|
 | V6       | ![img_](doc/V6+/D1.png)![img_](doc/V6+/D2.png)![img_](doc/V6+/D3.png)|
 | V7 light | 🚧None🚧|
 | V8 super light | 🚧None🚧|
-### Other:
+### 🚧 Other:
 ![img_](doc/V6/D4.png)
 <!--
 ![img_](doc/V6/D5.png)
@@ -145,6 +145,15 @@ The model provided in this project should not be used for medical diagnosis with
 ![img3](doc/Screenshot.png)  
 -->
 
+## 📚 Citing
+```bib
+@software{Hamedi_Pneumonia-Detection-Ai,
+author = {Aydin Hamedi},
+license = {MIT},
+title = {Pneumonia-Detection-Ai},
+url = {https://github.com/Aydinhamedi/Pneumonia-Detection-Ai}
+}
+```
 
 ## License
 

@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+title: PyTorch-Project-Template
+message: "A Simple Template For A PyTorch Classification Project \U0001F604"
+type: software
+authors:
+  - email: aydin.hamediasl@gmail.com
+    given-names: Aydin
+    family-names: Hamedi
+repository-code: 'https://github.com/Aydinhamedi/PyTorch-Project-Template'
+license: MIT
