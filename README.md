@@ -147,11 +147,11 @@ The model provided in this project should not be used for medical diagnosis with
 
 ## 📚 Citing
 ```bib
-@software{Hamedi_PyTorch-Project-Template,
+@software{Hamedi_Pneumonia-Detection-Ai,
 author = {Aydin Hamedi},
 license = {MIT},
-title = {PyTorch-Project-Template},
-url = {https://github.com/Aydinhamedi/PyTorch-Project-Template}
+title = {Pneumonia-Detection-Ai},
+url = {https://github.com/Aydinhamedi/Pneumonia-Detection-Ai}
 }
 ```
 
