@@ -1,97 +1,94 @@
-# Exclude Visual Studio Code project settings
+
 /.vscode 
 
-# Exclude Visual Studio project settings  
+
 /.vs
 
-# Exclude database files
+
 /Database 
 
-# Exclude downloaded files
+
 /download
 
-# Exclude model files
+
 /models
 
-# Exclude Python cache files
+
 __pycache__/
 
-# Ignore all files in the logs/fit directory
+
 logs/fit/*
 
-# Ignore all files in the Samples directory
+
 Samples/*
 
-# Do not ignore directories in logs/fit that end with _STR
+
 !logs/fit/*_STR/
 
-# Do not ignore directories in Samples that end with _STR  
+
 !Samples/*_STR/
 
-# Do not ignore .gz files in directories in Samples that end with _STR
+
 !Samples/*_STR.gz
 
-# Exclude specific model weight files
+
 /PAI_model_weights.h5
 /PAI_model_weights_BL.h5 
 /PAI_model_T.h5
 /PAI_model_T_BL.h5
 
-# Exclude cache files  
+
 /cache
 
-# Exclude build artifacts
+
 /Build 
 
-# Exclude validation files
+
 /validation
 
-# Exclude project file for Pneumonia AI
+
 /Pneumonia AI.pyproj
 
-# Exclude specific model file used in the CLI interface
+
 /Interface/CLI/Data/PAI_model.h5
 
-# Exclude temporary files
+
 /TEMP.txt
 /freearc1.tmp
 
-# Exclude logs and dataset files in the CLI interface
+
 /Interface/CLI/Data/logs  
 /Interface/CLI/Data/dataset.npy
 
-# Exclude temporary Python version file in the CLI interface
+
 /Interface/CLI/Data/Python Ver.tmp
 
-# Exclude specific model file used in the GUI interface
+
 /Interface/GUI/Data/PAI_model.h5
 
-# Exclude temporary Python version file in the GUI interface
+
 /Interface/GUI/Data/Python Ver.tmp
 
-# Virtual environment directories
+
 /venv_2  
 /venv
 
-# Python Embed directory
+
 /Interface/CLI/Data/Python Embed 3.10.11
 /Interface/CLI/Data/Use_Python_Embed.tmp
 /Interface/CLI/Python.Embed.3.10.11.exe
 
-# GUI development file
-/Interface/GUI/GUI_DEV.cmd
 
-# Exclude logs in GUI interface
+
 /Interface/GUI/Data/logs
 
-# Other excluded files
+
 /Test_ENV_G.py
 /scc.exe
 /SCC_Auto.cmd
 /Microsoft.PowerShell_profile_Nvidia_smi.ps1
 /Data/image_SUB_generator.pkl
 /GPU_Info.txt
-/Build.py
 /env
 /Temp
 /Test.md
@@ -100,9 +97,9 @@ Samples/*
 /ruff_format_results.txt
 /Load_Backup.py
 
-# Exclude backup load
+
 /Backup_*_COPY.ipynb
 
-# Temp
+
 /history/Archive
 /Test_ENV_G.ipynb
