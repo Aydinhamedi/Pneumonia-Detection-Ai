@@ -9,6 +9,7 @@ set Full_Auto=1
 set arg=%1
 set PV_filepath="Data\\Python Ver.tmp"
 set python_path=python
+set file_path="Data\GUI_main"
 set pip_path=pip
 
 REM Check if the fast start flag is used
@@ -79,7 +80,24 @@ if "%arg%"=="-f" (
 REM Clear the terminal and start the Python GUI script
 timeout /t 1 >nul
 cls
-"%python_path%" "Data\GUI_main.py"
+if exist %file_path%.py (
+    echo Python file found, attempting to run...
+    %python_path% %file_path%.py
+    if %errorlevel% neq 0 (
+        echo Error running Python file.
+        pause
+    )
+) else if exist %file_path%.pyc (
+    echo Compiled Python file found, attempting to run...
+    %python_path% %file_path%.pyc
+    if %errorlevel% neq 0 (
+        echo Error running compiled Python file.
+        pause
+    )
+) else (
+    echo Neither Python nor compiled Python file found.
+    pause
+)
 
 goto :EOF
 
